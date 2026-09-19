@@ -18,6 +18,7 @@ const NAV = [
   ["day1.html",   "逐日行程", "day"],
   ["food.html",   "特色菜",   "food"],
   ["weather.html","天氣",     "weather"],
+  ["checklist.html","準備清單","checklist"],
 ];
 
 const DAY_SHORT = ["慕尼黑","新天鵝堡","楚格峰","因斯布魯克","薩爾斯堡","國王湖","哈修塔特","基姆湖","返程"];
@@ -250,6 +251,77 @@ if (PAGE === "weather") {
 
   el("wxnotes").innerHTML = `<ul class="notes">${WX_NOTES.map(([l,t]) =>
     `<li><b class="lbl">${esc(l)}</b>${esc(t)}</li>`).join("")}</ul>`;
+}
+
+/* ── 出發前準備清單 ─────────────────────────────────── */
+
+/* 勾選狀態存在各自裝置的 localStorage，不同步給其他人。
+   無痕模式下讀寫會直接拋例外，兩個函式都必須包 try/catch，否則整頁會掛掉。 */
+const CK_KEY = "trip2026.checklist.v1";
+function ckLoad(){
+  try { return JSON.parse(localStorage.getItem(CK_KEY)) || {}; } catch (e) { return {}; }
+}
+function ckSave(state){
+  try { localStorage.setItem(CK_KEY, JSON.stringify(state)); return true; } catch (e) { return false; }
+}
+
+if (PAGE === "checklist") {
+  const state = ckLoad();
+  const total = CHECKLIST.reduce((a,g) => a + g.items.length, 0);
+  const doneIn = g => g.items.filter(([id]) => state[id]).length;
+  const doneAll = () => CHECKLIST.reduce((a,g) => a + doneIn(g), 0);
+
+  el("ckroot").innerHTML = CHECKLIST.map(g => `
+    <section class="ck-group glass rv" data-g="${g.id}">
+      <div class="ck-head">
+        <h2>${esc(g.title)}</h2>
+        <span class="ck-count" data-count="${g.id}">${doneIn(g)}／${g.items.length}</span>
+      </div>
+      ${g.items.map(([id,label,note]) => `
+        <label class="ck-item${state[id] ? " on" : ""}" data-item="${id}">
+          <input type="checkbox" data-id="${id}"${state[id] ? " checked" : ""}>
+          <span class="ck-text">
+            <span class="ck-label">${esc(label)}</span>
+            ${note ? `<span class="ck-note">${esc(note)}</span>` : ""}
+          </span>
+        </label>`).join("")}
+    </section>`).join("");
+
+  function paint(){
+    const n = doneAll();
+    el("ckbar").style.width = total ? (n / total * 100) + "%" : "0%";
+    el("cknum").textContent = `${n}／${total}`;
+    el("ckstate").textContent = n === total ? "全部完成" : `還有 ${total - n} 項`;
+    CHECKLIST.forEach(g => {
+      document.querySelector(`[data-count="${g.id}"]`).textContent = `${doneIn(g)}／${g.items.length}`;
+    });
+  }
+  paint();
+
+  /* 事件委派：只改動當下那一項，不整頁重繪 */
+  el("ckroot").addEventListener("change", e => {
+    const box = e.target.closest('input[type="checkbox"]');
+    if (!box) return;
+    const id = box.dataset.id;
+    if (box.checked) state[id] = 1; else delete state[id];
+    box.closest(".ck-item").classList.toggle("on", box.checked);
+    if (!ckSave(state)) el("cknostore").hidden = false;
+    paint();
+  });
+
+  el("ckreset").addEventListener("click", () => {
+    if (!confirm("確定要清空所有勾選嗎？此動作無法復原。")) return;
+    Object.keys(state).forEach(k => delete state[k]);
+    ckSave(state);
+    document.querySelectorAll('#ckroot input[type="checkbox"]').forEach(b => {
+      b.checked = false;
+      b.closest(".ck-item").classList.remove("on");
+    });
+    paint();
+  });
+
+  /* 開啟時就先探測一次能不能寫入，無痕模式直接提示 */
+  if (!ckSave(state)) el("cknostore").hidden = false;
 }
 
 /* ── 互動 ───────────────────────────────────────────── */
