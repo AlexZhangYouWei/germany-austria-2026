@@ -130,9 +130,7 @@ function dayArticle(d){
 
 if (PAGE === "index") {
   el("facts").innerHTML = FACTS.map(([k,v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("");
-  /* 路線圖：內嵌 SVG，座標由 make_map.js 以 Web Mercator 投影預先算好 */
-  const P = Object.fromEntries(MAP.places.map(p => [p.k, p]));
-  const line = keys => keys.map((k,i) => (i ? "L" : "M") + P[k].x + " " + P[k].y).join("");
+  /* 路線圖：內嵌 SVG。國界與行車幾何都由 make_map.js 於建置時投影好，執行期不取外部資料。 */
   const SIDE = {
     n:  { dx:0,   dy:-20, a:"middle" },
     s:  { dx:0,   dy:30,  a:"middle" },
@@ -140,37 +138,33 @@ if (PAGE === "index") {
     w:  { dx:-15, dy:6,   a:"end"    },
     sw: { dx:-14, dy:22,  a:"end"    },
   };
+  /* 長的先畫、短的後畫，短路線才不會被長路線埋掉 */
+  const drawOrder = MAP.routes.slice().sort((x,y) => y.km - x.km);
+  const chipDays = [...new Set(MAP.routes.map(r => r.day))].sort((x,y) => x - y);
+
   el("map").innerHTML = `
   <svg viewBox="0 0 ${MAP.w} ${MAP.h}" class="mapsvg" role="img"
-       aria-label="德國與奧地利行程路線圖，慕尼黑出發經米滕瓦爾德、因斯布魯克、薩爾斯堡、國王湖、哈修塔特繞回慕尼黑">
+       aria-label="德國與奧地利逐日行車路線圖，依實際道路繪製，每日不同顏色">
     <defs>
       <clipPath id="mclip"><rect x="0" y="0" width="${MAP.w}" height="${MAP.h}"/></clipPath>
-      <linearGradient id="mroute" x1="0" y1="0" x2="1" y2="0">
-        <stop offset="0%"  stop-color="#ffd79b"/>
-        <stop offset="55%" stop-color="#ffb872"/>
-        <stop offset="100%" stop-color="#ff7a4d"/>
-      </linearGradient>
-      <filter id="mglow" x="-40%" y="-40%" width="180%" height="180%">
-        <feGaussianBlur stdDeviation="5" result="b"/>
-        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-      </filter>
+      ${drawOrder.map(r => `<path id="rt-${r.key}" d="${r.d}"/>`).join("")}
     </defs>
 
     <g clip-path="url(#mclip)">
       <g class="m-land">
-        ${Object.entries(MAP.border).map(([k,d]) =>
-          `<path class="m-c m-${k}" d="${d}"/>`).join("")}
+        ${Object.entries(MAP.border).map(([k,d]) => `<path class="m-c m-${k}" d="${d}"/>`).join("")}
       </g>
 
-      ${MAP.spurs.map(([a,b]) =>
-        `<path class="m-spur" d="${line([a,b])}"/>`).join("")}
-
-      <path class="m-route-glow" d="${line(MAP.route)}"/>
-      <path class="m-route" d="${line(MAP.route)}"/>
+      <g class="m-routes">
+        ${drawOrder.map(r => `<use class="m-case" href="#rt-${r.key}" data-day="${r.day}"/>`).join("")}
+        ${drawOrder.map(r =>
+          `<use class="m-line d${r.day}${r.variant === "B" ? " alt" : ""}"
+                href="#rt-${r.key}" data-day="${r.day}"
+                aria-label="Day ${r.day}${r.variant} ${r.label} ${r.km} 公里"/>`).join("")}
+      </g>
 
       ${MAP.places.map(p => {
-        const S = SIDE[p.side] || SIDE.n;
-        const big = p.kind === "stay";
+        const S = SIDE[p.side] || SIDE.n, big = p.kind === "stay";
         return `<g class="m-pt ${p.kind}">
           ${big ? `<circle class="m-halo" cx="${p.x}" cy="${p.y}" r="13"/>` : ""}
           <circle class="m-dot" cx="${p.x}" cy="${p.y}" r="${big ? 7 : 4.5}"/>
@@ -181,12 +175,37 @@ if (PAGE === "index") {
       }).join("")}
     </g>
   </svg>
-  <div class="m-legend">
-    <span><i class="lg-stay"></i>住宿地點</span>
-    <span><i class="lg-see"></i>沿途景點</span>
-    <span><i class="lg-spur"></i>Day 3 當日往返</span>
-    <span class="m-cap">連線為行程順序示意，非實際行車路線</span>
-  </div>`;
+
+  <div class="m-chips" role="group" aria-label="依日期篩選路線">
+    ${chipDays.map(n => {
+      const rs = MAP.routes.filter(r => r.day === n);
+      const km = rs.map(r => r.km).join("／");
+      return `<button type="button" class="m-chip d${n}" data-day="${n}" aria-pressed="false">
+        <i></i>Day ${n}<em>${km} km</em></button>`;
+    }).join("")}
+    <button type="button" class="m-chip m-clear" data-day="all" hidden>顯示全部</button>
+  </div>
+  <p class="m-cap">路線依 OpenStreetMap 路網的實際道路繪製，與總檔的 Google 里程差 0.3–7%。
+     虛線為天候二選一的 B 方案。Day 1、5 無自駕；Day 9 僅市區短程後轉搭 S-Bahn，皆未繪製。</p>`;
+
+  /* 點日期籌碼 → 只留那一天，其餘淡出。再點一次還原。 */
+  const mapBox = el("map");
+  let only = null;
+  const apply = () => {
+    mapBox.querySelectorAll(".m-line, .m-case").forEach(n =>
+      n.classList.toggle("dim", only !== null && +n.dataset.day !== only));
+    mapBox.querySelectorAll(".m-chip[data-day]").forEach(b => {
+      if (b.dataset.day === "all") { b.hidden = only === null; return; }
+      b.setAttribute("aria-pressed", String(+b.dataset.day === only));
+    });
+  };
+  mapBox.addEventListener("click", e => {
+    const b = e.target.closest(".m-chip");
+    if (!b) return;
+    only = b.dataset.day === "all" ? null : (+b.dataset.day === only ? null : +b.dataset.day);
+    apply();
+  });
+
   el("daylinks").innerHTML = DAYS.map((d,i) => `
     <a class="dcard glass rv" href="day${d.n}.html">
       <span class="day-n">DAY ${d.n}</span>

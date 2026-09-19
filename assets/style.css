@@ -476,12 +476,18 @@ body[data-page="day"] .day{margin-bottom:0}
 .m-de{fill:rgba(255,196,130,.075);stroke:rgba(255,206,150,.34)}
 .m-at{fill:rgba(242,144,154,.075);stroke:rgba(246,168,176,.34)}
 
-.m-route{fill:none;stroke:url(#mroute);stroke-width:3.2;stroke-linecap:round;
-  stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.m-route-glow{fill:none;stroke:#ff9a5c;stroke-width:9;stroke-linecap:round;
-  stroke-linejoin:round;opacity:.22;filter:url(#mglow);vector-effect:non-scaling-stroke}
-.m-spur{fill:none;stroke:rgba(255,214,178,.5);stroke-width:2;stroke-dasharray:6 7;
-  stroke-linecap:round;vector-effect:non-scaling-stroke}
+/* 逐日路線：深色 casing 在下、彩色線在上。重疊時上層線有深色描邊把下層切開，
+   不必依賴平行位移就分得出來。位移只是額外加分。 */
+.m-case{fill:none;stroke:#0d0806;stroke-width:7.5;stroke-linecap:round;stroke-linejoin:round;
+  opacity:.9;vector-effect:non-scaling-stroke;transition:opacity .25s}
+.m-line{fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;transition:opacity .25s}
+.m-line.alt{stroke-dasharray:9 7;stroke-width:2.6}
+.m-line.dim,.m-case.dim{opacity:.1}
+.m-case.dim{opacity:.05}
+
+.d2{stroke:#ffb43d} .d3{stroke:#ff7a52} .d4{stroke:#f279a8}
+.d6{stroke:#a98cff} .d7{stroke:#4fd6c4} .d8{stroke:#8fd15a}
 
 .m-halo{fill:rgba(255,150,80,.16)}
 .m-dot{fill:#ffcf96;stroke:#3a1a0c;stroke-width:2;vector-effect:non-scaling-stroke}
@@ -495,14 +501,21 @@ body[data-page="day"] .day{margin-bottom:0}
   paint-order:stroke;stroke:rgba(13,8,6,.85);stroke-width:4px;stroke-linejoin:round}
 .m-pt.see .m-name{font-size:17px;font-weight:500;fill:var(--ink2)}
 
-.m-legend{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;
-  margin:14px 4px 2px;font-size:11.5px;color:var(--ink3)}
-.m-legend span{display:flex;align-items:center;gap:7px}
-.m-legend i{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
-.lg-stay{background:linear-gradient(160deg,#ffd79b,#ff7a4d)}
-.lg-see{background:rgba(255,226,196,.55)}
-.lg-spur{border-radius:0;height:0;border-top:2px dashed rgba(255,214,178,.6);width:16px}
-.m-cap{margin-left:auto;opacity:.75}
+.m-chips{display:flex;flex-wrap:wrap;gap:7px;margin:14px 2px 0}
+.m-chip{font:inherit;display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  font-size:12.5px;padding:7px 14px;border-radius:999px;color:var(--ink2);
+  background:rgba(255,255,255,.05);border:1px solid var(--hair2);transition:.2s}
+.m-chip:hover{color:var(--ink);border-color:rgba(255,190,140,.3)}
+.m-chip:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.m-chip i{width:13px;height:3.5px;border-radius:2px;flex:0 0 auto}
+.m-chip em{font-style:normal;font-size:11px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.m-chip[aria-pressed="true"]{color:var(--ink);background:rgba(255,255,255,.1);
+  border-color:rgba(255,200,150,.45)}
+.m-chip.d2 i{background:#ffb43d} .m-chip.d3 i{background:#ff7a52}
+.m-chip.d4 i{background:#f279a8} .m-chip.d6 i{background:#a98cff}
+.m-chip.d7 i{background:#4fd6c4} .m-chip.d8 i{background:#8fd15a}
+.m-clear{color:var(--ink3)}
+.m-cap{margin:12px 2px 0;font-size:11.5px;color:var(--ink3);line-height:1.7}
 
 /* ───────── 駐外館處與急難救助 ───────── */
 .sosgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:34px}
@@ -608,7 +621,7 @@ body[data-page="day"] .day{margin-bottom:0}
   .m-name{font-size:27px}
   .m-sub{font-size:21px}
   .m-pt.see .m-name{font-size:24px}
-  .m-cap{margin-left:0;flex-basis:100%}
+  .m-chip{font-size:12px;padding:8px 13px}
   .of-calls{grid-template-columns:1fr}
   .office{padding:22px 20px 24px}
   .of-kv{grid-template-columns:1fr;gap:2px 0}
