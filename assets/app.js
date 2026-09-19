@@ -19,6 +19,7 @@ const NAV = [
   ["food.html",   "特色菜",   "food"],
   ["weather.html","天氣",     "weather"],
   ["checklist.html","準備清單","checklist"],
+  ["offices.html","辦事處","offices"],
 ];
 
 const DAY_SHORT = ["慕尼黑","新天鵝堡","楚格峰","因斯布魯克","薩爾斯堡","國王湖","哈修塔特","基姆湖","返程"];
@@ -251,6 +252,51 @@ if (PAGE === "weather") {
 
   el("wxnotes").innerHTML = `<ul class="notes">${WX_NOTES.map(([l,t]) =>
     `<li><b class="lbl">${esc(l)}</b>${esc(t)}</li>`).join("")}</ul>`;
+}
+
+/* ── 駐外館處與急難救助 ─────────────────────────────── */
+
+if (PAGE === "offices") {
+  const L = EMERGENCY.local;
+  el("sos").innerHTML = `
+    <div class="sos-local glass">
+      <div>
+        <div class="sos-k">${esc(L.label)}</div>
+        <a class="sos-big" href="tel:${esc(L.dial)}">${esc(L.num)}</a>
+      </div>
+      <p class="sos-note">${esc(L.note)}</p>
+    </div>
+    ${EMERGENCY.lines.map(x => `
+      <div class="sos-line glass">
+        <div class="sos-k">${esc(x.label)}</div>
+        <a class="sos-num" href="tel:${esc(x.dial)}">${esc(x.num)}</a>
+        <p class="sos-note">${esc(x.where)}</p>
+        ${x.warn ? `<p class="sos-warn">${esc(x.warn)}</p>` : ""}
+      </div>`).join("")}`;
+
+  el("offices").innerHTML = OFFICES.map(o => `
+    <article class="office glass rv${o.pri ? " pri" : ""}">
+      <div class="of-tag${o.pri ? " on" : ""}">${esc(o.tag)}</div>
+      <h2 class="of-name">${esc(o.name)}</h2>
+      <p class="of-local">${esc(o.local)}</p>
+      <p class="of-why">${esc(o.why)}</p>
+
+      <div class="of-calls">
+        <a class="of-call sos" href="tel:${esc(o.sosDial)}">
+          <span>急難救助專線</span><b>${esc(o.sos)}</b><em>${esc(o.sosLocal)}</em></a>
+        <a class="of-call" href="tel:${esc(o.telDial)}">
+          <span>辦公室總機</span><b>${esc(o.tel)}</b><em>限領務服務時間</em></a>
+      </div>
+
+      <dl class="of-kv">
+        <dt>地址</dt><dd>${esc(o.addr)}　<a class="daylink" href="${esc(o.map)}" target="_blank" rel="noopener">在地圖開啟</a></dd>
+        ${o.extra ? `<dt>交通</dt><dd>${esc(o.extra)}</dd>` : ""}
+        <dt>服務時間</dt><dd>${esc(o.hours)}</dd>
+        <dt>領務轄區</dt><dd>${esc(o.area)}</dd>
+        <dt>電子信箱</dt><dd>${o.mail.map(m => `<a class="daylink" href="mailto:${esc(m)}">${esc(m)}</a>`).join("　")}</dd>
+        <dt>傳真</dt><dd>${esc(o.fax)}</dd>
+      </dl>
+    </article>`).join("");
 }
 
 /* ── 出發前準備清單 ─────────────────────────────────── */

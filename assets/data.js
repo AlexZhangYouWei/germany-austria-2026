@@ -484,3 +484,64 @@ const CHECKLIST = [
     ["pr7","航班時刻與航廈向國泰再次核對",""],
   ]},
 ];
+
+/* 駐外館處與急難救助。資料查證日 2026-09-19，來源：
+   外交部全球資訊網駐外館處頁、各處官網、外交部領事事務局。
+   出發前請再次核對，號碼與服務時間可能異動。 */
+const EMERGENCY = {
+  local: { label:"當地緊急電話", num:"112", dial:"112",
+    note:"德國與奧地利共用，警察、消防、救護皆可，免費且不需區碼" },
+  lines: [
+    { label:"旅外國人急難救助全球免付費專線", num:"800-0885-0885", dial:"008008850885",
+      where:"德國境內撥打：先撥 00，即 00-800-0885-0885",
+      warn:"奧地利不在適用的 22 個國家名單內，在奧地利請改打駐奧地利代表處急難電話或下方付費專線" },
+    { label:"外交部緊急聯絡中心（自國外撥打）", num:"+886-800-085-095", dial:"+886800085095",
+      where:"德奧境內需先撥 00，即 00-886-800-085-095。此為付費電話", warn:"" },
+    { label:"外交部緊急聯絡中心（台灣境內免付費）", num:"0800-085-095", dial:"0800085095",
+      where:"供台灣親友代為聯繫，24 小時有人接聽", warn:"" },
+  ],
+};
+
+const OFFICES = [
+  { id:"muc", pri:true, tag:"德國段主要聯絡",
+    name:"駐德國台北代表處慕尼黑辦事處",
+    local:"Taipeh Vertretung in der Bundesrepublik Deutschland, Büro München",
+    why:"本行程德國段全在其轄區：慕尼黑、新天鵝堡、米滕瓦爾德、楚格峰、加米施、國王湖、貝希特斯加登、基姆湖。",
+    addr:"Leopoldstraße 28a/V, 80802 München",
+    map:"https://www.google.com/maps/search/?api=1&query=Leopoldstrasse+28a%2C+80802+M%C3%BCnchen",
+    tel:"+49-89-5126790", telDial:"+49895126790",
+    sos:"+49-174-632-6739", sosDial:"+491746326739", sosLocal:"德國境內直撥 0174-632-6739",
+    fax:"+49-89-51267979",
+    mail:["muc1@mofa.gov.tw"],
+    hours:"領務服務 週一至週五 09:00–12:30",
+    area:"巴伐利亞邦 Bayern、巴登-符騰堡邦 Baden-Württemberg",
+    extra:"" },
+
+  { id:"vie", pri:true, tag:"奧地利段主要聯絡",
+    name:"駐奧地利台北經濟文化代表處",
+    local:"Taipei Economic and Cultural Office in Austria",
+    why:"本行程奧地利段全在其轄區：因斯布魯克、拉滕貝格、薩爾斯堡、哈修塔特。",
+    addr:"Wagramer Strasse 19/11. OG, A-1220 Wien",
+    map:"https://www.google.com/maps/search/?api=1&query=Wagramer+Strasse+19%2C+1220+Wien",
+    tel:"+43-1-2124720", telDial:"+4312124720",
+    sos:"+43-664-345-0455", sosDial:"+436643450455", sosLocal:"奧地利境內直撥 0664-345-0455",
+    fax:"+43-1-212-472086",
+    mail:["aut@mofa.gov.tw","info@taipei.at"],
+    hours:"領務服務 週一至週五 09:00–12:00（辦公時間 09:00–17:00）",
+    area:"奧地利全境，兼理斯洛維尼亞、克羅埃西亞",
+    extra:"地鐵 U1 至 Kaisermühlen／Vienna International Center 站，步行約 5 分鐘" },
+
+  { id:"ber", pri:false, tag:"德國主館，轄區不含本行程",
+    name:"駐德國台北代表處（柏林）",
+    local:"Taipeh Vertretung in der Bundesrepublik Deutschland",
+    why:"德國主館。轄區不含巴伐利亞，本行程一般不需聯絡，列此供備查。",
+    addr:"Markgrafenstrasse 35, 10117 Berlin",
+    map:"https://www.google.com/maps/search/?api=1&query=Markgrafenstrasse+35%2C+10117+Berlin",
+    tel:"+49-30-203610", telDial:"+4930203610",
+    sos:"+49-171-389-8257", sosDial:"+491713898257", sosLocal:"德國境內直撥 0171-389-8257",
+    fax:"+49-30-20361101",
+    mail:["deu@mofa.gov.tw"],
+    hours:"領務櫃檯 週一至週五 09:00–12:30（下午停止櫃檯服務，電話正常接聽）",
+    area:"柏林邦、布蘭登堡邦、薩克森邦、薩克森-安哈特邦、圖林根邦",
+    extra:"" },
+];

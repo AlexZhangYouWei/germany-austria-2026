@@ -491,6 +491,46 @@ body[data-page="day"] .day{margin-bottom:0}
   .chev{opacity:.42}
 }
 
+/* ───────── 駐外館處與急難救助 ───────── */
+.sosgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:34px}
+.sos-local{grid-column:1 / -1;display:flex;align-items:center;justify-content:space-between;
+  gap:18px;flex-wrap:wrap;padding:20px 24px;
+  border-color:rgba(255,79,51,.34);background:linear-gradient(170deg,rgba(255,110,70,.14),rgba(255,79,51,.05))}
+.sos-line{padding:18px 22px}
+.sos-k{font-size:11.5px;letter-spacing:.1em;color:var(--ink3)}
+.sos-big{display:block;margin-top:4px;font-size:40px;font-weight:700;letter-spacing:-.04em;
+  font-variant-numeric:tabular-nums;text-decoration:none;color:#ff8f70}
+.sos-num{display:block;margin-top:6px;font-size:21px;font-weight:700;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;text-decoration:none;color:var(--ink)}
+.sos-num:hover,.sos-big:hover{text-decoration:underline}
+.sos-note{margin:8px 0 0;font-size:12.5px;color:var(--ink3);line-height:1.65;max-width:34em}
+.sos-warn{margin:9px 0 0;font-size:12.5px;color:#ffb3a0;line-height:1.65;
+  padding:9px 13px;border-radius:11px;background:rgba(255,79,51,.1);border:1px solid rgba(255,79,51,.22)}
+
+.office{padding:26px 28px 28px;margin-bottom:14px}
+.of-tag{display:inline-block;font-size:11px;letter-spacing:.1em;padding:4px 11px;border-radius:999px;
+  color:var(--ink3);background:rgba(255,255,255,.05);border:1px solid var(--hair2)}
+.of-tag.on{color:#ffd9b0;background:rgba(255,160,90,.15);border-color:rgba(255,175,110,.3)}
+.of-name{margin:14px 0 0;font-size:20px;font-weight:700;letter-spacing:-.025em;line-height:1.35}
+.of-local{margin:4px 0 0;font-size:12px;color:var(--ink3);line-height:1.5}
+.of-why{margin:12px 0 0;font-size:13.5px;color:var(--ink2);line-height:1.7}
+
+.of-calls{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:18px 0 0}
+.of-call{display:block;padding:14px 18px;border-radius:16px;text-decoration:none;color:inherit;
+  background:rgba(255,255,255,.04);border:1px solid var(--hair2);transition:.2s}
+.of-call:hover{border-color:rgba(255,190,140,.34);transform:translateY(-2px)}
+.of-call span{display:block;font-size:11px;letter-spacing:.08em;color:var(--ink3)}
+.of-call b{display:block;margin-top:5px;font-size:18px;font-weight:700;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums}
+.of-call em{display:block;margin-top:3px;font-size:11px;font-style:normal;color:var(--ink3)}
+.of-call.sos{background:rgba(255,79,51,.1);border-color:rgba(255,79,51,.26)}
+.of-call.sos b{color:#ff8f70}
+.of-call.sos:hover{border-color:rgba(255,79,51,.5)}
+
+.of-kv{display:grid;grid-template-columns:72px 1fr;gap:8px 16px;margin:20px 0 0;font-size:13px}
+.of-kv dt{color:var(--ink3)}
+.of-kv dd{margin:0;color:var(--ink2);line-height:1.65}
+
 /* ───────── 出發前準備清單 ───────── */
 .ck-top{padding:22px 26px;margin-bottom:16px}
 .ck-topline{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -550,6 +590,12 @@ body[data-page="day"] .day{margin-bottom:0}
 @media (max-width:760px){
   .dgrid{grid-template-columns:1fr}
   .ckgrid{grid-template-columns:1fr}
+  .sosgrid{grid-template-columns:1fr}
+  .of-calls{grid-template-columns:1fr}
+  .office{padding:22px 20px 24px}
+  .of-kv{grid-template-columns:1fr;gap:2px 0}
+  .of-kv dd{margin-bottom:9px}
+  .sos-big{font-size:34px}
   .ck-top{padding:20px}
   .pagehead{padding:36px 0 28px}
 }
