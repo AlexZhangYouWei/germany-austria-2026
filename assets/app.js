@@ -6,14 +6,19 @@ const PAGE = document.body.dataset.page;
 const DAYN = +document.body.dataset.day || 0;
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const md  = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<em>$1</em>");
+/* 備註支援 **粗體** 與 [文字](https://…)。先 esc 再轉，所以連結文字與網址都已經跳脫過；
+   只收 http/https，不接受其他協定。 */
+const md  = s => esc(s)
+  .replace(/\n/g, "<br>")
+  .replace(/\*\*(.+?)\*\*/g, "<em>$1</em>")
+  .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
+    '<a class="daylink" href="$2" target="_blank" rel="noopener">$1</a>');
 const el  = id => document.getElementById(id);
 
 /* ── 導覽 ───────────────────────────────────────────── */
 
 const NAV = [
   ["index.html",  "總覽",     "index"],
-  ["flights.html","航班",     "flights"],
   ["stays.html",  "住宿",     "stays"],
   ["day1.html",   "逐日行程", "day"],
   ["food.html",   "特色菜",   "food"],
@@ -23,6 +28,7 @@ const NAV = [
 ];
 
 const DAY_SHORT = ["慕尼黑","新天鵝堡","楚格峰","因斯布魯克","薩爾斯堡","國王湖","哈修塔特","基姆湖","返程"];
+const DAY_STAY  = ["慕尼黑","米滕瓦爾德","米滕瓦爾德","薩爾斯堡","薩爾斯堡","比紹夫斯維森","哈修塔特","慕尼黑",""];
 
 el("nav").innerHTML = NAV.map(([href,label,key]) =>
   `<a href="${href}"${key === PAGE ? ' class="on" aria-current="page"' : ""}>${label}</a>`).join("");
@@ -57,8 +63,30 @@ const ICON = {
   rain:`<path d="M7.4 14.6h9.5a3.5 3.5 0 0 0 .4-6.9 4.8 4.8 0 0 0-9.2-1.2 3.6 3.6 0 0 0-.7 8.1z"/><g stroke-linecap="round"><path d="M8.6 17.2l-1.3 4M12.4 17.2l-1.3 4M16.2 17.2l-1.3 4"/></g>`,
 };
 const icon  = k  => `<svg class="wicon ${k}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">${ICON[k]}</svg>`;
-const bar   = p  => `<span class="bar"><i style="width:${p*0.6}px"></i><span>${p}%</span></span>`;
-const mmBar = mm => `<span class="bar"><i class="rainmm" style="width:${Math.min(mm,6)*11}px"></i><span>${mm} mm</span></span>`;
+
+/* 數值分級上色。色階只是輔助，數字本身仍是主要資訊。
+   溫度以穿衣感受切段（冰點／厚外套／外套／舒適／溫暖），降雨以「要不要帶傘」切段。
+   兩個 class 是為了勝過 td.strong、.bar span 這些既有規則。 */
+const tCls = t  => "v " + (t < 0 ? "t0" : t < 6 ? "t1" : t < 10 ? "t2" : t < 13 ? "t3" : t < 16 ? "t4" : "t5");
+const pCls = p  => "v " + (p <  30  ? "r0" : p <  50  ? "r1" : "r2");
+const mCls = mm => "v " + (mm < 0.5 ? "r0" : mm < 1.5 ? "r1" : "r2");
+const cCls = c  => "v " + (c <  30  ? "k0" : c <  70  ? "k1" : "k2");
+const mm1  = v  => v.toFixed(1);     /* 1 → 「1.0 mm」，同一欄小數位要一致 */
+
+const bar   = p  => `<span class="bar"><i style="width:${p*0.6}px"></i><span class="${pCls(p)}">${p}%</span></span>`;
+const mmBar = mm => `<span class="bar"><i class="rainmm" style="width:${Math.min(mm,6)*11}px"></i><span class="${mCls(mm)}">${mm1(mm)} mm</span></span>`;
+
+/* 與近五年十月基準的比較。w.oct 是 2021–2025 十月整月（每地 155 個白天）的同法統計，
+   用來回答「這幾天在十月裡算濕還是乾」。差距小於門檻就標「接近」，不要製造假訊號。 */
+function vsOct(now, base, tol){
+  const d = +(now - base).toFixed(1);
+  if (Math.abs(d) < tol) return { cls:"same", tag:"接近" };
+  return d > 0 ? { cls:"wetter", tag:"偏濕" } : { cls:"drier", tag:"偏乾" };
+}
+const octP  = w => { const v = vsOct(w.dt.p,  w.oct.p,  3);
+  return `<span class="base">十月 ${w.oct.p}%<b class="${v.cls}">${v.tag}</b></span>`; };
+const octMm = w => { const v = vsOct(w.dt.mm, w.oct.mm, 0.2);
+  return `<span class="base">十月 ${mm1(w.oct.mm)} mm<b class="${v.cls}">${v.tag}</b></span>`; };
 
 /* 哪幾筆天氣資料屬於哪一天（Day 3 同時有山谷與峰頂兩筆） */
 const WX_BY_DAY = { 1:[0], 2:[1], 3:[2,3], 4:[4], 5:[5], 6:[6], 7:[7], 8:[8], 9:[9] };
@@ -71,10 +99,10 @@ function dayWeather(n){
     return `<div class="daywx-row">
       <span class="wxcond ${kind}">${icon(kind)}<span>${esc(label)}</span></span>
       ${idx.length > 1 ? `<span class="daywx-place">${esc(w.place)}</span>` : ""}
-      <span class="daywx-n"><b>${w.dt.a}°</b> 白天均溫</span>
-      <span class="daywx-n"><b>${w.dt.h}°</b> 日間最高</span>
-      <span class="daywx-n"><b>${w.dt.p}%</b> 降雨機率</span>
-      <span class="daywx-n"><b>${w.dt.mm} mm</b> 平均雨量</span>
+      <span class="daywx-n"><b class="${tCls(w.dt.a)}">${w.dt.a}°</b> 白天均溫</span>
+      <span class="daywx-n"><b class="${tCls(w.dt.h)}">${w.dt.h}°</b> 日間最高</span>
+      <span class="daywx-n"><b class="${pCls(w.dt.p)}">${w.dt.p}%</b> 降雨機率<em>十月典型 ${w.oct.p}%</em></span>
+      <span class="daywx-n"><b class="${mCls(w.dt.mm)}">${mm1(w.dt.mm)} mm</b> 平均雨量<em>十月典型 ${mm1(w.oct.mm)} mm</em></span>
     </div>`;
   }).join("") + `</div>`;
 }
@@ -112,6 +140,20 @@ function dayArticle(d){
     ? `<ul class="notes">${d.notes.map(([l,t]) =>
         `<li><b class="lbl">${esc(l)}</b>${md(t)}</li>`).join("")}</ul>` : "";
 
+  const wx = dayWeather(d.n);
+
+  /* 當日確認：只有需要臨場判斷的日子才有（目前 Day 3）。獨立成塊，不埋在時間軸裡。 */
+  const chk = d.check ? `<section class="day glass rv">
+    <div class="daybox-t">當日確認<span class="daybox-when">${esc(d.check.when)}</span></div>
+    <p class="cfm-lead">${md(d.check.lead)}</p>
+    <ol class="cfm">${d.check.items.map(([name,url,why],i) => `
+      <li><span class="no">${"①②③④⑤⑥"[i] || i+1}</span>
+        <div><a class="daylink" href="${esc(url)}" target="_blank" rel="noopener">${esc(name)}</a>
+        <p>${md(why)}</p></div></li>`).join("")}
+    </ol>
+    ${d.check.foot ? `<p class="cfm-foot">${md(d.check.foot)}</p>` : ""}
+  </section>` : "";
+
   return `<article class="day glass rv">
     <div class="day-head">
       <span class="day-n">DAY ${d.n}</span>
@@ -120,16 +162,46 @@ function dayArticle(d){
     </div>
     <h1 class="day-title">${esc(d.title)}</h1>
     <div class="day-meta">${d.meta.map(m => `<span>${esc(m)}</span>`).join("")}</div>
-    ${dayWeather(d.n)}
+  </article>
+
+  ${wx ? `<section class="day glass rv">
+    <div class="daybox-t">天氣概況<a class="daylink" href="weather.html">完整氣候統計</a></div>
+    ${wx}
+  </section>` : ""}
+
+  ${chk}
+
+  <section class="day glass rv">
+    <div class="daybox-t">時辰表</div>
     <p class="legend"><i></i> 發光標記為不可調動的固定時間：班機、導覽、船班、固定入住與還車</p>
     ${blocks}${notes}
-  </article>`;
+  </section>`;
 }
 
 /* ── 各頁渲染 ───────────────────────────────────────── */
 
+/* 日卡第四行：當晚住宿地與里程。里程砍掉「／約 3 小時 15 分」這種時間尾巴，
+   A／B 方案的里程字串不受影響（分隔字串是「／約」不是「／」）。 */
+function dcardSub(d, i){
+  const km = d.km ? d.km.split("／約")[0] : "無自駕";
+  return [DAY_STAY[i] ? "宿 " + DAY_STAY[i] : "", km].filter(Boolean).join("　·　");
+}
+
 if (PAGE === "index") {
   el("facts").innerHTML = FACTS.map(([k,v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("");
+  el("flightlist").innerHTML = FLIGHTS.map(g => `
+    <div class="fgroup rv">
+      <div class="grouplabel">${esc(g.label)}</div>
+      ${g.legs.map(l => `
+        <div class="leg glass">
+          <div>
+            <div class="code">${esc(l.code)}　${esc(l.date)}</div>
+            <div class="path">${esc(l.path)}</div>
+            <div class="time">${esc(l.time)}</div>
+          </div>
+          <div class="side">${l.side.map(s => esc(s)).join("<br>")}</div>
+        </div>`).join("")}
+    </div>`).join("");
   /* 路線圖：內嵌 SVG。國界與行車幾何都由 make_map.js 於建置時投影好，執行期不取外部資料。 */
   const SIDE = {
     n:  { dx:0,   dy:-20, a:"middle" },
@@ -211,7 +283,7 @@ if (PAGE === "index") {
       <span class="day-n">DAY ${d.n}</span>
       <span class="dcard-date">${esc(d.date)}</span>
       <span class="dcard-title">${esc(d.title)}</span>
-      <span class="dcard-sub">${esc(DAY_SHORT[i])}${d.km ? "　·　" + esc(d.km) : ""}</span>
+      <span class="dcard-sub">${esc(dcardSub(d,i))}</span>
     </a>`).join("");
 }
 
@@ -229,22 +301,6 @@ if (PAGE === "day") {
   el("edges").innerHTML =
     zone(DAYS.find(x => x.n === DAYN - 1), "prev") +
     zone(DAYS.find(x => x.n === DAYN + 1), "next");
-}
-
-if (PAGE === "flights") {
-  el("flightlist").innerHTML = FLIGHTS.map(g => `
-    <div class="fgroup rv">
-      <div class="grouplabel">${esc(g.label)}</div>
-      ${g.legs.map(l => `
-        <div class="leg glass">
-          <div>
-            <div class="code">${esc(l.code)}　${esc(l.date)}</div>
-            <div class="path">${esc(l.path)}</div>
-            <div class="time">${esc(l.time)}</div>
-          </div>
-          <div class="side">${l.side.map(s => esc(s)).join("<br>")}</div>
-        </div>`).join("")}
-    </div>`).join("");
 }
 
 if (PAGE === "stays") {
@@ -280,6 +336,9 @@ if (PAGE === "weather") {
     <p><b>這不是預報，是氣候統計。</b>DWD 與 GeoSphere 的官方逐日預報最遠只到 10 天，撰寫日 2026/09/19 還涵蓋不到行程日期。</p>
     <p>數值取自 ECMWF ERA5 再分析（溫度、降水、雲量），2016–2025 共 10 年、每個目標日期 ±2 天的實際觀測值，每格 50 個「年×日」樣本。
        <b>所有主要數值都只取白天 06–18</b>；降雨機率＝該時段累積降水 ≥0.2 mm 的樣本比例。</p>
+    <p><b>降雨兩個數字下方附的是十月基準。</b>同樣的座標、同樣的白天 06–18、同樣 ≥0.2 mm 算有雨，
+       但樣本改成近五年（2021–2025）十月整月，每地 155 個白天，用來看行程這幾天在十月裡偏濕還是偏乾。
+       十處有九處的當期數值高於十月平均，因為逐日統計含 2016–2020 那五個較濕的年份，且 10/05–10/13 前後本身在十月裡偏濕。</p>
     <p>可取得官方預報的時間：09/25 起涵蓋 Day 1、09/28 起涵蓋至 Day 4、10/01 起涵蓋至 Day 7、<b>10/03 起完整涵蓋至 Day 9</b>。</p>`;
 
   el("wxtable").innerHTML = `
@@ -295,11 +354,25 @@ if (PAGE === "weather") {
         <td style="white-space:nowrap"><a class="daylink" href="day${n}.html">${esc(w.day)}</a></td>
         <td style="white-space:nowrap">${esc(w.place)}</td>
         <td><span class="wxcond ${kind}">${icon(kind)}<span>${esc(label)}</span></span></td>
-        <td class="num strong">${w.dt.a}°</td><td class="num">${w.dt.h}°</td>
-        <td class="num">${w.dt.c}%</td><td class="num">${bar(w.dt.p)}</td>
-        <td class="num">${mmBar(w.dt.mm)}</td>
+        <td class="num strong ${tCls(w.dt.a)}">${w.dt.a}°</td>
+        <td class="num ${tCls(w.dt.h)}">${w.dt.h}°</td>
+        <td class="num ${cCls(w.dt.c)}">${w.dt.c}%</td>
+        <td class="num">${bar(w.dt.p)}${octP(w)}</td>
+        <td class="num">${mmBar(w.dt.mm)}${octMm(w)}</td>
       </tr>`;
     }).join("")}</tbody>`;
+
+  /* 色階說明。門檻改在上面的 tCls／pCls，這裡的文字要跟著改。 */
+  el("wxkey").innerHTML =
+    `<span class="vkey-g"><b>溫度</b>` +
+    [["t0","0° 以下"],["t1","0–6°"],["t2","6–10°"],["t3","10–13°"],["t4","13–16°"],["t5","16° 以上"]]
+      .map(([k,t]) => `<i class="v ${k}"></i>${t}`).join("") + `</span>` +
+    `<span class="vkey-g"><b>降雨</b>` +
+    [["r0","低"],["r1","中"],["r2","高"]]
+      .map(([k,t]) => `<i class="v ${k}"></i>${t}`).join("") + `</span>` +
+    `<span class="vkey-g"><b>雲量</b>` +
+    [["k0","少"],["k1","中"],["k2","多"]]
+      .map(([k,t]) => `<i class="v ${k}"></i>${t}`).join("") + `</span>`;
 
   const PERIODS = [
     ["morn","上午 06–12",1],["noon","下午 12–18",1],
@@ -310,15 +383,18 @@ if (PAGE === "weather") {
     return `<details class="glass rv">
       <summary>
         <span class="s-t">${esc(w.day)}｜${esc(w.place)}</span>
-        <span class="s-d">${esc(label)}　${w.dt.a}° / ${w.dt.h}°　雨 ${w.dt.p}%</span>
+        <span class="s-d">${esc(label)}　<b class="${tCls(w.dt.a)}">${w.dt.a}°</b> / <b class="${tCls(w.dt.h)}">${w.dt.h}°</b>　雨 <b class="${pCls(w.dt.p)}">${w.dt.p}%</b></span>
       </summary>
       <div class="dbody"><div class="scroll"><table>
         <thead><tr><th>時段</th><th class="num">均溫</th><th class="num">歷年區間</th>
           <th class="num">雲量</th><th class="num">雨機率</th><th class="num">平均雨量</th></tr></thead>
         <tbody>${PERIODS.map(([k,name,day]) => { const s = w.p[k]; return `
           <tr class="${day?"":"dim"}"><td>${esc(name)}${day?"":' <span class="tag">夜</span>'}</td>
-            <td class="num">${s.a} °C</td><td class="num">${s.lo} – ${s.hi} °C</td>
-            <td class="num">${s.c}%</td><td class="num">${s.p}%</td><td class="num">${s.mm} mm</td></tr>`;
+            <td class="num ${tCls(s.a)}">${s.a} °C</td>
+            <td class="num"><span class="${tCls(s.lo)}">${s.lo}</span> – <span class="${tCls(s.hi)}">${s.hi}</span> °C</td>
+            <td class="num ${cCls(s.c)}">${s.c}%</td>
+            <td class="num ${pCls(s.p)}">${s.p}%</td>
+            <td class="num ${mCls(s.mm)}">${mm1(s.mm)} mm</td></tr>`;
         }).join("")}</tbody>
       </table></div></div>
     </details>`;
