@@ -130,8 +130,63 @@ function dayArticle(d){
 
 if (PAGE === "index") {
   el("facts").innerHTML = FACTS.map(([k,v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("");
-  el("journey").innerHTML = JOURNEY.map(([c,n]) =>
-    `<div class="stop"><div class="city">${esc(c)}</div><div class="nights">${esc(n)}</div></div>`).join("");
+  /* 路線圖：內嵌 SVG，座標由 make_map.js 以 Web Mercator 投影預先算好 */
+  const P = Object.fromEntries(MAP.places.map(p => [p.k, p]));
+  const line = keys => keys.map((k,i) => (i ? "L" : "M") + P[k].x + " " + P[k].y).join("");
+  const SIDE = {
+    n:  { dx:0,   dy:-20, a:"middle" },
+    s:  { dx:0,   dy:30,  a:"middle" },
+    e:  { dx:15,  dy:6,   a:"start"  },
+    w:  { dx:-15, dy:6,   a:"end"    },
+    sw: { dx:-14, dy:22,  a:"end"    },
+  };
+  el("map").innerHTML = `
+  <svg viewBox="0 0 ${MAP.w} ${MAP.h}" class="mapsvg" role="img"
+       aria-label="德國與奧地利行程路線圖，慕尼黑出發經米滕瓦爾德、因斯布魯克、薩爾斯堡、國王湖、哈修塔特繞回慕尼黑">
+    <defs>
+      <clipPath id="mclip"><rect x="0" y="0" width="${MAP.w}" height="${MAP.h}"/></clipPath>
+      <linearGradient id="mroute" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%"  stop-color="#ffd79b"/>
+        <stop offset="55%" stop-color="#ffb872"/>
+        <stop offset="100%" stop-color="#ff7a4d"/>
+      </linearGradient>
+      <filter id="mglow" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="5" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+
+    <g clip-path="url(#mclip)">
+      <g class="m-land">
+        ${Object.entries(MAP.border).map(([k,d]) =>
+          `<path class="m-c m-${k}" d="${d}"/>`).join("")}
+      </g>
+
+      ${MAP.spurs.map(([a,b]) =>
+        `<path class="m-spur" d="${line([a,b])}"/>`).join("")}
+
+      <path class="m-route-glow" d="${line(MAP.route)}"/>
+      <path class="m-route" d="${line(MAP.route)}"/>
+
+      ${MAP.places.map(p => {
+        const S = SIDE[p.side] || SIDE.n;
+        const big = p.kind === "stay";
+        return `<g class="m-pt ${p.kind}">
+          ${big ? `<circle class="m-halo" cx="${p.x}" cy="${p.y}" r="13"/>` : ""}
+          <circle class="m-dot" cx="${p.x}" cy="${p.y}" r="${big ? 7 : 4.5}"/>
+          <text class="m-name" x="${p.x + S.dx}" y="${p.y + S.dy}" text-anchor="${S.a}">${esc(p.name)}</text>
+          ${p.nights ? `<text class="m-sub" x="${p.x + S.dx}" y="${p.y + S.dy + 17}"
+             text-anchor="${S.a}">${esc(p.nights)}</text>` : ""}
+        </g>`;
+      }).join("")}
+    </g>
+  </svg>
+  <div class="m-legend">
+    <span><i class="lg-stay"></i>住宿地點</span>
+    <span><i class="lg-see"></i>沿途景點</span>
+    <span><i class="lg-spur"></i>Day 3 當日往返</span>
+    <span class="m-cap">連線為行程順序示意，非實際行車路線</span>
+  </div>`;
   el("daylinks").innerHTML = DAYS.map((d,i) => `
     <a class="dcard glass rv" href="day${d.n}.html">
       <span class="day-n">DAY ${d.n}</span>

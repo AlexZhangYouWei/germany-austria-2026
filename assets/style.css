@@ -167,23 +167,6 @@ section{padding:78px 0 0;scroll-margin-top:86px}
 h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:-.035em;line-height:1.1}
 .sub{margin:0 0 34px;color:var(--ink3);font-size:14.5px;max-width:620px}
 
-/* ───────── journey ───────── */
-.journey{display:flex;padding:30px 24px;gap:0}
-.journey .stop{flex:1;text-align:center;position:relative;padding-top:24px}
-.journey .stop::before{
-  content:"";position:absolute;top:2px;left:50%;transform:translateX(-50%);
-  width:10px;height:10px;border-radius:50%;z-index:2;
-  background:linear-gradient(160deg,var(--gold),var(--hot));
-  box-shadow:0 0 14px rgba(255,150,80,.8),0 0 0 4px rgba(255,150,80,.14);
-}
-.journey .stop::after{
-  content:"";position:absolute;top:6.5px;left:50%;width:100%;height:1.5px;z-index:1;
-  background:linear-gradient(90deg,rgba(255,180,120,.5),rgba(255,180,120,.12));
-}
-.journey .stop:last-child::after{display:none}
-.journey .city{font-size:13px;font-weight:600;line-height:1.45}
-.journey .nights{font-size:11px;color:var(--ink3);margin-top:1px}
-
 /* ───────── day ───────── */
 .day{padding:34px 34px 38px;margin-bottom:22px}
 .day-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
@@ -385,13 +368,6 @@ footer{
   .kicker{font-size:10.5px;letter-spacing:.14em;padding:5px 12px}
   .stats{grid-template-columns:repeat(2,1fr);gap:8px}
   section{padding:58px 0 0}
-  .journey{flex-direction:column;padding:24px 22px 8px}
-  .journey .stop{text-align:left;padding:0 0 20px 24px;width:100%}
-  .journey .stop::before{top:5px;left:0;transform:none}
-  .journey .stop::after{top:12px;left:4.2px;width:1.5px;height:100%;
-    background:linear-gradient(180deg,rgba(255,180,120,.5),rgba(255,180,120,.1))}
-  .journey .city,.journey .nights{display:inline}
-  .journey .nights{margin-left:9px}
   .day{padding:26px 20px 30px}
   .tl li{grid-template-columns:88px 18px 1fr}
   .tl .t{font-size:11px;overflow-wrap:anywhere}
@@ -490,6 +466,43 @@ body[data-page="day"] .day{margin-bottom:0}
   .edge-label{display:none}
   .chev{opacity:.42}
 }
+
+/* ───────── 路線圖（內嵌 SVG） ───────── */
+.mapwrap{padding:18px 18px 14px}
+.mapsvg{display:block;width:100%;height:auto;overflow:visible}
+
+.m-c{fill:rgba(255,226,196,.045);stroke:rgba(255,214,178,.20);stroke-width:1;
+  stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.m-de{fill:rgba(255,196,130,.075);stroke:rgba(255,206,150,.34)}
+.m-at{fill:rgba(242,144,154,.075);stroke:rgba(246,168,176,.34)}
+
+.m-route{fill:none;stroke:url(#mroute);stroke-width:3.2;stroke-linecap:round;
+  stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.m-route-glow{fill:none;stroke:#ff9a5c;stroke-width:9;stroke-linecap:round;
+  stroke-linejoin:round;opacity:.22;filter:url(#mglow);vector-effect:non-scaling-stroke}
+.m-spur{fill:none;stroke:rgba(255,214,178,.5);stroke-width:2;stroke-dasharray:6 7;
+  stroke-linecap:round;vector-effect:non-scaling-stroke}
+
+.m-halo{fill:rgba(255,150,80,.16)}
+.m-dot{fill:#ffcf96;stroke:#3a1a0c;stroke-width:2;vector-effect:non-scaling-stroke}
+.m-pt.stay .m-dot{fill:url(#mroute);stroke-width:2.5}
+.m-pt.see .m-dot{fill:rgba(255,226,196,.55);stroke-width:1.5}
+.m-pt.pass .m-dot{fill:none;stroke:rgba(255,214,178,.75);stroke-width:2.5}
+
+.m-name{fill:var(--ink);font-size:20px;font-weight:600;letter-spacing:.01em;
+  paint-order:stroke;stroke:rgba(13,8,6,.85);stroke-width:4px;stroke-linejoin:round}
+.m-sub{fill:rgba(251,242,234,.5);font-size:15px;
+  paint-order:stroke;stroke:rgba(13,8,6,.85);stroke-width:4px;stroke-linejoin:round}
+.m-pt.see .m-name{font-size:17px;font-weight:500;fill:var(--ink2)}
+
+.m-legend{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;
+  margin:14px 4px 2px;font-size:11.5px;color:var(--ink3)}
+.m-legend span{display:flex;align-items:center;gap:7px}
+.m-legend i{width:11px;height:11px;border-radius:50%;flex:0 0 auto}
+.lg-stay{background:linear-gradient(160deg,#ffd79b,#ff7a4d)}
+.lg-see{background:rgba(255,226,196,.55)}
+.lg-spur{border-radius:0;height:0;border-top:2px dashed rgba(255,214,178,.6);width:16px}
+.m-cap{margin-left:auto;opacity:.75}
 
 /* ───────── 駐外館處與急難救助 ───────── */
 .sosgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:34px}
@@ -591,6 +604,11 @@ body[data-page="day"] .day{margin-bottom:0}
   .dgrid{grid-template-columns:1fr}
   .ckgrid{grid-template-columns:1fr}
   .sosgrid{grid-template-columns:1fr}
+  .mapwrap{padding:12px 10px 10px}
+  .m-name{font-size:27px}
+  .m-sub{font-size:21px}
+  .m-pt.see .m-name{font-size:24px}
+  .m-cap{margin-left:0;flex-basis:100%}
   .of-calls{grid-template-columns:1fr}
   .office{padding:22px 20px 24px}
   .of-kv{grid-template-columns:1fr;gap:2px 0}
