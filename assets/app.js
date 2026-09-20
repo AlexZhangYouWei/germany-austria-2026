@@ -24,6 +24,7 @@ const NAV = [
   ["weather.html","天氣預報", "weather"],
   ["tickets.html","票券","tickets"],
   ["access.html","抵達攻略","access"],
+  ["shop.html","伴手禮","shop"],
   ["checklist.html","準備清單","checklist"],
   ["offices.html","緊急聯絡","offices"],
 ];
@@ -38,7 +39,7 @@ const rail = el("rail");
 if (rail && PAGE === "day") {
   rail.innerHTML = DAYS.map((d,i) =>
     `<a href="day${d.n}.html"${d.n === DAYN ? ' class="on" aria-current="page"' : ""}>` +
-    `<b>${String(d.n).padStart(2,"0")}</b><span>${esc(DAY_SHORT[i])}</span></a>`).join("");
+    `<b>Day ${d.n}<i>${esc(d.date.slice(0,5))}</i></b><span>${esc(DAY_SHORT[i])}</span></a>`).join("");
   rail.classList.add("show");
   // 目前這天捲進側邊選單可視範圍（窄螢幕的底部橫列）
   const on = rail.querySelector("a.on");
@@ -711,6 +712,26 @@ if (PAGE === "access") {
       <p class="ac-src">資料來源　${esc(a.src)}${a.links.map(([x,u]) =>
         `　·　<a class="daylink" href="${esc(u)}" target="_blank" rel="noopener">${esc(x)}</a>`).join("")}</p>
     </article>`).join("");
+}
+
+if (PAGE === "shop") {
+  const tbl = rows => `<table>${rows.map(([a,b,c]) =>
+    `<tr><td style="width:30%"><strong>${esc(a)}</strong></td><td>${md(b)}</td><td class="sh-where">${esc(c)}</td></tr>`).join("")}</table>`;
+  const grp = (cc, label) => `
+    <h2 class="sec-h rv">${label}</h2>
+    <details class="glass rv" open>
+      <summary><span class="s-t">食品與伴手禮</span><span class="s-d">${SHOP[cc].food.length} 項</span></summary>
+      <div class="dbody"><div class="scroll">${tbl(SHOP[cc].food)}</div></div>
+    </details>
+    <details class="glass rv">
+      <summary><span class="s-t">藥品與保健</span><span class="s-d">${SHOP[cc].med.length} 項</span></summary>
+      <div class="dbody"><div class="scroll">${tbl(SHOP[cc].med)}</div></div>
+    </details>`;
+  el("shroot").innerHTML = grp("DE","德國") + grp("AT","奧地利");
+  el("shstops").innerHTML = `<table>${SHOP.stops.map(([t,pl,w,g]) =>
+    `<tr><td style="width:22%"><strong>${esc(t)}</strong></td><td>${esc(pl)}${geoLink("步行", g)}</td><td class="sh-where">${md(w)}</td></tr>`).join("")}</table>`;
+  el("shnotes").innerHTML = `<ul class="notes">${SHOP.notes.map(([l,t]) =>
+    `<li><b class="lbl">${esc(l)}</b>${esc(t)}</li>`).join("")}</ul>`;
 }
 
 if (PAGE === "offices") {

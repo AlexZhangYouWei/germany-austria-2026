@@ -916,6 +916,78 @@ const ACCESS = [
   },
 ];
 
+/* 伴手禮與藥品。品項為德奧常見必買，購買點只列本行程會路過、且行程表已有時間的停留。
+   價格與營業時間以現場為準；台灣入境限制見 notes。 */
+const SHOP = {
+  stops:[
+    ["Day 1 14:20–15:50","慕尼黑卡爾廣場 Karlsplatz／Neuhauser Str.","dm、Rossmann、Müller 藥妝店，Galeria 百貨；Dallmayr 總店在 Dienerstraße 14–15，步行 8 分","karlsplatz"],
+    ["Day 1 20:00–20:40","慕尼黑中央車站 EDEKA","超市食品、零食；車站內有藥局","muc-hbf"],
+    ["Day 3 17:15–17:45","米滕瓦爾德車站藥局 Bahnhof-Apotheke","德國藥品主要採買點，週三到 18:00；指定品項先官網預訂","mit-apotheke"],
+    ["Day 3 自由活動","米滕瓦爾德 REWE（Innsbrucker Str. 4）","德國超市零食、Ritter Sport、Haribo、芥末","obermarkt"],
+    ["Day 4 A 方案 12:00–13:00","因斯布魯克老城 Herzog-Friedrich-Straße","Handl Tyrol Speck Stube（12 號，週四營業）、MPreis 超市、dm、Apotheke","inn-congress"],
+    ["Day 5 全日","薩爾斯堡老城 Getreidegasse、Alter Markt","Fürst 總店 Brodgasse 13、Café Sacher Schwarzstraße 5–7、Spar／Billa、dm、Bipa、Apotheke","hohensalzburg"],
+    ["Day 6 16:05–16:30","比紹夫斯維森 Edeka Winkl／Aldi Süd","德國超市；時間只有 25 分鐘，補買零食與芥末","bis-stay"],
+    ["Day 8 11:50–12:00","哈修塔特 Salzwelten 山下站遊客中心商店","哈修塔特鹽、SalzZart 鹽花、鹽味巧克力；市集廣場另有 Salzkontor","salzwelten-tal"],
+    ["Day 8 18:10–20:00","慕尼黑 Neuhauser Str.、考芬格街、國際路德維希藥局","**先買藥再逛商店**；藥局週一到 20:00，dm／Rossmann／Müller 約到 20:00","neuhauser"],
+    ["Day 9 出境後","慕尼黑機場 MUC T2 免稅與 Dallmayr、Ritter Sport 專櫃","最後補買巧克力、咖啡；價格較市區高","muc-t1"],
+  ],
+  DE:{
+    food:[
+      ["Dallmayr 咖啡","慕尼黑百年總店，Prodomo 咖啡豆／粉是最不會錯的伴手禮，總店有禮盒與獨家包裝","Day 1／Day 8 慕尼黑總店 Dienerstraße 14–15；MUC 機場、任何超市有基本款"],
+      ["Ritter Sport 巧克力","方塊巧克力，超市一片約 €1–1.5，口味多；機場有大盒裝","Day 1 EDEKA、Day 3 REWE、Day 6 Edeka／Aldi、Day 9 MUC"],
+      ["Haribo 小熊軟糖","德國本地口味多於台灣，超市大包便宜","Day 1／3／6 任何超市"],
+      ["Händlmaier 甜芥末 Süßer Senf","配白香腸的巴伐利亞甜芥末，玻璃罐要包好托運","Day 1 EDEKA、Day 6 Edeka；Viktualienmarkt 攤位"],
+      ["Bahlsen、Leibniz 餅乾與 Storck merci 巧克力","超市價格約台灣一半","任何德國超市"],
+      ["Lebkuchen 薑餅、Spekulatius 香料餅","10 月初超市已開始上架聖誕季商品","Day 6 Edeka、Day 8 慕尼黑超市"],
+      ["Kinder 系列、Milka","歐洲版口味與台灣不同，Kinder Bueno 白巧、Milka Oreo 等","任何德國超市"],
+      ["啤酒杯、Hofbräuhaus 周邊","1 L 陶杯或玻璃杯；不買啤酒本身，重且入境限 1 公升","Day 1／8 皇家啤酒屋商店、Neuhauser Str. 紀念品店"],
+      ["Niederegger 杏仁糖 Marzipan","北德呂北克名產，慕尼黑百貨與機場也有","Galeria、MUC 機場"],
+    ],
+    med:[
+      ["Bepanthen 修護軟膏","德國原廠版本便宜，藍色 Wund- und Heilsalbe 與嬰兒版 Baby 都常買","Day 3 米滕瓦爾德藥局、Day 8 路德維希藥局"],
+      ["Wick VapoRub、Wick MediNait","德國版 Vicks，感冒夜用糖漿是熱門品","藥局 Apotheke"],
+      ["Grippostad C、Aspirin Complex","感冒複方，只在藥局賣，出示欲購清單即可","藥局 Apotheke"],
+      ["Voltaren Schmerzgel、Kytta 草本痠痛膏","肌肉關節止痛凝膠，德國價約台灣六成","藥局 Apotheke"],
+      ["Fenistil 凝膠","蚊蟲咬與過敏止癢","藥局 Apotheke"],
+      ["Iberogast 腸胃滴劑、Klosterfrau Melissengeist","經典腸胃與提神藥水","藥局 Apotheke"],
+      ["Doppelherz 雙心、Orthomol 保健品","維他命與魚油，dm／Rossmann 就有，比藥局便宜","Day 1／8 dm、Rossmann、Müller"],
+      ["Kneipp、Tetesept 泡澡與精油","泡澡錠、精油沐浴，dm 貨最全","dm、Rossmann、Müller"],
+      ["Balea（dm 自有）、Weleda、Dr. Hauschka","Balea 保養極便宜；Weleda 金盞花、Dr. Hauschka 玫瑰系列德國價最低","Day 1／8 dm、Müller"],
+      ["Eucerin、Nivea 德國版","德國版配方與台灣不同，藥局與藥妝都有","dm、Apotheke"],
+      ["Hansaplast 防水 OK 繃、Compeed 水泡貼","步道多，自用也順手","dm、Apotheke"],
+    ],
+  },
+  AT:{
+    food:[
+      ["Fürst 原創莫札特巧克力球 Original Salzburger Mozartkugel","銀藍紙、手工，只在薩爾斯堡 Fürst 四家店販售；保存期短約 8 週，最後幾天買","Day 5 Fürst 總店 Brodgasse 13、Alter Markt、Ritzerbogen、Mirabellplatz"],
+      ["Mirabell 莫札特巧克力球","紅金紙工業版，超市與機場都有，便宜好分送","Day 5 Spar／Billa、Day 9 MUC 也有"],
+      ["Manner 威化 Neapolitaner","維也納粉紅包裝榛果威化，奧地利國民零食，超市最便宜","Day 4／5 Spar、Billa、MPreis"],
+      ["Original Sacher-Torte 木盒","薩爾斯堡 Café Sacher 有售，可保存約 2 週，木盒好托運","Day 5 Café Sacher Schwarzstraße 5–7"],
+      ["哈修塔特鹽 Hallstatt Salz、SalzZart 鹽花","Salinen Austria 出品，罐裝或木盒，輕好帶","Day 8 Salzwelten 山下站商店、市集廣場鹽店"],
+      ["Zotter 巧克力","施泰爾馬克手工巧克力，口味怪奇，Spar 高級線與紀念品店有","Day 4／5 Spar Gourmet、Getreidegasse"],
+      ["Darbo 果醬、Staud's 果醬","提洛 Darbo 杏桃果醬是奧地利代表，小罐裝適合送人","Day 4 MPreis、Day 5 Spar／Billa"],
+      ["南瓜籽油 Kürbiskernöl、Almdudler 汽水","施泰爾馬克南瓜籽油要托運包好；Almdudler 鋁罐當地喝就好","Spar、Billa"],
+      ["Handl Tyrol 提洛煙燻火腿 Speck","提洛名產，**豬肉製品不得帶入台灣**，只買來當地吃","Day 4 Handl Tyrol Speck Stube Herzog-Friedrich-Str. 12"],
+    ],
+    med:[
+      ["Bepanthen、Voltadol Forte","奧地利版 Voltaren 叫 Voltadol；奧地利藥品只在 Apotheke 賣，dm／Bipa 不賣藥","Day 4 因斯布魯克、Day 5 薩爾斯堡 Apotheke"],
+      ["Cetebe 長效維他命 C","奧地利藥局長銷品，膠囊裝","Apotheke"],
+      ["Wick、Neo-Angin、Isla-Moos 喉糖","與德國同品牌，奧地利價通常略高，德國買得到就在德國買","Apotheke"],
+      ["Mucosolvan 化痰、Aspro","奧地利藥局常備","Apotheke"],
+      ["Bipa／dm 自有保養、Weleda 奧地利製","Bipa 是奧地利本土藥妝，自有品牌便宜；Weleda 部分品項為奧地利製","Day 5 薩爾斯堡 Bipa、dm"],
+      ["Salzburg 鹽療產品、Hallstatt 鹽泡澡鹽","鹽花泡澡鹽、鹽膚品，Salzwelten 商店最齊","Day 8 Salzwelten 商店"],
+    ],
+  },
+  notes:[
+    ["肉品絕對不帶回台灣","豬肉製品（Speck、香腸、含肉調理包、含肉泡麵）禁止入境，非洲豬瘟期間罰款新台幣 20 萬起。Speck 只在當地吃。"],
+    ["藥品入境上限","非處方藥每種最多 12 瓶或盒、合計不超過 36 瓶或盒；維他命等保健食品同樣限量，超過需申報。四人分開帶。"],
+    ["酒類","免稅額每人 1 公升，且滿 20 歲。啤酒重，建議只買杯子。"],
+    ["液體與玻璃罐","芥末、果醬、南瓜籽油、Melissengeist 都要托運，用衣物包好放行李箱中央。"],
+    ["德奧分工","同品牌藥品德國通常較便宜且藥局與藥妝選擇多，先在 Day 3 米滕瓦爾德買，缺的 Day 8 慕尼黑補；奧地利只買奧地利限定品。"],
+    ["退稅","單店單日滿 €50.01（德）／€75.01（奧）可辦退稅，非歐盟居民出示護照拿表格，Day 9 MUC 出境前蓋章。"],
+  ],
+};
+
 const ROADSIDE = {
   lines: [
     { label:"SIXT 24 小時道路救援", num:"+49 89 244 000 88", dial:"+498924400088",
