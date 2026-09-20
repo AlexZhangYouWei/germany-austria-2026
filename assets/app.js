@@ -19,12 +19,12 @@ const el  = id => document.getElementById(id);
 
 const NAV = [
   ["index.html",  "總覽",     "index"],
-  ["stays.html",  "住宿",     "stays"],
   ["day1.html",   "逐日行程", "day"],
   ["food.html",   "特色菜",   "food"],
   ["weather.html","天氣",     "weather"],
+  ["tickets.html","票券","tickets"],
   ["checklist.html","準備清單","checklist"],
-  ["offices.html","辦事處","offices"],
+  ["offices.html","緊急聯絡","offices"],
 ];
 
 const DAY_SHORT = ["慕尼黑","新天鵝堡","楚格峰","因斯布魯克","薩爾斯堡","國王湖","哈修塔特","基姆湖","返程"];
@@ -109,10 +109,42 @@ function dayWeather(n){
 
 /* ── 逐日行程 ───────────────────────────────────────── */
 
+/* 地圖連結。座標來自 GEO（已逐筆查證），移動類給導航、其餘給地圖。
+   導航一律不寫死起點，用使用者當下位置，路上臨時偏離也還是對的。 */
+function travelMode(cat){
+  if (/步行|散步|步道/.test(cat)) return "walking";
+  if (/公車|機場線|電車|S-Bahn/.test(cat)) return "transit";
+  return "driving";
+}
+function geoLink(cat, key){
+  const g = GEO[key];
+  if (!g) return "";
+  const [name, ll] = g;
+  const go = /移動|交通|接駁|租車|還車|機場線|公車|步行/.test(cat);
+  const href = go
+    ? `https://www.google.com/maps/dir/?api=1&destination=${ll}&travelmode=${travelMode(cat)}`
+    : `https://www.google.com/maps/search/?api=1&query=${ll}`;
+  return `<a class="geo" href="${href}" target="_blank" rel="noopener"
+    aria-label="在 Google Maps ${go?"導航至":"查看"} ${esc(name)}">${go?"導航":"地圖"}</a>`;
+}
+
+/* 今日行車路線：航點與路線圖同一組，兩者永遠一致 */
+function routeLink(day, variant){
+  if (typeof MAP === "undefined") return "";
+  const r = MAP.routes.find(x => x.day === day && (x.variant || "") === (variant || ""));
+  if (!r || !r.gmap || r.gmap.length < 2) return "";
+  const pts = r.gmap, way = pts.slice(1, -1);
+  const u = `https://www.google.com/maps/dir/?api=1&travelmode=driving`
+    + `&origin=${pts[0]}&destination=${pts[pts.length-1]}`
+    + (way.length ? `&waypoints=${way.join("|")}` : "");
+  return `<a class="daylink" href="${u}" target="_blank" rel="noopener">`
+    + `在 Google Maps 開啟今日路線　${r.km} km</a>`;
+}
+
 function timeline(rows){
-  return `<ul class="tl">` + rows.map(([t,cat,place,note,fx]) => `
+  return `<ul class="tl">` + rows.map(([t,cat,place,note,fx,geo]) => `
     <li class="${fx?"fx":""}">
-      <div class="t">${esc(t)}</div><div class="m"></div>
+      <div class="t">${geo ? geoLink(cat, geo) : ""}<span>${esc(t)}</span></div><div class="m"></div>
       <div class="c">
         <div class="p"><span class="cat">${esc(cat)}</span>${esc(place)}</div>
         ${note && note !== "—" ? `<div class="n">${md(note)}</div>` : ""}
@@ -126,11 +158,13 @@ function dayArticle(d){
       const g = `d${d.n}`;
       const btns = b.tabs.map((p,i) =>
         `<button role="tab" aria-selected="${i===0}" data-g="${g}" data-i="${i}">${esc(p.label)}</button>`).join("");
-      const panels = b.tabs.map((p,i) =>
-        `<div class="panel" data-g="${g}" data-i="${i}" ${i===0?"":"hidden"}>
+      const panels = b.tabs.map((p,i) => {
+        const rl = routeLink(d.n, (p.label.match(/^([ABC])/) || [])[1]);
+        return `<div class="panel" data-g="${g}" data-i="${i}" ${i===0?"":"hidden"}>
            ${p.cond ? `<p class="cond">${esc(p.cond)}</p>` : ""}
+           ${rl ? `<p class="routeline">${rl}</p>` : ""}
            ${timeline(p.rows)}
-         </div>`).join("");
+         </div>`; }).join("");
       return `<div class="tabs" role="tablist">${btns}</div>${panels}`;
     }
     return (b.title ? `<div class="block-title">${esc(b.title)}</div>` : "") + timeline(b.rows);
@@ -172,7 +206,7 @@ function dayArticle(d){
   ${chk}
 
   <section class="day glass rv">
-    <div class="daybox-t">時辰表</div>
+    <div class="daybox-t">時辰表${d.blocks.some(b => b.tabs) ? "" : routeLink(d.n, "")}</div>
     <p class="legend"><i></i> 發光標記為不可調動的固定時間：班機、導覽、船班、固定入住與還車</p>
     ${blocks}${notes}
   </section>`;
@@ -201,6 +235,18 @@ if (PAGE === "index") {
           </div>
           <div class="side">${l.side.map(s => esc(s)).join("<br>")}</div>
         </div>`).join("")}
+    </div>`).join("");
+  el("staylist").innerHTML = STAYS.map(s => `
+    <div class="card glass rv">
+      <div class="meta">${esc(s.city)}　${esc(s.date)}　${s.nights} 晚</div>
+      <h3 class="cardtitle">${esc(s.name)}</h3>
+      <dl class="kv">
+        <dt>地址</dt><dd>${esc(s.addr)}</dd>
+        <dt>房型</dt><dd>${esc(s.room)}</dd>
+        <dt>入住</dt><dd>${esc(s.inn)}</dd>
+        <dt>退房</dt><dd>${esc(s.out)}</dd>
+        ${s.note ? `<dt>備註</dt><dd>${esc(s.note)}</dd>` : ""}
+      </dl>
     </div>`).join("");
   /* 路線圖：內嵌 SVG。國界與行車幾何都由 make_map.js 於建置時投影好，執行期不取外部資料。 */
   const SIDE = {
@@ -303,21 +349,6 @@ if (PAGE === "day") {
     zone(DAYS.find(x => x.n === DAYN + 1), "next");
 }
 
-if (PAGE === "stays") {
-  el("staylist").innerHTML = STAYS.map(s => `
-    <div class="card glass rv">
-      <div class="meta">${esc(s.city)}　${esc(s.date)}　${s.nights} 晚</div>
-      <h3 class="cardtitle">${esc(s.name)}</h3>
-      <dl class="kv">
-        <dt>地址</dt><dd>${esc(s.addr)}</dd>
-        <dt>房型</dt><dd>${esc(s.room)}</dd>
-        <dt>入住</dt><dd>${esc(s.inn)}</dd>
-        <dt>退房</dt><dd>${esc(s.out)}</dd>
-        ${s.note ? `<dt>備註</dt><dd>${esc(s.note)}</dd>` : ""}
-      </dl>
-    </div>`).join("");
-}
-
 if (PAGE === "food") {
   el("foodlist").innerHTML = FOOD.map(f => `
     <details class="glass rv">
@@ -341,63 +372,47 @@ if (PAGE === "weather") {
        十處有九處的當期數值高於十月平均，因為逐日統計含 2016–2020 那五個較濕的年份，且 10/05–10/13 前後本身在十月裡偏濕。</p>
     <p>可取得官方預報的時間：09/25 起涵蓋 Day 1、09/28 起涵蓋至 Day 4、10/01 起涵蓋至 Day 7、<b>10/03 起完整涵蓋至 Day 9</b>。</p>`;
 
-  el("wxtable").innerHTML = `
-    <thead><tr>
-      <th>日程</th><th>地點</th><th>概況</th>
-      <th class="num">白天均溫</th><th class="num">日間最高</th>
-      <th class="num">雲量</th><th class="num">降雨機率</th><th class="num">平均雨量</th>
-    </tr></thead>
-    <tbody>${WX.map((w,i) => {
-      const [label,kind] = cond(w.dt.c, w.dt.p);
-      const n = +w.day.match(/Day (\d)/)[1];
-      return `<tr>
-        <td style="white-space:nowrap"><a class="daylink" href="day${n}.html">${esc(w.day)}</a></td>
-        <td style="white-space:nowrap">${esc(w.place)}</td>
-        <td><span class="wxcond ${kind}">${icon(kind)}<span>${esc(label)}</span></span></td>
-        <td class="num strong ${tCls(w.dt.a)}">${w.dt.a}°</td>
-        <td class="num ${tCls(w.dt.h)}">${w.dt.h}°</td>
-        <td class="num ${cCls(w.dt.c)}">${w.dt.c}%</td>
-        <td class="num">${bar(w.dt.p)}${octP(w)}</td>
-        <td class="num">${mmBar(w.dt.mm)}${octMm(w)}</td>
-      </tr>`;
-    }).join("")}</tbody>`;
-
-  /* 色階說明。門檻改在上面的 tCls／pCls，這裡的文字要跟著改。 */
-  el("wxkey").innerHTML =
-    `<span class="vkey-g"><b>溫度</b>` +
-    [["t0","0° 以下"],["t1","0–6°"],["t2","6–10°"],["t3","10–13°"],["t4","13–16°"],["t5","16° 以上"]]
-      .map(([k,t]) => `<i class="v ${k}"></i>${t}`).join("") + `</span>` +
-    `<span class="vkey-g"><b>降雨</b>` +
-    [["r0","低"],["r1","中"],["r2","高"]]
-      .map(([k,t]) => `<i class="v ${k}"></i>${t}`).join("") + `</span>` +
-    `<span class="vkey-g"><b>雲量</b>` +
-    [["k0","少"],["k1","中"],["k2","多"]]
-      .map(([k,t]) => `<i class="v ${k}"></i>${t}`).join("") + `</span>`;
-
+  /* 每天一張卡。手機一欄、桌機兩欄；時段明細收在卡內的摺疊區，
+     取代原本那張要橫捲的八欄大表。 */
   const PERIODS = [
     ["morn","上午 06–12",1],["noon","下午 12–18",1],
     ["dawn","清晨 00–06",0],["night","夜間 18–24",0],
   ];
-  el("wxdaily").innerHTML = WX.map(w => {
-    const [label] = cond(w.dt.c, w.dt.p);
-    return `<details class="glass rv">
-      <summary>
-        <span class="s-t">${esc(w.day)}｜${esc(w.place)}</span>
-        <span class="s-d">${esc(label)}　<b class="${tCls(w.dt.a)}">${w.dt.a}°</b> / <b class="${tCls(w.dt.h)}">${w.dt.h}°</b>　雨 <b class="${pCls(w.dt.p)}">${w.dt.p}%</b></span>
-      </summary>
-      <div class="dbody"><div class="scroll"><table>
-        <thead><tr><th>時段</th><th class="num">均溫</th><th class="num">歷年區間</th>
-          <th class="num">雲量</th><th class="num">雨機率</th><th class="num">平均雨量</th></tr></thead>
-        <tbody>${PERIODS.map(([k,name,day]) => { const s = w.p[k]; return `
-          <tr class="${day?"":"dim"}"><td>${esc(name)}${day?"":' <span class="tag">夜</span>'}</td>
-            <td class="num ${tCls(s.a)}">${s.a} °C</td>
-            <td class="num"><span class="${tCls(s.lo)}">${s.lo}</span> – <span class="${tCls(s.hi)}">${s.hi}</span> °C</td>
-            <td class="num ${cCls(s.c)}">${s.c}%</td>
-            <td class="num ${pCls(s.p)}">${s.p}%</td>
-            <td class="num ${mCls(s.mm)}">${mm1(s.mm)} mm</td></tr>`;
-        }).join("")}</tbody>
-      </table></div></div>
-    </details>`;
+
+  el("wxcards").innerHTML = WX.map(w => {
+    const [label,kind] = cond(w.dt.c, w.dt.p);
+    const n = +w.day.match(/Day (\d)/)[1];
+    const [dayLabel, date] = w.day.split("｜");
+    return `<article class="wxcard glass rv">
+      <div class="wxc-head">
+        <a class="daylink" href="day${n}.html">${esc(dayLabel)}</a>
+        <span class="wxc-date">${esc(date)}</span>
+        <span class="wxc-place">${esc(w.place)}</span>
+      </div>
+      <span class="wxcond ${kind}">${icon(kind)}<span>${esc(label)}</span></span>
+      <div class="wxc-grid">
+        <div><b class="${tCls(w.dt.a)}">${w.dt.a}°</b><span>白天均溫</span></div>
+        <div><b class="${tCls(w.dt.h)}">${w.dt.h}°</b><span>日間最高</span></div>
+        <div><b class="${cCls(w.dt.c)}">${w.dt.c}%</b><span>雲量</span></div>
+        <div><b class="${pCls(w.dt.p)}">${w.dt.p}%</b><span>降雨機率</span>${octP(w)}</div>
+        <div><b class="${mCls(w.dt.mm)}">${mm1(w.dt.mm)} mm</b><span>平均雨量</span>${octMm(w)}</div>
+      </div>
+      <details class="wxc-more">
+        <summary><span class="s-t">時段明細</span><span class="s-d">白天兩段為主（Europe/Berlin）</span></summary>
+        <div class="dbody"><div class="scroll"><table>
+          <thead><tr><th>時段</th><th class="num">均溫</th><th class="num">歷年區間</th>
+            <th class="num">雲量</th><th class="num">雨機率</th><th class="num">平均雨量</th></tr></thead>
+          <tbody>${PERIODS.map(([k,name,day]) => { const x = w.p[k]; return `
+            <tr class="${day?"":"dim"}"><td>${esc(name)}${day?"":' <span class="tag">夜</span>'}</td>
+              <td class="num ${tCls(x.a)}">${x.a} °C</td>
+              <td class="num"><span class="${tCls(x.lo)}">${x.lo}</span> – <span class="${tCls(x.hi)}">${x.hi}</span> °C</td>
+              <td class="num ${cCls(x.c)}">${x.c}%</td>
+              <td class="num ${pCls(x.p)}">${x.p}%</td>
+              <td class="num ${mCls(x.mm)}">${mm1(x.mm)} mm</td></tr>`;
+          }).join("")}</tbody>
+        </table></div></div>
+      </details>
+    </article>`;
   }).join("");
 
   el("wxnotes").innerHTML = `<ul class="notes">${WX_NOTES.map(([l,t]) =>
@@ -405,6 +420,36 @@ if (PAGE === "weather") {
 }
 
 /* ── 駐外館處與急難救助 ─────────────────────────────── */
+
+if (PAGE === "tickets") {
+  const rules = r => `<ul class="notes tkrules">${r.map(([l,t]) =>
+    `<li><b class="lbl">${esc(l)}</b>${md(t)}</li>`).join("")}</ul>`;
+
+  el("tkbought").innerHTML = TICKETS.bought.map(t => `
+    <article class="card glass rv tkcard">
+      <div class="meta">Day ${t.day}　${esc(t.date)}　${esc(t.city)}</div>
+      <h3 class="cardtitle">${esc(t.name)}</h3>
+      <div class="tkbig"><b>${esc(t.big)}</b><span>${esc(t.bigk)}</span></div>
+      <dl class="kv tkkv">${t.kv.map(([k, v]) =>
+        `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}
+        ${t.tel ? `<dt>電話</dt><dd><a href="tel:${esc(t.tel[1])}">${esc(t.tel[0])}</a></dd>` : ""}
+      </dl>
+      <p class="tkwarn">${esc(t.warn)}</p>
+      ${rules(t.rules)}
+      ${t.links.map(([x, u]) =>
+        `<p class="tklink"><a class="daylink" href="${esc(u)}" target="_blank" rel="noopener">${esc(x)}</a></p>`).join("")}
+    </article>`).join("");
+
+  el("tklater").innerHTML = TICKETS.later.map(t => `
+    <article class="card glass rv">
+      <div class="meta">${esc(t.price)}</div>
+      <h3 class="cardtitle">${esc(t.name)}</h3>
+      <dl class="kv"><dt>時點</dt><dd>${esc(t.when)}</dd><dt>做法</dt><dd>${md(t.how)}</dd></dl>
+    </article>`).join("");
+
+  el("tknotes").innerHTML = `<ul class="notes">${TICKETS.notes.map(([l, t]) =>
+    `<li><b class="lbl">${esc(l)}</b>${esc(t)}</li>`).join("")}</ul>`;
+}
 
 if (PAGE === "offices") {
   const L = EMERGENCY.local;
@@ -423,6 +468,24 @@ if (PAGE === "offices") {
         <p class="sos-note">${esc(x.where)}</p>
         ${x.warn ? `<p class="sos-warn">${esc(x.warn)}</p>` : ""}
       </div>`).join("")}`;
+
+  el("road").innerHTML =
+    ROADSIDE.lines.map(x => `
+      <div class="sos-line glass rv">
+        <div class="sos-k">${esc(x.label)}</div>
+        <a class="sos-num" href="tel:${esc(x.dial)}">${esc(x.num)}</a>
+        <p class="sos-note">${esc(x.where)}</p>
+        ${x.warn ? `<p class="sos-warn">${esc(x.warn)}</p>` : ""}
+      </div>`).join("") +
+    `<div class="sos-line glass rv roadlinks">
+      <div class="sos-k">即時路況</div>
+      ${ROADSIDE.roads.map(([t,u,d]) =>
+        `<p class="roadlink"><a class="daylink" href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a>
+         <span>${esc(d)}</span></p>`).join("")}
+    </div>`;
+
+  el("roadtips").innerHTML = `<ul class="notes">${ROADSIDE.tips.map(([l,t]) =>
+    `<li><b class="lbl">${esc(l)}</b>${esc(t)}</li>`).join("")}</ul>`;
 
   el("offices").innerHTML = OFFICES.map(o => `
     <article class="office glass rv${o.pri ? " pri" : ""}">
@@ -538,6 +601,28 @@ const rvio = new IntersectionObserver((es,o) => {
   es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); o.unobserve(e.target); } });
 }, { rootMargin:"0px 0px -8% 0px" });
 document.querySelectorAll(".rv").forEach(n => rvio.observe(n));
+
+/* 日頁：左右滑動切換日期。左滑 = 下一天，與方向鍵一致。
+   在可橫捲的容器、連結與按鈕上不攔截，避免蓋掉原本的操作。 */
+if (PAGE === "day") {
+  const go = n => { if (n >= 1 && n <= DAYS.length) location.href = `day${n}.html`; };
+  let x0 = null, y0 = 0, t0 = 0;
+  addEventListener("touchstart", e => {
+    x0 = null;
+    if (e.touches.length !== 1) return;
+    if (e.target.closest && e.target.closest(".scroll,.navbar,.rail,.tabs,.mapsvg,a,button")) return;
+    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+  }, { passive:true });
+  addEventListener("touchend", e => {
+    if (x0 === null) return;
+    const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0;
+    x0 = null;
+    if (Date.now() - t0 > 700) return;              // 太慢的不算滑動
+    if (Math.abs(dx) < 64) return;                  // 位移不足
+    if (Math.abs(dx) < Math.abs(dy) * 1.6) return;  // 比較像直向捲動
+    go(dx < 0 ? DAYN + 1 : DAYN - 1);
+  }, { passive:true });
+}
 
 /* 日頁：左右方向鍵翻頁 */
 if (PAGE === "day") {
