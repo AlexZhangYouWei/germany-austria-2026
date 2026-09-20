@@ -21,7 +21,7 @@ const NAV = [
   ["index.html",  "總覽",     "index"],
   ["day1.html",   "逐日行程", "day"],
   ["food.html",   "特色菜",   "food"],
-  ["weather.html","預報",     "weather"],
+  ["weather.html","天氣預報", "weather"],
   ["tickets.html","票券","tickets"],
   ["checklist.html","準備清單","checklist"],
   ["offices.html","緊急聯絡","offices"],
@@ -66,52 +66,78 @@ const icon  = k  => `<svg class="wicon ${k}" viewBox="0 0 24 24" fill="none" str
 
 /* 數值分級上色。色階只是輔助，數字本身仍是主要資訊。
    溫度以穿衣感受切段（冰點／厚外套／外套／舒適／溫暖），降雨以「要不要帶傘」切段。
-   兩個 class 是為了勝過 td.strong、.bar span 這些既有規則。 */
+   兩個 class 是為了勝過 td.strong 這類既有規則。 */
 const tCls = t  => "v " + (t < 0 ? "t0" : t < 6 ? "t1" : t < 10 ? "t2" : t < 13 ? "t3" : t < 16 ? "t4" : "t5");
 const pCls = p  => "v " + (p <  30  ? "r0" : p <  50  ? "r1" : "r2");
 const mCls = mm => "v " + (mm < 0.5 ? "r0" : mm < 1.5 ? "r1" : "r2");
 const cCls = c  => "v " + (c <  30  ? "k0" : c <  70  ? "k1" : "k2");
 const mm1  = v  => v.toFixed(1);     /* 1 → 「1.0 mm」，同一欄小數位要一致 */
 
-const bar   = p  => `<span class="bar"><i style="width:${p*0.6}px"></i><span class="${pCls(p)}">${p}%</span></span>`;
-const mmBar = mm => `<span class="bar"><i class="rainmm" style="width:${Math.min(mm,6)*11}px"></i><span class="${mCls(mm)}">${mm1(mm)} mm</span></span>`;
+/* ── 四段時段表：預報頁卡片與日頁共用同一個元件 ───────── */
+
+/* 時段定義的唯一來源在 fetch_fc.js，經 FC_META 下傳。 */
+const PD = FC_META.periods;
+
+const PD_HEAD = `<div class="wxp-hd">`
+  + `<span>時段</span><span>天氣</span><span>氣溫</span>`
+  + `<span class="wxp-rain"><span class="wxp-p">雨機率</span><span class="wxp-m">雨量</span></span></div>`;
+
+/* low＝系集：多一行成員區間，並把「雨機率」的語意換成「有雨成員比例」。
+   兩種來源的鍵名已在資料層統一，這裡不再分支。 */
+function wxRow(x, P, low){
+  if (!x) return `<div class="wxp-row na${P.day ? "" : " dim"}">`
+    + `<span class="wxp-when"><b>${esc(P.label)}</b><em>${esc(P.span)}</em></span>`
+    + `<span class="wxp-dash">—</span></div>`;
+  const [label, kind] = cond(x.c, x.p);
+  const rg = low && x.lo != null ? `<em class="wxp-rg">${x.lo}–${x.hi}</em>` : "";
+  return `<div class="wxp-row${P.day ? "" : " dim"}">`
+    + `<span class="wxp-when"><b>${esc(P.label)}</b><em>${esc(P.span)}</em></span>`
+    + `<span class="wxcond sm ${kind}">${icon(kind)}<span>${esc(label)}</span></span>`
+    + `<span class="wxp-t"><b class="${tCls(x.a)}">${x.a}</b><i>°</i>${rg}</span>`
+    + `<span class="wxp-rain">`
+    + `<span class="wxp-p"><b class="${pCls(x.p)}">${x.p}</b><i>%</i></span>`
+    + `<span class="wxp-m"><b class="${mCls(x.mm)}">${mm1(x.mm)}</b><i>mm</i></span>`
+    + `</span></div>`;
+}
+
+function wxPeriods(f){
+  const low = f.kind === "ens";
+  return `<div class="wxp">` + PD_HEAD
+    + PD.map(P => wxRow(f.p && f.p[P.k], P, low)).join("") + `</div>`;
+}
+
+/* 出處徽章。none 沒有 src/res 可標。 */
+function wxSrc(f){
+  if (f.kind === "none") return `<span class="wxsrc low">尚無預報</span>`;
+  return `<span class="wxsrc${f.kind === "ens" ? " low" : ""}">${esc(f.src)} ${esc(f.res)}`
+    + (f.kind === "ens" ? `<em>${f.members} 成員 · 低信度</em>` : `<em>提前 ${f.lead} 天</em>`)
+    + `</span>`;
+}
+
+/* 「X 月 X 日起 Y 就報得到這天」。far 由資料層算出射程最遠的模式；
+   任一模式抓取失敗時 avail 會少一筆，所以不能在這裡寫死索引。 */
+const wxWhen = f => f.far ? `${esc(f.far.from)} 起 ${esc(f.far.src)} 就報得到這天。` : "";
+/* AROME 沒有降雨機率，那一欄借自階梯下一個模式；借了就要標。 */
+const wxPop  = f => f.pop_src ? `　·　雨機率取自 ${esc(f.pop_src)}` : "";
 
 /* 日頁上方那條預報。Day 3 有山谷與峰頂兩筆。 */
 function dayWeather(n){
   const rows = FC.filter(f => f.day === n);
   if (!rows.length) return "";
-  return `<div class="daywx">` + rows.map(f => {
-    const place = rows.length > 1 ? `<span class="daywx-place">${esc(f.place)}</span>` : "";
-
-    if (f.kind === "none") return `<div class="daywx-row">
-      <span class="wxsrc low">尚無預報</span>${place}
-      <span class="daywx-n">提前 ${f.lead} 天，超出所有模式射程。${esc(f.avail[3].from)} 起可取得。</span>
-    </div>`;
-
-    if (f.kind === "ens") return `<div class="daywx-row">
-      <span class="wxsrc low">${esc(f.src)}　低信度</span>${place}
-      <span class="daywx-n"><b class="${tCls(f.dt.a)}">${f.dt.a}°</b> 系集平均</span>
-      <span class="daywx-n"><b>${f.dt.lo}–${f.dt.hi}°</b> 成員區間</span>
-      <span class="daywx-n"><b class="${pCls(f.dt.wet)}">${f.dt.wet}%</b> 有雨成員</span>
-      <span class="daywx-n">提前 ${f.lead} 天<em>${esc(f.avail[3].from)} 起有真預報</em></span>
-    </div>`;
-
-    const [label, kind] = cond(f.dt.c, f.dt.p);
-    return `<div class="daywx-row">
-      <span class="wxcond ${kind}">${icon(kind)}<span>${esc(label)}</span></span>${place}
-      <span class="daywx-n"><b class="${tCls(f.dt.a)}">${f.dt.a}°</b> 白天均溫</span>
-      <span class="daywx-n"><b class="${tCls(f.dt.h)}">${f.dt.h}°</b> 日間最高</span>
-      <span class="daywx-n"><b class="${pCls(f.dt.p)}">${f.dt.p}%</b> 降雨機率</span>
-      <span class="daywx-n"><b class="${mCls(f.dt.mm)}">${mm1(f.dt.mm)} mm</b> 累積雨量</span>
-      <span class="wxsrc">${esc(f.src)} ${esc(f.res)}<em>提前 ${f.lead} 天</em></span>
-    </div>`;
-  }).join("") + `</div>`;
+  return `<div class="daywx">` + rows.map(f =>
+    `<div class="daywx-one">`
+    + `<div class="daywx-hd">${rows.length > 1 ? `<span class="daywx-place">${esc(f.place)}</span>` : ""}${wxSrc(f)}</div>`
+    + wxPeriods(f)
+    + (f.kind === "det"
+        ? (f.pop_src ? `<p class="wxc-foot">${wxPop(f).slice(3)}</p>` : "")
+        : `<p class="wxc-nodata">提前 ${f.lead} 天，超出數值模式射程。${wxWhen(f)}</p>`)
+    + `</div>`).join("") + `</div>`;
 }
 
 /* ── 逐日行程 ───────────────────────────────────────── */
 
 /* 地圖導航。座標來自 GEO（已逐筆查證），每個有座標的地點都給兩顆按鈕：
-   左半 Google Maps、右半 Apple Maps，兩者都是「從我現在的位置帶我去這裡」。
+   左 Google Maps、右 Apple Maps，兩者都是「從我現在的位置帶我去這裡」。
    兩邊都不寫死起點，路上臨時偏離也還是對的。
    交通方式由類別推定，使用者在 App 裡仍可一鍵改。 */
 function travelMode(cat){
@@ -122,6 +148,25 @@ function travelMode(cat){
 /* Apple Maps 的 dirflg：d 開車、w 步行、r 大眾運輸；daddr 單獨給就以目前位置為起點 */
 const APPLE_FLG = { walking:"w", transit:"r", driving:"d" };
 
+/* 兩個品牌標誌都是內嵌 SVG（站上不載外部資源）。
+   G 是四色環＋橫槓，環的兩端切齊橫槓上下緣；蘋果單色吃 currentColor。
+   蘋果原始路徑塞滿 0–24 且比 G 高，縮到高 19.7 並置中，兩顆並排才等重。 */
+const ICON_G = '<svg class="gmk" viewBox="0 0 24 24" aria-hidden="true">'
+  + '<path fill="#4285F4" d="M22.29 14.1A10.5 10.5 0 0 1 16.93 21.27L14.91 17.47A6.2 6.2 0 0 0 18.07 13.24Z"/>'
+  + '<path fill="#34A853" d="M16.93 21.27A10.5 10.5 0 0 1 4.2 19.03L7.39 16.15A6.2 6.2 0 0 0 14.91 17.47Z"/>'
+  + '<path fill="#FBBC05" d="M4.2 19.03A10.5 10.5 0 0 1 2.48 7.56L6.38 9.38A6.2 6.2 0 0 0 7.39 16.15Z"/>'
+  + '<path fill="#EA4335" d="M2.48 7.56A10.5 10.5 0 0 1 22.29 9.9L18.07 10.76A6.2 6.2 0 0 0 6.38 9.38Z"/>'
+  + '<path fill="#4285F4" d="M12 9.9H22.55V14.1H12Z"/></svg>';
+
+const ICON_A = '<svg class="gmk" viewBox="0 0 24 24" aria-hidden="true">'
+  + '<path fill="currentColor" transform="translate(2.63 2.15) scale(.8191)"'
+  + ' d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014'
+  + '-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987'
+  + ' 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415'
+  + '-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376'
+  + '-2-.156-3.675 1.09-4.61 1.09ZM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818'
+  + '-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701Z"/></svg>';
+
 function geoLink(cat, key){
   const g = GEO[key];
   if (!g) return "";
@@ -130,8 +175,8 @@ function geoLink(cat, key){
   const gmap = `https://www.google.com/maps/dir/?api=1&destination=${ll}&travelmode=${mode}`;
   const amap = `https://maps.apple.com/?daddr=${ll}&dirflg=${APPLE_FLG[mode]}`;
   return `<span class="geo">`
-    + `<a href="${gmap}" target="_blank" rel="noopener" aria-label="用 Google 地圖導航至 ${esc(name)}">G</a>`
-    + `<a href="${amap}" target="_blank" rel="noopener" aria-label="用 Apple 地圖導航至 ${esc(name)}">A</a>`
+    + `<a class="geo-g" href="${gmap}" target="_blank" rel="noopener" aria-label="用 Google 地圖導航至 ${esc(name)}">${ICON_G}</a>`
+    + `<a class="geo-a" href="${amap}" target="_blank" rel="noopener" aria-label="用 Apple 地圖導航至 ${esc(name)}">${ICON_A}</a>`
     + `</span>`;
 }
 
@@ -527,95 +572,59 @@ if (PAGE === "weather") {
   el("wxasof").innerHTML =
     `預報發布：<b>${esc(stamp)} UTC</b>`
     + `　·　確定性預報 <b>${FC_META.n}／${FC_META.total}</b> 天`
-    + `　·　白天 06–18（Europe/Berlin）`
+    + `　·　每日四時段（Europe/Berlin）`
+    + `<br>德國地點以 <b>DWD</b>、奧地利地點以 <b>GeoSphere Austria</b> 的官方模式為首選；超出射程時改用 ECMWF 與 GEFS＋GEM 系集，可用下方 tab 切換比對。`
     + (age >= 1 ? `　·　<b class="stale">本頁已 ${age} 天未更新，請重跑建置</b>` : "");
 
-  const ready = FC_META.n, total = FC_META.total;
-  el("wxwarn").innerHTML =
-    (ready === 0
-      ? `<p><b>目前沒有任何一天在數值模式的射程內。</b>最遠的 ECMWF IFS 報到
-         ${FC_META.horizon.slice(-1)[0].days} 天後，行程第一天還在那之後。
-         下方各列顯示的是 GEFS 31 成員系集的可能區間，<b>那是訊號不是預報</b>——
-         距平普遍小於成員離散度，代表沒有可用的預報度。</p>`
-      : ready < total
-        ? `<p><b>${ready} 天已進入模式射程，其餘 ${total - ready} 天尚未。</b>
-           已有預報的列標示了出處與解析度；尚未涵蓋的列顯示 GEFS 系集區間，僅供參考。</p>`
-        : `<p><b>全部 ${total} 天都已進入模式射程。</b>每一列各自採用射程涵蓋得到、解析度最高的模式。</p>`)
-    + `<p>每天各自挑最好的模式：<b>DWD ICON-D2 2.2 km</b>（最準，只有 2 天射程）→
-       <b>ICON-EU 7 km</b> → <b>ICON 11 km</b> → <b>ECMWF IFS 0.25°</b>。
-       四者都構不到才退到 GEFS 系集。楚格峰以 6.5 °C/km 由格點高程修正至 2962 m。</p>`
-    + `<p><b>這份資料會過期。</b>數值模式每天重跑數次，本頁只是某一輪的快照。
-       出發前與旅程中請以 <b>DWD WarnWetter</b>（德國段）與 <b>GeoSphere Austria</b>（奧地利段）的即時預報與官方警報為準。</p>`;
-
-  /* 各天何時進入各模式射程。已可取得的打勾，未到的標日期。 */
-  const rows = FC.filter((r, i) => FC.findIndex(x => x.date === r.date) === i);
-  el("wxsched").innerHTML =
-    `<details class="wxc-more"><summary><span class="s-t">何時能看到真預報</span>
-       <span class="s-d">各天進入各模式射程的日期</span></summary>
-     <div class="dbody"><div class="scroll"><table>
-       <thead><tr><th>日期</th>${FC_META.horizon.map(h =>
-         `<th class="num">${esc(h.src)}<em>${esc(h.res)}</em></th>`).join("")}</tr></thead>
-       <tbody>${rows.map(r => `<tr><td>Day ${r.day}　${esc(r.date.slice(5).replace("-", "/"))}</td>`
-         + r.avail.map(a => `<td class="num ${a.ready ? "ok" : ""}">${a.ready ? "✓ 已可取得" : esc(a.from) + " 起"}</td>`).join("")
-         + `</tr>`).join("")}</tbody>
-     </table></div></div></details>`;
-
-  const PERIODS = [
-    ["morn","上午 06–12",1],["noon","下午 12–18",1],
-    ["dawn","清晨 00–06",0],["night","夜間 18–24",0],
+  /* 色階圖例。手機的四段列會隱藏欄位頭，這裡補上「數字各是什麼」。 */
+  const KEY = [
+    ["氣溫 °C", [["t1","&lt;6"],["t2","6–10"],["t3","10–13"],["t4","13–16"],["t5","≥16"]]],
+    ["雨機率 %", [["r0","&lt;30"],["r1","30–50"],["r2","≥50"]]],
+    ["雨量 mm", [["r0","&lt;0.5"],["r1","0.5–1.5"],["r2","≥1.5"]]],
   ];
+  el("wxkey").innerHTML = KEY.map(([name, xs]) =>
+    `<span class="vkey-g"><b>${name}</b>`
+    + xs.map(([c, t]) => `<i class="${c}"></i>${t}`).join("　") + `</span>`).join("");
 
-  el("wxcards").innerHTML = FC.map(f => {
-    const head = `<div class="wxc-head">
+  /* 三層來源 tab。FC 每筆的 v 存三層各自的結果，筆身是最準那層；「最佳」就是筆身。
+     卡片結構不因 tab 而變，只換餵進去的那筆資料。 */
+  const TABS = [
+    ["best",  "最佳",           "每天自動採用射程內最準的一層：官方模式 → ECMWF 系集 → GEFS＋GEM 系集。"],
+    ["model", "官方模式",       "德國 DWD ICON-D2 2.2 km、奧地利 GeoSphere AROME 2.5 km，約 2 天內；再遠退到 ICON-EU／ICON／ECMWF IFS。"],
+    ["ecmwf", "ECMWF 系集",     "ECMWF ENS 51 成員，約 15 天內；中期展望公認最強，給區間不給單點。"],
+    ["pool",  "GEFS＋GEM 系集", "NOAA GEFS 31＋加拿大 GEM 21 併成 52 成員多模式系集，35 天內；只看趨勢。"],
+  ];
+  const card = (f, shown) => `<article class="wxcard glass rv${shown ? " in" : ""}${f.kind === "none" ? " wxc-empty" : ""}">
+      <div class="wxc-head">
         <a class="daylink" href="day${f.day}.html">Day ${f.day}</a>
         <span class="wxc-date">${esc(f.date.slice(5).replace("-", "/"))}</span>
         <span class="wxc-place">${esc(f.place)}</span>
-        <span class="wxc-lead">提前 ${f.lead} 天</span>
-      </div>`;
-
-    if (f.kind === "none") return `<article class="wxcard glass rv wxc-empty">${head}
-      <p class="wxc-nodata">尚未進入任何模式射程。最早 ${esc(f.avail[3].from)} 起可取得。</p></article>`;
-
-    if (f.kind === "ens") return `<article class="wxcard glass rv">${head}
-      <span class="wxsrc low">${esc(f.src)} ${esc(f.res)}　${f.members} 成員　低信度</span>
-      <div class="wxc-grid">
-        <div><b class="${tCls(f.dt.a)}">${f.dt.a}°</b><span>系集平均</span></div>
-        <div><b>${f.dt.lo}–${f.dt.hi}°</b><span>成員區間<em>10–90 百分位</em></span></div>
-        <div><b class="${pCls(f.dt.wet)}">${f.dt.wet}%</b><span>有雨成員</span></div>
-        <div><b class="${mCls(f.dt.mm)}">${mm1(f.dt.mm)} mm</b><span>平均雨量</span></div>
+        ${wxSrc(f)}
       </div>
-      <p class="wxc-nodata">提前 ${f.lead} 天，超出數值模式射程。區間寬度即不確定度，
-         單一數字不具預報意義。${esc(f.avail[3].from)} 起 ${esc(f.avail[3].src)} 就報得到這天。</p></article>`;
-
-    const [label, kind] = cond(f.dt.c, f.dt.p);
-    return `<article class="wxcard glass rv">${head}
-      <span class="wxsrc">${esc(f.src)} ${esc(f.res)}</span>
-      <span class="wxcond ${kind}">${icon(kind)}<span>${esc(label)}</span></span>
-      <div class="wxc-grid">
-        <div><b class="${tCls(f.dt.a)}">${f.dt.a}°</b><span>白天均溫</span></div>
-        <div><b class="${tCls(f.dt.h)}">${f.dt.h}°</b><span>日間最高</span></div>
-        <div><b class="${tCls(f.dt.l)}">${f.dt.l}°</b><span>日間最低</span></div>
-        <div><b class="${cCls(f.dt.c)}">${f.dt.c}%</b><span>雲量</span></div>
-        <div><b class="${pCls(f.dt.p)}">${f.dt.p}%</b><span>降雨機率<em>時段最高</em></span></div>
-        <div><b class="${mCls(f.dt.mm)}">${mm1(f.dt.mm)} mm</b><span>累積雨量</span></div>
-      </div>
-      <details class="wxc-more">
-        <summary><span class="s-t">時段明細</span><span class="s-d">白天兩段為主（Europe/Berlin）</span></summary>
-        <div class="dbody"><div class="scroll"><table>
-          <thead><tr><th>時段</th><th class="num">均溫</th><th class="num">最低–最高</th>
-            <th class="num">雲量</th><th class="num">雨機率</th><th class="num">累積雨量</th></tr></thead>
-          <tbody>${PERIODS.map(([k, name, day]) => { const x = f.p && f.p[k]; return !x ? "" : `
-            <tr class="${day ? "" : "dim"}"><td>${esc(name)}${day ? "" : ' <span class="tag">夜</span>'}</td>
-              <td class="num ${tCls(x.a)}">${x.a} °C</td>
-              <td class="num"><span class="${tCls(x.l)}">${x.l}</span> – <span class="${tCls(x.h)}">${x.h}</span> °C</td>
-              <td class="num ${cCls(x.c)}">${x.c}%</td>
-              <td class="num ${pCls(x.p)}">${x.p}%</td>
-              <td class="num ${mCls(x.mm)}">${mm1(x.mm)} mm</td></tr>`;
-          }).join("")}</tbody>
-        </table></div></div>
-      </details>
+      ${wxPeriods(f)}
+      ${f.kind === "det"
+        ? `<p class="wxc-foot">提前 ${f.lead} 天　·　Europe/Berlin${wxPop(f)}</p>`
+        : `<p class="wxc-nodata">提前 ${f.lead} 天，超出數值模式射程。${wxWhen(f)}</p>`}
     </article>`;
-  }).join("");
+  const pickRec = (f, t) => t === "best" ? f : (f.v && f.v[t]) || { day:f.day, date:f.date, place:f.place, lead:f.lead, kind:"none" };
+
+  let cur = "best";
+  try { const s = localStorage.getItem("wxtab"); if (TABS.some(t => t[0] === s)) cur = s; } catch (e) {}
+  /* 切 tab 重畫的卡片直接帶 in：進場觀察器只在載入時掃過一次 .rv，之後新加的節點不會被看到 */
+  function draw(shown){
+    el("wxtabs").innerHTML = TABS.map(([k, name]) =>
+      `<button type="button" role="tab" class="wxtab${k === cur ? " on" : ""}" data-tab="${k}" aria-selected="${k === cur}">${name}</button>`).join("");
+    el("wxtabnote").textContent = TABS.find(t => t[0] === cur)[2];
+    el("wxcards").innerHTML = FC.map(f => card(pickRec(f, cur), shown)).join("");
+  }
+  draw(false);
+  el("wxtabs").addEventListener("click", e => {
+    const b = e.target && e.target.closest ? e.target.closest("[data-tab]") : null;
+    if (!b || b.dataset.tab === cur) return;
+    cur = b.dataset.tab;
+    try { localStorage.setItem("wxtab", cur); } catch (e2) {}
+    draw(true);
+  });
 }
 
 /* ── 駐外館處與急難救助 ─────────────────────────────── */
