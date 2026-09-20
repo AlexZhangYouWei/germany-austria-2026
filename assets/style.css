@@ -224,8 +224,8 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
 
 /* ───────── timeline ───────── */
 .tl{margin:16px 0 0;padding:0;list-style:none}
-.tl li{display:grid;grid-template-columns:134px 20px 1fr;position:relative}
-.tl .t{display:flex;align-items:center;gap:7px;
+.tl li{display:grid;grid-template-columns:150px 20px 1fr;position:relative}
+.tl .t{display:flex;align-items:center;flex-wrap:wrap;gap:7px;
   font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums;padding:13px 0;line-height:1.6;letter-spacing:.02em}
 .tl .m{position:relative}
 .tl .m::before{
@@ -393,7 +393,7 @@ footer{
 
 /* ───────── print ───────── */
 @media print{
-  nav,.rail,.tabs,body::before,body::after{display:none !important}
+  nav,.rail,.tabs,.geo,body::before,body::after{display:none !important}
   html,body{background:#fff !important;color:#000 !important}
   .glass{background:#fff !important;border:1px solid #ccc !important;box-shadow:none !important;
     -webkit-backdrop-filter:none !important;backdrop-filter:none !important}
@@ -673,11 +673,20 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .wxc-more table{font-size:12px}
 .wxc-more th,.wxc-more td{padding:8px 10px 8px 0}
 
-/* 時間軸列的地圖連結 */
-.geo{display:inline-block;padding:2px 9px;border-radius:999px;vertical-align:1px;
-  font-size:10.5px;letter-spacing:.04em;text-decoration:none;white-space:nowrap;
-  color:var(--ink3);background:rgba(255,255,255,.05);border:1px solid var(--hair2);transition:.2s}
-.geo:hover{color:#ffd9b0;border-color:rgba(255,175,110,.4);background:rgba(255,160,90,.12)}
+/* 時間軸列的導航按鈕：一顆膠囊切成兩半，左 G＝Google Maps、右 A＝Apple Maps。
+   兩個熱區各自至少 24px 寬，手指點得到；實際目的地與交通方式寫在 aria-label 裡。 */
+.geo{
+  display:inline-flex;flex:0 0 auto;vertical-align:1px;
+  border:1px solid var(--hair2);border-radius:999px;overflow:hidden;
+  background:rgba(255,255,255,.05);
+}
+.geo a{
+  display:block;padding:2px 8px;min-width:24px;box-sizing:border-box;text-align:center;
+  font-size:10.5px;font-weight:600;letter-spacing:.04em;line-height:1.7;
+  text-decoration:none;white-space:nowrap;color:var(--ink3);transition:.2s;
+}
+.geo a + a{border-left:1px solid var(--hair2)}
+.geo a:hover{color:#ffd9b0;background:rgba(255,160,90,.14)}
 .routeline{margin:14px 0 0}
 
 /* ───────── 數值色階 ─────────
@@ -696,6 +705,9 @@ tr.dim td .v{color:inherit}
 .daywx-n em{display:block;margin-top:2px;font-style:normal;font-size:10.5px;
   color:rgba(251,242,234,.3);letter-spacing:.01em}
 
+/* 資料產出時間戳，放在頁首標題下方 */
+.asof{margin:-6px 2px 16px;font-size:11.5px;line-height:1.7;color:var(--ink3)}
+.asof b{font-weight:600;color:var(--ink2)}
 .vkey{display:flex;flex-wrap:wrap;gap:8px 22px;margin:12px 2px 0;font-size:11.5px;color:var(--ink3)}
 .vkey-g{display:inline-flex;align-items:center;gap:6px}
 .vkey-g b{font-weight:600;color:var(--ink2);margin-right:2px}
@@ -708,10 +720,73 @@ tr.dim td .v{color:inherit}
 
 .cardtitle{margin:8px 0 0;font-size:16.5px;font-weight:600;line-height:1.5;letter-spacing:-.012em}
 
-/* 日頁：日期列改為上方 sticky 橫列，不再佔用左側留白，main 維持置中。 */
-@media (max-width:760px){ body[data-page="day"]{padding-bottom:76px} }
-/* 底部有日期橫列時，點擊區不要壓到它 */
-/* 底部日期橫列只在 ≤760px 出現，該寬度的 .edge 已是窄帶，不需再讓位 */
+/* ───────── 日頁分頁軌道 ─────────
+   九天同時在 DOM 裡，靠這裡的媒體查詢決定要攤平（桌機）還是變成橫向分頁（手機）。 */
+
+/* 桌機：display:contents 把軌道與非當前面板的盒子整個拿掉，
+   .day 卡片仍是 main.wrap 的直接子元素，版面與加入軌道之前完全相同。
+   用 760.02px 而不是 761px，避免瀏覽器縮放產生的小數寬度掉進兩個查詢的縫隙。 */
+@media (min-width:760.02px){
+  #daytrack{display:contents}
+  .daypanel{display:none}
+  .daypanel.cur{display:contents}
+}
+@media print{
+  #daytrack{display:contents}
+  .daypanel{display:none}
+  .daypanel.cur{display:contents}
+}
+
+/* 手機：整頁不再垂直捲動，改成固定框 + 橫向 scroll-snap 分頁。
+   慣性、橡皮筋與吸附全部交給瀏覽器原生捲動，JS 不模擬位移。 */
+@media (max-width:760px){
+  body[data-page="day"]{
+    height:100dvh;min-height:0;          /* 蓋掉 body{min-height:100%} */
+    display:flex;flex-direction:column;overflow:hidden;
+    padding-bottom:0;                    /* 原本的 76px 會從 100dvh 裡被吃掉，改由面板自己留 */
+    overscroll-behavior-x:none;          /* 盡量壓下 iOS 邊緣返回手勢，非萬靈丹 */
+  }
+  /* .wrap 的 margin:0 auto 在直向 flex 容器裡會取消 stretch，main 會縮成內容寬，
+     百分比寬的面板就失去依據——這三行是必要的，不是保險。 */
+  body[data-page="day"] main.wrap{
+    width:100%;max-width:none;margin:0;padding:0;
+    flex:1 1 auto;min-height:0;display:flex;
+  }
+  body[data-page="day"] footer{display:none}
+  body[data-page="day"] .edge{display:none}
+
+  .daytrack{
+    position:relative;                   /* 面板的 offsetParent，用它算吸附點比 clientWidth 準 */
+    flex:1 1 auto;min-width:0;display:flex;align-items:stretch;
+    overflow-x:auto;overflow-y:hidden;
+    scroll-snap-type:x mandatory;
+    overscroll-behavior-x:contain;
+    scrollbar-width:none;
+  }
+  .daytrack::-webkit-scrollbar{display:none}
+
+  .daypanel{
+    flex:0 0 100%;width:100%;
+    min-width:0;                         /* flex 預設 min-width:auto，寬表格會撐破吸附點 */
+    overflow-y:auto;overscroll-behavior-y:contain;
+    scroll-snap-align:start;
+    scroll-snap-stop:always;             /* 一次只翻一天，等同 UIScrollView 的 isPagingEnabled */
+    padding:6px 16px calc(84px + env(safe-area-inset-bottom));
+  }
+
+  /* 內層橫向捲動到底時不要牽動分頁 */
+  body[data-page="day"] .scroll,
+  body[data-page="day"] .tabs{overscroll-behavior-x:contain}
+
+  /* 分頁本身就是「抵達」，再播淡入只會在吸附瞬間彈一下 */
+  body[data-page="day"] .rv{opacity:1;transform:none;transition:none}
+}
+
+/* 給螢幕報讀用：換頁時朗讀天數，replaceState 與改 title 都不會觸發朗讀 */
+.srlive{
+  position:absolute;width:1px;height:1px;margin:-1px;padding:0;
+  overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;
+}
 
 @media (max-width:760px){
   /* 日頁三張卡：窄螢幕上靠近一點，不要看起來像三個不相干的畫面 */

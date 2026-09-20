@@ -109,23 +109,29 @@ function dayWeather(n){
 
 /* ── 逐日行程 ───────────────────────────────────────── */
 
-/* 地圖連結。座標來自 GEO（已逐筆查證），移動類給導航、其餘給地圖。
-   導航一律不寫死起點，用使用者當下位置，路上臨時偏離也還是對的。 */
+/* 地圖導航。座標來自 GEO（已逐筆查證），每個有座標的地點都給兩顆按鈕：
+   左半 Google Maps、右半 Apple Maps，兩者都是「從我現在的位置帶我去這裡」。
+   兩邊都不寫死起點，路上臨時偏離也還是對的。
+   交通方式由類別推定，使用者在 App 裡仍可一鍵改。 */
 function travelMode(cat){
   if (/步行|散步|步道/.test(cat)) return "walking";
   if (/公車|機場線|電車|S-Bahn/.test(cat)) return "transit";
   return "driving";
 }
+/* Apple Maps 的 dirflg：d 開車、w 步行、r 大眾運輸；daddr 單獨給就以目前位置為起點 */
+const APPLE_FLG = { walking:"w", transit:"r", driving:"d" };
+
 function geoLink(cat, key){
   const g = GEO[key];
   if (!g) return "";
   const [name, ll] = g;
-  const go = /移動|交通|接駁|租車|還車|機場線|公車|步行/.test(cat);
-  const href = go
-    ? `https://www.google.com/maps/dir/?api=1&destination=${ll}&travelmode=${travelMode(cat)}`
-    : `https://www.google.com/maps/search/?api=1&query=${ll}`;
-  return `<a class="geo" href="${href}" target="_blank" rel="noopener"
-    aria-label="在 Google Maps ${go?"導航至":"查看"} ${esc(name)}">${go?"導航":"地圖"}</a>`;
+  const mode = travelMode(cat);
+  const gmap = `https://www.google.com/maps/dir/?api=1&destination=${ll}&travelmode=${mode}`;
+  const amap = `https://maps.apple.com/?daddr=${ll}&dirflg=${APPLE_FLG[mode]}`;
+  return `<span class="geo">`
+    + `<a href="${gmap}" target="_blank" rel="noopener" aria-label="用 Google 地圖導航至 ${esc(name)}">G</a>`
+    + `<a href="${amap}" target="_blank" rel="noopener" aria-label="用 Apple 地圖導航至 ${esc(name)}">A</a>`
+    + `</span>`;
 }
 
 /* 今日行車路線：航點與路線圖同一組，兩者永遠一致 */
@@ -333,10 +339,23 @@ if (PAGE === "index") {
     </a>`).join("");
 }
 
+/* ── 日頁：九天一條橫向軌道 ─────────────────────────
+   手機（≤760px）：CSS scroll-snap 做跟手的分頁捲動。慣性、橡皮筋與吸附全交給瀏覽器，
+   JS 只在吸附完成後同步網址、標題、日期列與翻頁區。
+   桌機（≥760.02px）：CSS 以 display:contents 攤平軌道、只留 .cur 那一天，
+   盒模型與先前完全相同（.day 仍是 main.wrap 的直接子元素）。
+   內容本來就是執行期由 DAYS 產生，九天合計約 84 KB，不增加任何下載量。 */
 if (PAGE === "day") {
-  const d = DAYS.find(x => x.n === DAYN);
-  el("dayroot").innerHTML = dayArticle(d);
-  /* 左右側點擊區翻頁 */
+  el("dayroot").innerHTML =
+    `<div class="daytrack" id="daytrack">`
+    + DAYS.map((d, i) =>
+        `<section class="daypanel${d.n === DAYN ? " cur" : ""}" data-n="${d.n}"`
+        + ` aria-label="Day ${d.n} ${esc(DAY_SHORT[i])}">${dayArticle(d)}</section>`).join("")
+    + `</div>`
+    + `<p class="srlive" id="daylive" aria-live="polite"></p>`;
+
+  /* 左右側點擊區翻頁：桌機用。手機由 CSS 隱藏——它是覆在軌道上的固定條，
+     會把滑動誤判成點擊，而且正好落在 iOS 邊緣返回手勢的地盤。 */
   const chev = dir => `<span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="${dir === "prev" ? "M15 5l-7 7 7 7" : "M9 5l7 7-7 7"}"/></svg></span>`;
@@ -344,9 +363,146 @@ if (PAGE === "day") {
       aria-label="${dir === "prev" ? "上一天" : "下一天"}：Day ${d.n} ${esc(d.title)}"
       aria-keyshortcuts="${dir === "prev" ? "ArrowLeft" : "ArrowRight"}">
       <span class="edge-label">Day ${d.n}<b>${esc(d.title)}</b></span>${chev(dir)}</a>` : "";
-  el("edges").innerHTML =
-    zone(DAYS.find(x => x.n === DAYN - 1), "prev") +
-    zone(DAYS.find(x => x.n === DAYN + 1), "next");
+  const drawEdges = n => { el("edges").innerHTML =
+    zone(DAYS.find(x => x.n === n - 1), "prev") + zone(DAYS.find(x => x.n === n + 1), "next"); };
+  drawEdges(DAYN);
+
+  const track  = el("daytrack");
+  const railEl = el("rail");
+  const panels = DAYS.map(d =>
+    track && track.querySelector ? track.querySelector(`.daypanel[data-n="${d.n}"]`) : null);
+
+  if (track && panels.every(Boolean)) {
+    const mq    = window.matchMedia ? matchMedia("(max-width:760px)") : null;
+    const pager = () => !!(mq && mq.matches);
+    /* file:// 下 WebKit 視每份文件為不透明來源，replaceState 換路徑會丟 SecurityError */
+    const canHist = location.protocol === "http:" || location.protocol === "https:";
+
+    let cur = DAYN;      // 已確定停妥的那天
+    let live = DAYN;     // 拖曳中目前最接近的那天（只驅動日期列高亮）
+    let touching = false, settleT = 0, resizeT = 0;
+
+    const nearest = () => {
+      let best = 0, d = Infinity;
+      for (let i = 0; i < panels.length; i++){
+        const dd = Math.abs(panels[i].offsetLeft - track.scrollLeft);
+        if (dd < d){ d = dd; best = i; }
+      }
+      return best;
+    };
+
+    const syncRail = n => {
+      if (!railEl) return;
+      railEl.querySelectorAll("a").forEach(a => {
+        const me = a.getAttribute("href") === `day${n}.html`;
+        a.classList.toggle("on", me);
+        if (me) a.setAttribute("aria-current", "page");
+        else a.removeAttribute("aria-current");
+      });
+      const onA = railEl.querySelector("a.on");
+      if (onA && railEl.scrollWidth > railEl.clientWidth)
+        railEl.scrollLeft = onA.offsetLeft - (railEl.clientWidth - onA.offsetWidth) / 2;
+    };
+
+    /* 拖曳途中只動日期列高亮，便宜且讓籌碼跟得上手指 */
+    const setLive = n => { if (n !== live){ live = n; syncRail(n); } };
+
+    /* 吸附停妥才做不可逆的事：換網址、改標題、調整 inert 與朗讀 */
+    const commit = n => {
+      if (n < 1 || n > DAYS.length || n === cur) return;
+      cur = n;
+      const d = DAYS.find(x => x.n === n);
+      panels.forEach(p => {
+        const me = +p.dataset.n === n;
+        p.classList.toggle("cur", me);
+        p.inert = !me;
+      });
+      const ae = document.activeElement;
+      if (ae && ae.closest && ae.closest(".daypanel") && !ae.closest(".daypanel.cur") && ae.blur) ae.blur();
+      document.title = `Day ${n}　${d.title}｜德國・奧地利`;
+      if (canHist) { try { history.replaceState(null, "", `day${n}.html`); } catch (err) {} }
+      setLive(n);
+      drawEdges(n);
+      const say = el("daylive");
+      if (say) say.textContent = `Day ${n}　${esc(d.title)}`;
+    };
+
+    const check = () => {
+      if (!pager() || touching) return;
+      const i = nearest();
+      /* 動量的尾巴可能停超過去抖時間，先確認真的落在吸附點上再提交 */
+      if (Math.abs(panels[i].offsetLeft - track.scrollLeft) > 2) return arm();
+      commit(i + 1);
+    };
+    function arm(){ clearTimeout(settleT); settleT = setTimeout(check, 140); }
+
+    track.addEventListener("scroll", () => {
+      if (!pager()) return;
+      setLive(nearest() + 1);
+      arm();
+    }, { passive:true });
+    if ("onscrollend" in window) track.addEventListener("scrollend", check);
+    track.addEventListener("touchstart", () => { touching = true; clearTimeout(settleT); }, { passive:true });
+    ["touchend","touchcancel"].forEach(t =>
+      track.addEventListener(t, () => { touching = false; arm(); }, { passive:true }));
+
+    /* 對位時先關掉 snap，免得修正動作本身又被吸到別處 */
+    const place = () => {
+      const prev = track.style.scrollSnapType;
+      track.style.scrollSnapType = "none";
+      track.scrollLeft = panels[cur - 1].offsetLeft;
+      const back = () => { track.style.scrollSnapType = prev || ""; };
+      if (window.requestAnimationFrame) requestAnimationFrame(back); else back();
+    };
+    panels.forEach(p => { p.inert = +p.dataset.n !== cur; });
+    if (window.requestAnimationFrame) requestAnimationFrame(place); else place();
+
+    addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(place, 150); });
+    addEventListener("pageshow", e => { if (e.persisted) place(); });
+
+    const goTo = (n, smooth) => {
+      if (n < 1 || n > DAYS.length) return;
+      if (!pager()) { location.href = `day${n}.html`; return; }
+      track.scrollTo({ left:panels[n - 1].offsetLeft, behavior: smooth ? "smooth" : "auto" });
+    };
+
+    /* 日期列：手機平滑滑過去，桌機維持整頁跳轉（href 保留，長按開新分頁仍可用） */
+    if (railEl) railEl.addEventListener("click", e => {
+      if (!pager()) return;
+      const a = e.target.closest && e.target.closest("a");
+      if (!a) return;
+      const m = /day(\d+)\.html/.exec(a.getAttribute("href") || "");
+      if (!m) return;
+      e.preventDefault();
+      goTo(+m[1], true);
+    });
+
+    addEventListener("keydown", e => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+      if (e.key === "ArrowLeft")  goTo(cur - 1, true);
+      if (e.key === "ArrowRight") goTo(cur + 1, true);
+    });
+
+    /* ≥760.02px 的觸控裝置沒有分頁軌道，沿用原本的整頁跳轉手勢 */
+    let x0 = null, y0 = 0, t0 = 0;
+    addEventListener("touchstart", e => {
+      x0 = null;
+      if (pager() || e.touches.length !== 1) return;
+      if (e.target.closest && e.target.closest(".scroll,.navbar,.rail,.tabs,.mapsvg,a,button")) return;
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+    }, { passive:true });
+    addEventListener("touchend", e => {
+      if (x0 === null) return;
+      const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0;
+      x0 = null;
+      if (pager()) return;
+      if (Date.now() - t0 > 700) return;              // 太慢的不算滑動
+      if (Math.abs(dx) < 64) return;                  // 位移不足
+      if (Math.abs(dx) < Math.abs(dy) * 1.6) return;  // 比較像直向捲動
+      goTo(dx < 0 ? cur + 1 : cur - 1, false);
+    }, { passive:true });
+  }
 }
 
 if (PAGE === "food") {
@@ -363,8 +519,14 @@ if (PAGE === "food") {
 }
 
 if (PAGE === "weather") {
+  el("wxasof").innerHTML =
+    `資料產出：<b>${esc(WX_ASOF.built.replace(/-/g, "/"))}</b>`
+    + `　·　樣本：ERA5 ${esc(WX_ASOF.span)}（逐日）、${esc(WX_ASOF.oct)}（十月基準）`
+    + `　·　<b>氣候統計，非預報</b>——數值不隨日期變動，出發前請改查官方預報`;
+
   el("wxwarn").innerHTML = `
-    <p><b>這不是預報，是氣候統計。</b>DWD 與 GeoSphere 的官方逐日預報最遠只到 10 天，撰寫日 2026/09/19 還涵蓋不到行程日期。</p>
+    <p><b>這不是預報，是氣候統計。</b>DWD 與 GeoSphere 的官方逐日預報最遠只到 10 天，
+       資料產出日 ${esc(WX_ASOF.built.replace(/-/g, "/"))} 還涵蓋不到行程日期。</p>
     <p>數值取自 ECMWF ERA5 再分析（溫度、降水、雲量），2016–2025 共 10 年、每個目標日期 ±2 天的實際觀測值，每格 50 個「年×日」樣本。
        <b>所有主要數值都只取白天 06–18</b>；降雨機率＝該時段累積降水 ≥0.2 mm 的樣本比例。</p>
     <p><b>降雨兩個數字下方附的是十月基準。</b>同樣的座標、同樣的白天 06–18、同樣 ≥0.2 mm 算有雨，
@@ -601,35 +763,3 @@ const rvio = new IntersectionObserver((es,o) => {
   es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); o.unobserve(e.target); } });
 }, { rootMargin:"0px 0px -8% 0px" });
 document.querySelectorAll(".rv").forEach(n => rvio.observe(n));
-
-/* 日頁：左右滑動切換日期。左滑 = 下一天，與方向鍵一致。
-   在可橫捲的容器、連結與按鈕上不攔截，避免蓋掉原本的操作。 */
-if (PAGE === "day") {
-  const go = n => { if (n >= 1 && n <= DAYS.length) location.href = `day${n}.html`; };
-  let x0 = null, y0 = 0, t0 = 0;
-  addEventListener("touchstart", e => {
-    x0 = null;
-    if (e.touches.length !== 1) return;
-    if (e.target.closest && e.target.closest(".scroll,.navbar,.rail,.tabs,.mapsvg,a,button")) return;
-    x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
-  }, { passive:true });
-  addEventListener("touchend", e => {
-    if (x0 === null) return;
-    const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0;
-    x0 = null;
-    if (Date.now() - t0 > 700) return;              // 太慢的不算滑動
-    if (Math.abs(dx) < 64) return;                  // 位移不足
-    if (Math.abs(dx) < Math.abs(dy) * 1.6) return;  // 比較像直向捲動
-    go(dx < 0 ? DAYN + 1 : DAYN - 1);
-  }, { passive:true });
-}
-
-/* 日頁：左右方向鍵翻頁 */
-if (PAGE === "day") {
-  addEventListener("keydown", e => {
-    if (e.metaKey || e.ctrlKey || e.altKey) return;
-    if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
-    if (e.key === "ArrowLeft"  && DAYN > 1) location.href = `day${DAYN-1}.html`;
-    if (e.key === "ArrowRight" && DAYN < DAYS.length) location.href = `day${DAYN+1}.html`;
-  });
-}
