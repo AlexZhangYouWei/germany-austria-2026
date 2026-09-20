@@ -79,30 +79,54 @@ const mm1  = v  => v.toFixed(1);     /* 1 → 「1.0 mm」，同一欄小數位�
 const PD = FC_META.periods;
 
 const PD_HEAD = `<div class="wxp-hd">`
-  + `<span>時段</span><span>天氣</span><span>氣溫</span>`
+  + `<span>時段</span><span>天氣</span><span class="wxp-t">最低–最高</span>`
   + `<span class="wxp-rain"><span class="wxp-p">雨機率</span><span class="wxp-m">雨量</span></span></div>`;
 
 /* low＝系集：多一行成員區間，並把「雨機率」的語意換成「有雨成員比例」。
    兩種來源的鍵名已在資料層統一，這裡不再分支。 */
-function wxRow(x, P, low){
+/* 氣溫格：主體是「最低–最高」（整數），副行是均溫；系集再附成員均溫的 10／90 區間。 */
+function wxTemp(x, low){
+  const sub = `均 ${x.a}°` + (low && x.lo != null ? `<br>成員 ${x.lo}–${x.hi}°` : "");
+  return `<span class="wxp-t"><b class="${tCls(x.a)}">${Math.round(x.l)}–${Math.round(x.h)}</b><i>°</i>`
+    + `<em class="wxp-rg">${sub}</em></span>`;
+}
+function wxRow(x, P, low, cls = ""){
   if (!x) return `<div class="wxp-row na${P.day ? "" : " dim"}">`
     + `<span class="wxp-when"><b>${esc(P.label)}</b><em>${esc(P.span)}</em></span>`
     + `<span class="wxp-dash">—</span></div>`;
   const [label, kind] = cond(x.c, x.p);
-  const rg = low && x.lo != null ? `<em class="wxp-rg">${x.lo}–${x.hi}</em>` : "";
-  return `<div class="wxp-row${P.day ? "" : " dim"}">`
+  return `<div class="wxp-row${P.day ? "" : " dim"}${cls}">`
     + `<span class="wxp-when"><b>${esc(P.label)}</b><em>${esc(P.span)}</em></span>`
     + `<span class="wxcond sm ${kind}">${icon(kind)}<span>${esc(label)}</span></span>`
-    + `<span class="wxp-t"><b class="${tCls(x.a)}">${x.a}</b><i>°</i>${rg}</span>`
+    + wxTemp(x, low)
     + `<span class="wxp-rain">`
     + `<span class="wxp-p"><b class="${pCls(x.p)}">${x.p}</b><i>%</i></span>`
     + `<span class="wxp-m"><b class="${mCls(x.mm)}">${mm1(x.mm)}</b><i>mm</i></span>`
     + `</span></div>`;
 }
 
+/* 全日概況：由四段合成。最低／最高取極值，均溫與雲量取平均，雨機率取最大，雨量加總。
+   系集的成員區間同樣取四段的極值。四段有缺就不合成，避免用半天冒充整天。 */
+const rd1 = v => Math.round(v * 10) / 10;
+function daySum(f){
+  const xs = PD.map(P => f.p && f.p[P.k]);
+  if (xs.some(x => !x)) return null;
+  const avg = a => a.reduce((s, v) => s + v, 0) / a.length;
+  const cs = xs.map(x => x.c).filter(c => c != null);
+  return {
+    l:Math.min(...xs.map(x => x.l)), h:Math.max(...xs.map(x => x.h)), a:rd1(avg(xs.map(x => x.a))),
+    c:cs.length ? Math.round(avg(cs)) : 0, p:Math.max(...xs.map(x => x.p)), mm:rd1(xs.reduce((s, x) => s + x.mm, 0)),
+    lo:xs[0].lo == null ? null : Math.min(...xs.map(x => x.lo)),
+    hi:xs[0].hi == null ? null : Math.max(...xs.map(x => x.hi)),
+  };
+}
+const PD_SUM = { label:"全日", span:"概況", day:1 };
+
 function wxPeriods(f){
   const low = f.kind === "ens";
+  const sum = daySum(f);
   return `<div class="wxp">` + PD_HEAD
+    + (sum ? wxRow(sum, PD_SUM, low, " sum") : "")
     + PD.map(P => wxRow(f.p && f.p[P.k], P, low)).join("") + `</div>`;
 }
 
