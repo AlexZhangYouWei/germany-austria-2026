@@ -755,6 +755,13 @@ tr.dim td .v{color:inherit}
    慣性、橡皮筋與吸附全部交給瀏覽器原生捲動，JS 不模擬位移。 */
 @media (max-width:760px){
   body[data-page="day"]{
+    /* position:fixed 是關鍵，不是保險。body 的 overflow 會被「上拋」給視窗
+       （html 沒設 overflow 時），body 自己因此變回 visible；而 iOS Safari 對
+       視窗層的 overflow:hidden 並不可靠，內部只要有一處超寬，整頁（連導覽列）
+       就會被手指拖著平移。改成 fixed 之後 body 脫離可捲動流，物理上不可能被平移。
+       .rail、.edge、body::before/after 本來就是 fixed，改以 body 為包含塊，
+       而 body 的 inset:0 就等於視窗，位置完全不變。 */
+    position:fixed;inset:0;
     height:100dvh;min-height:0;          /* 蓋掉 body{min-height:100%} */
     display:flex;flex-direction:column;overflow:hidden;
     padding-bottom:0;                    /* 原本的 76px 會從 100dvh 裡被吃掉，改由面板自己留 */
@@ -819,9 +826,14 @@ tr.dim td .v{color:inherit}
   /* 天氣數值改兩欄對齊，取代 flex 換行造成的參差 */
   .daywx{gap:14px}
   .daywx-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:center}
-  .daywx-row .wxcond,.daywx-place{grid-column:1 / -1;justify-self:start}
+  /* grid 子項預設 min-width:auto，裡面的 white-space:nowrap 會把 1fr 軌道撐開，
+     整列因此超出螢幕。每個子項都要能縮到 0，長徽章則允許換行。 */
+  .daywx-row > *{min-width:0}
+  .daywx-row .wxcond,.daywx-place,
+  .daywx-row .wxsrc{grid-column:1 / -1;justify-self:start;max-width:100%}
+  .daywx-row .wxsrc{flex-wrap:wrap;white-space:normal}
   .daywx-row + .daywx-row{border-top:1px solid var(--hair2);padding-top:14px}
-  .daywx-n{font-size:11px}
+  .daywx-n{font-size:11px;overflow-wrap:anywhere}
   .daywx-n b{font-size:16px}
 
   .wxgrid{grid-template-columns:1fr;gap:12px}
