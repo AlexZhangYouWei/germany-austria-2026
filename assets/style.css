@@ -318,7 +318,7 @@ tr:last-child td{border-bottom:0}
 .facts dd{margin:0;color:var(--ink);line-height:1.7}
 
 /* ───────── 每日天氣列 ───────── */
-/* 位於「天氣概況」卡內，不再自帶外框 */
+/* 位於「天氣預報」卡內，不再自帶外框 */
 .daywx{display:grid;gap:10px}
 .daywx-row{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap}
 .daywx-place{font-size:12px;color:var(--ink3);font-weight:600}
@@ -328,7 +328,7 @@ tr:last-child td{border-bottom:0}
   font-variant-numeric:tabular-nums;color:var(--ink);
 }
 
-/* ───────── 天氣概況樣式 ───────── */
+/* ───────── 天氣預報樣式 ───────── */
 .wxcond{
   display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;white-space:nowrap;
   font-size:12px;font-weight:600;padding:6px 12px 6px 9px;border-radius:999px;
@@ -708,6 +708,20 @@ tr.dim td .v{color:inherit}
 /* 資料產出時間戳，放在頁首標題下方 */
 .asof{margin:-6px 2px 16px;font-size:11.5px;line-height:1.7;color:var(--ink3)}
 .asof b{font-weight:600;color:var(--ink2)}
+.asof b.stale{color:#ffb9a0}
+
+/* 預報出處徽章。low = 系集後備或尚無資料，用灰調與行文區隔。 */
+.wxsrc{display:inline-flex;align-items:baseline;gap:6px;flex:0 0 auto;
+  padding:3px 9px;border:1px solid var(--hair2);border-radius:999px;
+  background:rgba(255,255,255,.05);
+  font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--ink2)}
+.wxsrc em{font-style:normal;font-weight:400;color:var(--ink3)}
+.wxsrc.low{color:var(--ink3);border-style:dashed}
+.wxc-lead{margin-left:auto;font-size:11px;color:var(--ink3)}
+.wxc-nodata{margin:10px 0 0;font-size:11.5px;line-height:1.75;color:var(--ink3)}
+.wxc-empty{opacity:.72}
+#wxsched td.ok{color:#a9e0b4}
+#wxsched th em{display:block;font-style:normal;font-weight:400;font-size:10px;color:var(--ink3)}
 .vkey{display:flex;flex-wrap:wrap;gap:8px 22px;margin:12px 2px 0;font-size:11.5px;color:var(--ink3)}
 .vkey-g{display:inline-flex;align-items:center;gap:6px}
 .vkey-g b{font-weight:600;color:var(--ink2);margin-right:2px}
@@ -752,7 +766,13 @@ tr.dim td .v{color:inherit}
     width:100%;max-width:none;margin:0;padding:0;
     flex:1 1 auto;min-height:0;display:flex;
   }
+  /* #dayroot 才是 main.wrap 的 flex 子項，.daytrack 隔了一層。
+     不攤平的話 #dayroot 以預設 min-width:auto 吃下軌道的 max-content（900%），
+     整條就撐爆視窗寬度。display:contents 讓 .daytrack 直接當 flex 子項，
+     下面那組 flex:1 1 auto / min-width:0 才真的生效。 */
+  body[data-page="day"] #dayroot{display:contents}
   body[data-page="day"] footer{display:none}
+  body[data-page="day"] #edges,
   body[data-page="day"] .edge{display:none}
 
   .daytrack{
@@ -768,6 +788,9 @@ tr.dim td .v{color:inherit}
   .daypanel{
     flex:0 0 100%;width:100%;
     min-width:0;                         /* flex 預設 min-width:auto，寬表格會撐破吸附點 */
+    /* 橫軸一定要寫死。留 visible 的話，規範會因為另一軸是 auto 而把它也算成 auto，
+       面板就變成可橫捲、跟分頁搶手勢。寬表格各自包在 .scroll 裡自行捲動。 */
+    overflow-x:hidden;
     overflow-y:auto;overscroll-behavior-y:contain;
     scroll-snap-align:start;
     scroll-snap-stop:always;             /* 一次只翻一天，等同 UIScrollView 的 isPagingEnabled */
