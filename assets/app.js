@@ -23,6 +23,7 @@ const NAV = [
   ["food.html",   "特色菜",   "food"],
   ["weather.html","天氣預報", "weather"],
   ["tickets.html","票券","tickets"],
+  ["access.html","抵達攻略","access"],
   ["checklist.html","準備清單","checklist"],
   ["offices.html","緊急聯絡","offices"],
 ];
@@ -582,6 +583,8 @@ if (PAGE === "food") {
       <div class="dbody">
         ${f.items.length ? `<table>${f.items.map(([a,b]) =>
           `<tr><td style="width:44%"><strong>${esc(a)}</strong></td><td>${esc(b)}</td></tr>`).join("")}</table>` : ""}
+        ${f.spots ? `<p class="fd-h">口袋名單 · 取自 Google Maps 清單「德奧」</p><table>${f.spots.map(([n,m,t,c]) =>
+          `<tr><td style="width:44%"><a class="fd-a" href="https://maps.google.com/?cid=${c}" target="_blank" rel="noopener" aria-label="在 Google 地圖開啟 ${esc(n)}"><strong>${esc(n)}</strong></a><span class="fd-m">${esc(m)}</span></td><td>${esc(t)}</td></tr>`).join("")}</table>` : ""}
         ${f.text ? `<p style="font-size:13px;color:var(--ink2);margin:${f.items.length?"16px":"0"} 0 0">${esc(f.text)}</p>` : ""}
       </div>
     </details>`).join("");
@@ -683,6 +686,33 @@ if (PAGE === "tickets") {
     `<li><b class="lbl">${esc(l)}</b>${esc(t)}</li>`).join("")}</ul>`;
 }
 
+if (PAGE === "access") {
+  const li = r => r.map(([l,t]) => `<li><b class="lbl">${esc(l)}</b>${md(t)}</li>`).join("");
+  el("acroot").innerHTML = ACCESS.map(a => `
+    <article class="card glass rv accard">
+      <div class="meta">Day ${a.day}　${esc(a.date)}</div>
+      <h3 class="cardtitle">${esc(a.name)}${a.geo ? geoLink("步行", a.geo) : ""}</h3>
+      <p class="ac-sub">${esc(a.sub)}</p>
+      <div class="tkbig"><b>${esc(a.big)}</b><span>${esc(a.bigk)}</span></div>
+      <ul class="notes ac-lead">${li(a.lead)}</ul>
+      <div class="ac-cols">
+        <section>
+          <h4 class="ac-h">怎麼上去</h4>
+          <ol class="ac-steps">${a.up.map(([n,l,t]) =>
+            `<li><span class="ac-n">${esc(n)}</span><div><b>${esc(l)}</b>${md(t)}</div></li>`).join("")}</ol>
+        </section>
+        <section>
+          <h4 class="ac-h">怎麼下來</h4>
+          <ul class="ac-down">${a.down.map(([l,t]) => `<li><b>${esc(l)}</b>${md(t)}</li>`).join("")}</ul>
+          <h4 class="ac-h">注意</h4>
+          <ul class="ac-down">${a.notes.map(([l,t]) => `<li><b>${esc(l)}</b>${md(t)}</li>`).join("")}</ul>
+        </section>
+      </div>
+      <p class="ac-src">資料來源　${esc(a.src)}${a.links.map(([x,u]) =>
+        `　·　<a class="daylink" href="${esc(u)}" target="_blank" rel="noopener">${esc(x)}</a>`).join("")}</p>
+    </article>`).join("");
+}
+
 if (PAGE === "offices") {
   const L = EMERGENCY.local;
   el("sos").innerHTML = `
@@ -758,24 +788,41 @@ function ckSave(state){
 
 if (PAGE === "checklist") {
   const state = ckLoad();
-  const total = CHECKLIST.reduce((a,g) => a + g.items.length, 0);
+  /* 資料是三層（區段 → 群組 → 項目），統計要用的只有最底層，先攤平一次。 */
+  const allItems = CHECKLIST.flatMap(s => s.groups.flatMap(g => g.items));
+  const total = allItems.length;
   const doneIn = g => g.items.filter(([id]) => state[id]).length;
-  const doneAll = () => CHECKLIST.reduce((a,g) => a + doneIn(g), 0);
+  const secTotal = s => s.groups.reduce((a,g) => a + g.items.length, 0);
+  const secDone = s => s.groups.reduce((a,g) => a + doneIn(g), 0);
+  const doneAll = () => allItems.filter(([id]) => state[id]).length;
 
-  el("ckroot").innerHTML = CHECKLIST.map(g => `
-    <section class="ck-group glass rv" data-g="${g.id}">
-      <div class="ck-head">
-        <h2>${esc(g.title)}</h2>
-        <span class="ck-count" data-count="${g.id}">${doneIn(g)}／${g.items.length}</span>
+  el("ckroot").innerHTML = CHECKLIST.map(s => `
+    <section class="ck-sec" data-s="${s.id}">
+      <div class="ck-sechead rv">
+        <div class="ck-secline">
+          <h2>${esc(s.title)}</h2>
+          <span class="ck-seccount" data-seccount="${s.id}">${secDone(s)}／${secTotal(s)}</span>
+        </div>
+        ${s.note ? `<p class="ck-secnote">${esc(s.note)}</p>` : ""}
+        <div class="ck-track ck-sectrack"><i data-secbar="${s.id}" style="width:0%"></i></div>
       </div>
-      ${g.items.map(([id,label,note]) => `
-        <label class="ck-item${state[id] ? " on" : ""}" data-item="${id}">
-          <input type="checkbox" data-id="${id}"${state[id] ? " checked" : ""}>
-          <span class="ck-text">
-            <span class="ck-label">${esc(label)}</span>
-            ${note ? `<span class="ck-note">${esc(note)}</span>` : ""}
-          </span>
-        </label>`).join("")}
+      <div class="ckgrid">
+        ${s.groups.map(g => `
+        <section class="ck-group glass rv" data-g="${g.id}">
+          <div class="ck-head">
+            <h3>${esc(g.title)}</h3>
+            <span class="ck-count" data-count="${g.id}">${doneIn(g)}／${g.items.length}</span>
+          </div>
+          ${g.items.map(([id,label,note]) => `
+            <label class="ck-item${state[id] ? " on" : ""}" data-item="${id}">
+              <input type="checkbox" data-id="${id}"${state[id] ? " checked" : ""}>
+              <span class="ck-text">
+                <span class="ck-label">${esc(label)}</span>
+                ${note ? `<span class="ck-note">${esc(note)}</span>` : ""}
+              </span>
+            </label>`).join("")}
+        </section>`).join("")}
+      </div>
     </section>`).join("");
 
   function paint(){
@@ -783,8 +830,13 @@ if (PAGE === "checklist") {
     el("ckbar").style.width = total ? (n / total * 100) + "%" : "0%";
     el("cknum").textContent = `${n}／${total}`;
     el("ckstate").textContent = n === total ? "全部完成" : `還有 ${total - n} 項`;
-    CHECKLIST.forEach(g => {
-      document.querySelector(`[data-count="${g.id}"]`).textContent = `${doneIn(g)}／${g.items.length}`;
+    CHECKLIST.forEach(s => {
+      const st = secTotal(s), sd = secDone(s);
+      document.querySelector(`[data-seccount="${s.id}"]`).textContent = `${sd}／${st}`;
+      document.querySelector(`[data-secbar="${s.id}"]`).style.width = st ? (sd / st * 100) + "%" : "0%";
+      s.groups.forEach(g => {
+        document.querySelector(`[data-count="${g.id}"]`).textContent = `${doneIn(g)}／${g.items.length}`;
+      });
     });
   }
   paint();
