@@ -25,6 +25,7 @@ const NAV = [
   ["tickets.html","票券","tickets"],
   ["shop.html","伴手禮","shop"],
   ["drive.html","開車須知","drive"],
+  ["esim.html","網路分析","esim"],
   ["checklist.html","準備清單","checklist"],
   ["offices.html","緊急聯絡","offices"],
 ];
@@ -682,8 +683,21 @@ if (PAGE === "tickets") {
           `　·　<a class="daylink" href="${esc(u)}" target="_blank" rel="noopener">${esc(x)}</a>`).join("")}</p>
       </div>`;
 
+  /* 「更多」開成浮層視窗（<dialog>），內容先存在 DETAIL，點的時候才填進去 */
+  const DETAIL = [];
   const card = t => {
     const a = t.ac ? ACCESS.find(x => x.id === t.ac) : null;
+    const idx = DETAIL.push(`
+          <div class="meta">Day ${t.day}　${esc(t.date)}　${esc(t.city)}</div>
+          <h3 class="cardtitle">${esc(t.name)}</h3>
+          <div class="tkbig"><b>${esc(t.big)}</b><span>${esc(t.bigk)}</span></div>
+          ${t.kv ? `<dl class="kv tkkv">${t.kv.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : ""}
+          ${t.price ? `<dl class="kv tkkv"><dt>票價</dt><dd>${esc(t.price)}</dd><dt>做法</dt><dd>${md(t.how)}</dd></dl>` : ""}
+          ${t.warn ? `<p class="tkwarn">${esc(t.warn)}</p>` : ""}
+          ${t.rules ? `<ul class="notes tkrules">${li(t.rules)}</ul>` : ""}
+          ${(t.links || []).map(([x, u]) =>
+            `<p class="tklink"><a class="daylink" href="${esc(u)}" target="_blank" rel="noopener">${esc(x)}</a></p>`).join("")}
+          ${access(a)}`) - 1;
     return `
     <article class="card glass rv tkcard">
       <div class="meta">Day ${t.day}　${esc(t.date)}　${esc(t.city)}</div>
@@ -691,18 +705,7 @@ if (PAGE === "tickets") {
       <div class="tkbig"><b>${esc(t.big)}</b><span>${esc(t.bigk)}</span></div>
       <p class="tkaddr">${esc(t.addr)}${t.geo ? geoLink("步行", t.geo) : ""}</p>
       <p class="tkday"><a class="daylink" href="day${t.day}.html">看 Day ${t.day} 時辰表</a>${t.tel ? `　·　<a class="daylink" href="tel:${esc(t.tel[1])}">${esc(t.tel[0])}</a>` : ""}</p>
-      <details class="tkmore">
-        <summary><span class="s-t">更多</span><span class="s-d">${t.kv ? "票務規定" : "購買做法"}${a ? "・抵達攻略" : ""}</span></summary>
-        <div class="dbody">
-          ${t.kv ? `<dl class="kv tkkv">${t.kv.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : ""}
-          ${t.price ? `<dl class="kv tkkv"><dt>票價</dt><dd>${esc(t.price)}</dd><dt>做法</dt><dd>${md(t.how)}</dd></dl>` : ""}
-          ${t.warn ? `<p class="tkwarn">${esc(t.warn)}</p>` : ""}
-          ${t.rules ? `<ul class="notes tkrules">${li(t.rules)}</ul>` : ""}
-          ${(t.links || []).map(([x, u]) =>
-            `<p class="tklink"><a class="daylink" href="${esc(u)}" target="_blank" rel="noopener">${esc(x)}</a></p>`).join("")}
-          ${access(a)}
-        </div>
-      </details>
+      <button type="button" class="tkmore" data-tk="${idx}" aria-haspopup="dialog"><span class="s-t">更多</span><span class="s-d">${t.kv ? "票務規定" : "購買做法"}${a ? "・抵達攻略" : ""}</span></button>
     </article>`;
   };
 
@@ -711,7 +714,21 @@ if (PAGE === "tickets") {
     `<div class="tabs tktabs" role="tablist">${groups.map(([l, xs], i) =>
       `<button role="tab" aria-selected="${i===0}" data-g="tk" data-i="${i}">${l}<em>${xs.length}</em></button>`).join("")}</div>`
     + groups.map(([l, xs], i) =>
-      `<div class="panel" data-g="tk" data-i="${i}" ${i===0?"":"hidden"}><div class="cards">${xs.map(card).join("")}</div></div>`).join("");
+      `<div class="panel" data-g="tk" data-i="${i}" ${i===0?"":"hidden"}><div class="cards">${xs.map(card).join("")}</div></div>`).join("")
+    + `<dialog class="tkdlg" id="tkdlg" aria-label="票券詳情"><div class="tkdlg-in glass"><button type="button" class="tkdlg-x" data-close aria-label="關閉">×</button><div id="tkdlgbody"></div></div></dialog>`;
+
+  const dlg = el("tkdlg");
+  el("tkroot").addEventListener("click", e => {
+    const b = e.target && e.target.closest ? e.target.closest("[data-tk]") : null;
+    if (b && dlg && dlg.showModal) {
+      el("tkdlgbody").innerHTML = DETAIL[+b.dataset.tk];
+      dlg.showModal();
+      dlg.querySelector(".tkdlg-in").scrollTop = 0;
+      return;
+    }
+    /* 點關閉鈕或點到深色背景（dialog 本體而非內層）就關 */
+    if (dlg && dlg.open && e.target && (e.target.closest("[data-close]") || e.target === dlg)) dlg.close();
+  });
 }
 
 if (PAGE === "shop") {
@@ -755,6 +772,57 @@ if (PAGE === "drive") {
     `<tr><td class="strong">${esc(k)}</td><td>${md(de)}</td><td>${md(at)}</td><td class="dr-tw">${md(tw)}</td></tr>`).join("")}</table>`;
 
   el("drnotes").innerHTML = `<ul class="notes">${li(D.notes)}</ul>`;
+}
+
+/* 網路分析：eSIM 方案比較。這是決策頁，所以結論放最上面，比較表在後面備查。
+   價格是查詢日當天的，全頁只標一次查詢日（頂部結論卡），不逐列重複。 */
+if (PAGE === "esim") {
+  const E = ESIM;
+
+  el("esconc").innerHTML = `
+    <p class="es-k">結論・建議方案</p>
+    <p class="es-plan">${esc(E.pick.plan)}</p>
+    <div class="tkbig"><b>${esc(E.pick.one)}</b><span>／人　·　4 人約 ${esc(E.pick.four)}</span></div>
+    <p class="es-why">${md(E.pick.why)}</p>
+    <p class="es-alt">${md(E.pick.alt)}</p>
+    <p class="es-asof">價格與合作網路查詢日 ${esc(E.asof)}，促銷與方案內容隨時會變，購買前以各平台結帳頁為準。</p>`;
+
+  el("eswhy").innerHTML = `<ul class="notes es-why-l">${E.why.map(t =>
+    `<li>${esc(t)}</li>`).join("")}</ul>`;
+
+  el("esadvice").innerHTML = E.advice.map(([k,t,body]) => `
+    <article class="card glass rv es-ad">
+      <span class="es-ad-k">方案 ${esc(k)}</span>
+      <h4>${esc(t)}</h4>
+      <p>${md(body)}</p>
+    </article>`).join("");
+
+  el("esplans").innerHTML = `<table><tr><th>平台／方案</th><th>流量</th><th>價格</th><th>可用網路／限制</th><th>4 人</th><th>評估</th></tr>`
+    + E.plans.map(([p,d,price,net,four,verdict]) =>
+      `<tr><td class="strong">${esc(p)}</td><td>${esc(d)}</td><td class="dr-fee">${esc(price)}</td><td>${esc(net)}</td>`
+      + `<td class="dr-fee">${esc(four)}</td><td class="es-vd">${esc(verdict)}</td></tr>`).join("") + `</table>`;
+
+  el("escost").innerHTML = `<table><tr><th>方案</th><th>單人</th><th>4 人</th><th>適合情境</th></tr>`
+    + E.cost.map(([p,one,four,who]) =>
+      `<tr><td class="strong">${esc(p)}</td><td class="dr-fee">${esc(one)}</td><td class="dr-fee">${esc(four)}</td><td>${esc(who)}</td></tr>`).join("") + `</table>`;
+
+  el("escarrier").innerHTML = E.carriers.map(c => `
+    <article class="card glass rv es-car">
+      <h4>${esc(c.cc)}</h4>
+      <ol class="es-rank">${c.rank.map(r => `<li>${esc(r)}</li>`).join("")}</ol>
+      <p>${md(c.note)}</p>
+      <p>${md(c.note2)}</p>
+      <p class="es-src">${md(c.src)}</p>
+    </article>`).join("");
+
+  el("esdetail").innerHTML = E.detail.map(d => `
+    <details class="glass rv">
+      <summary><span class="s-t">${esc(d.name)}</span><span class="s-d">${esc(d.tag)}</span></summary>
+      <div class="dbody"><ul class="notes">${d.points.map(t => `<li>${md(t)}</li>`).join("")}</ul></div>
+    </details>`).join("");
+
+  el("escheck").innerHTML = `<ul class="notes">${E.check.map(([l,t]) =>
+    `<li><b class="lbl">${esc(l)}</b>${md(t)}</li>`).join("")}</ul>`;
 }
 
 if (PAGE === "offices") {
