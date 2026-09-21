@@ -764,6 +764,26 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
   .ac-cols{grid-template-columns:1fr;gap:18px}
   .sh-stops{padding:4px 16px 8px}
   .es-picks{grid-template-columns:1fr}
+
+  /* 方案比較表在窄螢幕攤成卡片：7 欄約 860px，手機得橫捲兩個螢幕寬，
+     而且一捲出去最左邊的方案名稱就看不到了。改成每列一張卡，欄名由
+     td 的 data-l 印在值前面（欄頭列藏起來）。桌機完全不受影響。 */
+  .es-tw{background:none;border:0;box-shadow:none;padding:0}
+  .es-tw .scroll{overflow-x:visible}
+  .es-t,.es-t tbody,.es-t tr,.es-t td{display:block;width:auto}
+  .es-t tr:first-child{display:none}          /* 欄頭列 */
+  .es-t tr{margin-top:10px;padding:20px 22px 18px;
+    background:var(--glass);border:1px solid var(--hair);border-radius:var(--r);
+    box-shadow:var(--glass-hi),var(--shadow)}
+  .es-t tr.on{border-color:rgba(255,190,140,.34)}
+  .es-t tr.on td{background:none}
+  .es-t td{min-width:0;padding:0;border-bottom:0}
+  .es-t td:first-child{font-size:14.5px;margin-bottom:12px}
+  .es-t td+td{display:grid;grid-template-columns:68px 1fr;gap:0 10px;margin-top:8px}
+  .es-t td+td::before{content:attr(data-l);color:var(--ink3);font-size:11.5px;
+    letter-spacing:.04em;line-height:1.7}
+  .es-net{min-width:0}
+
   .sh-where{font-size:11.5px}
   .sh-pic{width:48px;padding-right:8px}
   .sh-img{width:48px;height:48px;border-radius:10px}

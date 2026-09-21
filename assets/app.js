@@ -800,24 +800,28 @@ if (PAGE === "esim") {
 
   /* 方案比較表：每個計費型態一張表，表下接該型態的總結。
      方案名稱本身就是購買連結（buy[0] 的平台名不顯示，留在資料裡備用）。
-     評分是本次行程的加權判斷，不是平台星等——依據寫在表格上方。 */
+     評分是本次行程的加權判斷，不是平台星等——依據寫在表格上方。
+     每個 td 都帶 data-l 欄名：窄螢幕把表格攤成卡片時，欄頭列會藏起來，
+     改由 CSS 的 ::before 把 data-l 印在每個值前面。 */
   el("esplans").innerHTML = `<p class="sub rv es-how">${md(E.scorehow)}</p>`
-    + E.groups.map(g => `
+    + E.groups.map(g => {
+    const dcol = g.type === "吃到飽" ? "是否降速" : "流量";
+    return `
     <h3 class="es-gh rv">${esc(g.type)}<span>${g.rows.length} 個方案</span></h3>
     <div class="glass rv sh-stops es-tw" style="margin-top:0"><div class="scroll"><table class="es-t">
-      <tr><th>方案</th><th>評分</th><th>單人價</th><th>${g.type === "吃到飽" ? "是否降速" : "流量"}</th><th>可用網路</th><th>熱點</th><th>通話</th></tr>
+      <tr><th>方案</th><th>評分</th><th>單人價</th><th>${dcol}</th><th>可用網路</th><th>熱點</th><th>通話</th></tr>
       ${g.rows.map(r => `<tr${r.pick ? ` class="on"` : ""}>
         <td class="strong"><a class="es-buy-a" href="${esc(r.buy[1])}" target="_blank" rel="noopener">${esc(r.name)}</a>${r.pick ? `<em class="es-tag">本組首選</em>` : ""}
           <span class="es-vd">${esc(r.verdict)}</span></td>
-        <td class="es-sc">${r.score}</td>
-        <td class="dr-fee">${esc(r.price)}</td>
-        <td>${esc(r.data)}</td>
-        <td><ul class="es-net">${r.net.map(t => `<li>${esc(t)}</li>`).join("")}</ul></td>
-        <td class="es-ox">${esc(r.hotspot)}</td>
-        <td class="es-ox">${esc(r.call)}</td>
+        <td class="es-sc" data-l="評分">${r.score}</td>
+        <td class="dr-fee" data-l="單人價">${esc(r.price)}</td>
+        <td data-l="${dcol}">${esc(r.data)}</td>
+        <td data-l="可用網路"><ul class="es-net">${r.net.map(t => `<li>${esc(t)}</li>`).join("")}</ul></td>
+        <td class="es-ox" data-l="熱點">${esc(r.hotspot)}</td>
+        <td class="es-ox" data-l="通話">${esc(r.call)}</td>
       </tr>`).join("")}
     </table></div></div>
-    <p class="es-sum rv"><b>總結</b>${md(g.sum)}</p>`).join("")
+    <p class="es-sum rv"><b>總結</b>${md(g.sum)}</p>`; }).join("")
     + `<p class="es-legend rv">${md(E.legend)}</p>`;
 
   el("escallnote").innerHTML = `<p class="tkwarn">${md(E.callnote)}</p>`;
