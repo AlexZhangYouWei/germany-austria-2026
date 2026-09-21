@@ -732,8 +732,13 @@ if (PAGE === "tickets") {
 }
 
 if (PAGE === "shop") {
-  const tbl = rows => `<table>${rows.map(([a,b,c]) =>
-    `<tr><td style="width:30%"><strong>${esc(a)}</strong></td><td>${md(b)}</td><td class="sh-where">${esc(c)}</td></tr>`).join("")}</table>`;
+  /* 有圖的品項放 64px 縮圖，沒有的放品名首字母佔位；圖片 title 帶作者與授權 */
+  const CR = Object.fromEntries((SHOP.credits || []).map(([k, f, au, li]) => [k, `${f}　©${au}　${li}`]));
+  const pic = (k, name) => k
+    ? `<img class="sh-img" src="assets/img/shop/${k}.jpg" width="64" height="64" loading="lazy" alt="${esc(name)}" title="${esc(CR[k] || "Wikimedia Commons")}">`
+    : `<span class="sh-img sh-noimg" aria-hidden="true">${esc(name.trim().charAt(0))}</span>`;
+  const tbl = rows => `<table class="sh-tbl">${rows.map(([a,b,c,k]) =>
+    `<tr><td class="sh-pic">${pic(k, a)}</td><td style="width:27%"><strong>${esc(a)}</strong></td><td>${md(b)}</td><td class="sh-where">${esc(c)}</td></tr>`).join("")}</table>`;
   const grp = (cc, label) => `
     <h2 class="sec-h sh-h rv">${label}</h2>
     <details class="glass rv">
@@ -748,7 +753,9 @@ if (PAGE === "shop") {
   el("shstops").innerHTML = `<table>${SHOP.stops.map(([t,pl,w,g]) =>
     `<tr><td style="width:22%"><strong>${esc(t)}</strong></td><td>${esc(pl)}${geoLink("步行", g)}</td><td class="sh-where">${md(w)}</td></tr>`).join("")}</table>`;
   el("shnotes").innerHTML = `<ul class="notes">${SHOP.notes.map(([l,t]) =>
-    `<li><b class="lbl">${esc(l)}</b>${esc(t)}</li>`).join("")}</ul>`;
+    `<li><b class="lbl">${esc(l)}</b>${esc(t)}</li>`).join("")}</ul>`
+    + `<p class="sh-credit">商品照片：食品多取自 Wikimedia Commons（公有領域或 CC 授權），藥品與部分食品為品牌或網路藥局商品頁的官方商品圖；滑鼠移到圖上可見來源與授權，僅供辨識。${(SHOP.credits || []).map(([k,f,au,li,u]) =>
+      `<a href="${esc(u)}" target="_blank" rel="noopener" title="${esc(f)}　©${esc(au)}　${esc(li)}">${esc(k)}</a>`).join("・")}</p>`;
 }
 
 /* 開車須知：租車、停車、加油站、與台灣不同的交通法規。
@@ -775,36 +782,49 @@ if (PAGE === "drive") {
 }
 
 /* 網路分析：eSIM 方案比較。這是決策頁，所以結論放最上面，比較表在後面備查。
-   價格是查詢日當天的，全頁只標一次查詢日（頂部結論卡），不逐列重複。 */
+   全頁只報單人價，因為選方案是個人決定。
+   方案依吃到飽／總量型／每日定量分三組——選錯計費型態比選錯平台更痛。 */
 if (PAGE === "esim") {
   const E = ESIM;
 
   el("esconc").innerHTML = `
-    <p class="es-k">結論・建議方案</p>
-    <p class="es-plan">${esc(E.pick.plan)}</p>
-    <div class="tkbig"><b>${esc(E.pick.one)}</b><span>／人　·　4 人約 ${esc(E.pick.four)}</span></div>
-    <p class="es-why">${md(E.pick.why)}</p>
-    <p class="es-alt">${md(E.pick.alt)}</p>
-    <p class="es-asof">價格與合作網路查詢日 ${esc(E.asof)}，促銷與方案內容隨時會變，購買前以各平台結帳頁為準。</p>`;
+    <p class="es-k">結論・三種計費型態各一個首選</p>
+    <div class="es-picks">${E.pick.map(p => `
+      <div class="es-pick${p.best ? " on" : ""}">
+        <span class="es-pt">${esc(p.type)}${p.best ? `<em>綜合首選</em>` : ""}</span>
+        <p class="es-plan">${esc(p.plan)}</p>
+        <div class="tkbig"><b>${esc(p.one)}</b><span>／人</span></div>
+        <p class="es-why">${md(p.why)}</p>
+      </div>`).join("")}</div>
+    <p class="es-asof">價格與合作網路查詢日 ${esc(E.asof)}，一律為單人價；促銷與方案內容隨時會變，購買前以各平台結帳頁為準。</p>`;
 
-  el("eswhy").innerHTML = `<ul class="notes es-why-l">${E.why.map(t =>
-    `<li>${esc(t)}</li>`).join("")}</ul>`;
+  /* 方案比較表：每個計費型態一張表，表下接該型態的總結。
+     方案名稱本身就是購買連結（buy[0] 的平台名不顯示，留在資料裡備用）。
+     評分是本次行程的加權判斷，不是平台星等——依據寫在表格上方。 */
+  el("esplans").innerHTML = `<p class="sub rv es-how">${md(E.scorehow)}</p>`
+    + E.groups.map(g => `
+    <h3 class="es-gh rv">${esc(g.type)}<span>${g.rows.length} 個方案</span></h3>
+    <div class="glass rv sh-stops es-tw" style="margin-top:0"><div class="scroll"><table class="es-t">
+      <tr><th>方案</th><th>評分</th><th>單人價</th><th>${g.type === "吃到飽" ? "是否降速" : "流量"}</th><th>可用網路</th><th>熱點</th><th>通話</th></tr>
+      ${g.rows.map(r => `<tr${r.pick ? ` class="on"` : ""}>
+        <td class="strong"><a class="es-buy-a" href="${esc(r.buy[1])}" target="_blank" rel="noopener">${esc(r.name)}</a>${r.pick ? `<em class="es-tag">本組首選</em>` : ""}
+          <span class="es-vd">${esc(r.verdict)}</span></td>
+        <td class="es-sc">${r.score}</td>
+        <td class="dr-fee">${esc(r.price)}</td>
+        <td>${esc(r.data)}</td>
+        <td><ul class="es-net">${r.net.map(t => `<li>${esc(t)}</li>`).join("")}</ul></td>
+        <td class="es-ox">${esc(r.hotspot)}</td>
+        <td class="es-ox">${esc(r.call)}</td>
+      </tr>`).join("")}
+    </table></div></div>
+    <p class="es-sum rv"><b>總結</b>${md(g.sum)}</p>`).join("")
+    + `<p class="es-legend rv">${md(E.legend)}</p>`;
 
-  el("esadvice").innerHTML = E.advice.map(([k,t,body]) => `
-    <article class="card glass rv es-ad">
-      <span class="es-ad-k">方案 ${esc(k)}</span>
-      <h4>${esc(t)}</h4>
-      <p>${md(body)}</p>
-    </article>`).join("");
+  el("escallnote").innerHTML = `<p class="tkwarn">${md(E.callnote)}</p>`;
 
-  el("esplans").innerHTML = `<table><tr><th>平台／方案</th><th>流量</th><th>價格</th><th>可用網路／限制</th><th>4 人</th><th>評估</th></tr>`
-    + E.plans.map(([p,d,price,net,four,verdict]) =>
-      `<tr><td class="strong">${esc(p)}</td><td>${esc(d)}</td><td class="dr-fee">${esc(price)}</td><td>${esc(net)}</td>`
-      + `<td class="dr-fee">${esc(four)}</td><td class="es-vd">${esc(verdict)}</td></tr>`).join("") + `</table>`;
-
-  el("escost").innerHTML = `<table><tr><th>方案</th><th>單人</th><th>4 人</th><th>適合情境</th></tr>`
-    + E.cost.map(([p,one,four,who]) =>
-      `<tr><td class="strong">${esc(p)}</td><td class="dr-fee">${esc(one)}</td><td class="dr-fee">${esc(four)}</td><td>${esc(who)}</td></tr>`).join("") + `</table>`;
+  el("escost").innerHTML = `<table><tr><th>方案</th><th>單人價</th><th>適合情境</th></tr>`
+    + E.cost.map(([p,one,who]) =>
+      `<tr><td class="strong">${esc(p)}</td><td class="dr-fee">${esc(one)}</td><td>${esc(who)}</td></tr>`).join("") + `</table>`;
 
   el("escarrier").innerHTML = E.carriers.map(c => `
     <article class="card glass rv es-car">
@@ -814,6 +834,24 @@ if (PAGE === "esim") {
       <p>${md(c.note2)}</p>
       <p class="es-src">${md(c.src)}</p>
     </article>`).join("");
+
+  /* 官方覆蓋數據：說明 → 兩塊判讀 → 道路表 → 對本次行程的結論 → 保留條款 */
+  el("escover").innerHTML = `
+    <p class="sub rv" style="margin:0 0 18px">${md(E.cover.how)}</p>
+    <div class="cards">${E.cover.blocks.map(b => `
+      <article class="card glass rv es-car">
+        <h4>${esc(b.h)}</h4>
+        ${b.points.map(t => `<p>${md(t)}</p>`).join("")}
+      </article>`).join("")}</div>
+    <p class="sub rv" style="margin:22px 0 10px">${md(E.cover.road.note)}</p>
+    <div class="glass rv sh-stops" style="margin-top:0"><div class="scroll"><table>
+      <tr>${E.cover.road.head.map(h => `<th>${esc(h)}</th>`).join("")}</tr>
+      ${E.cover.road.rows.map(r => `<tr><td class="strong">${esc(r[0])}</td>`
+        + r.slice(1).map(c => `<td>${esc(c)}</td>`).join("") + `</tr>`).join("")}
+    </table></div></div>
+    <ul class="notes rv" style="margin-top:22px">${E.cover.concl.map(t => `<li>${md(t)}</li>`).join("")}</ul>
+    <p class="tkwarn rv" style="margin-top:18px">${md(E.cover.caveat)}</p>
+    <p class="es-src rv">${E.cover.src.map(s => md(s)).join("　")}</p>`;
 
   el("esdetail").innerHTML = E.detail.map(d => `
     <details class="glass rv">

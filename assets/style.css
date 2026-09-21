@@ -690,6 +690,11 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .ac-down b{display:block;color:var(--ink);font-weight:600}
 .ac-src{margin:18px 0 0;font-size:11.5px;color:var(--ink3);line-height:1.8}
 .sh-h{margin-bottom:16px}
+.sh-pic{width:64px;padding-right:12px}
+.sh-img{display:block;width:64px;height:64px;object-fit:cover;border-radius:12px;border:1px solid var(--hair2);background:rgba(255,255,255,.04)}
+.sh-noimg{display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:var(--ink3);background:rgba(255,184,114,.08)}
+.sh-credit{margin:18px 2px 0;font-size:11px;line-height:1.8;color:var(--ink3)}
+.sh-credit a{color:var(--ink3);text-decoration:none;border-bottom:1px dotted var(--hair2)}
 .dr-card{padding:10px 26px 26px}
 .dr-kv{grid-template-columns:96px 1fr}
 .dr-kv + .notes{margin-top:22px}
@@ -706,18 +711,49 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .es-conc{padding:24px 26px 22px;border-color:rgba(255,190,140,.3);
   background:linear-gradient(170deg,rgba(255,160,90,.1),rgba(255,141,60,.03))}
 .es-k{margin:0;font-size:11.5px;letter-spacing:.1em;color:var(--ink3)}
-.es-plan{margin:8px 0 0;font-size:19px;font-weight:700;letter-spacing:-.02em}
-.es-conc .tkbig{margin:10px 0 0}
-.es-why{margin:14px 0 0;font-size:13.5px;color:var(--ink2);line-height:1.8}
-.es-alt{margin:12px 0 0;padding:12px 15px;border-radius:12px;font-size:12.5px;line-height:1.8;
-  color:var(--ink2);background:rgba(255,255,255,.04);border:1px solid var(--hair2)}
-.es-asof{margin:14px 0 0;font-size:11.5px;color:var(--ink3);line-height:1.7}
-.es-why-l{margin-top:0}
-.es-ad{padding:22px 24px 24px}
-.es-ad-k{font-size:11.5px;letter-spacing:.1em;color:var(--gold)}
-.es-ad h4{margin:6px 0 0}
-.es-ad p{margin:10px 0 0;font-size:13.5px;color:var(--ink2);line-height:1.8}
-.es-vd{color:var(--ink3);font-size:12px}
+/* 結論卡裡三種型態並排，綜合首選那格加底色拉出層次 */
+.es-picks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
+.es-pick{padding:16px 18px 18px;border-radius:14px;border:1px solid var(--hair2);
+  background:rgba(255,255,255,.03)}
+.es-pick.on{border-color:rgba(255,190,140,.42);background:rgba(255,160,90,.09)}
+.es-pt{font-size:11.5px;letter-spacing:.08em;color:var(--ink3)}
+.es-pick.on .es-pt{color:var(--gold)}
+.es-pt em{font-style:normal;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:10.5px;
+  letter-spacing:.04em;color:#2a1206;background:linear-gradient(160deg,#ffd9ae,#ffab63)}
+.es-plan{margin:8px 0 0;font-size:15.5px;font-weight:700;letter-spacing:-.02em;line-height:1.45}
+.es-pick .tkbig{margin:8px 0 0}
+.es-pick .tkbig b{font-size:24px}
+.es-why{margin:12px 0 0;font-size:12.5px;color:var(--ink2);line-height:1.8}
+.es-asof{margin:16px 0 0;font-size:11.5px;color:var(--ink3);line-height:1.7}
+
+/* 方案比較：依計費型態分組，每組一排卡片 */
+.es-gh{margin:30px 0 14px;font-size:15px;font-weight:600;letter-spacing:-.01em;
+  display:flex;align-items:baseline;gap:10px}
+.es-gh:first-child{margin-top:0}
+.es-gh span{font-size:11.5px;font-weight:400;color:var(--ink3)}
+/* 方案比較表：欄位多，整張橫捲；首選那列打底色。 */
+.es-how{margin:0 0 4px}
+.es-tw{padding-top:2px}
+.es-t td{font-size:12.5px;line-height:1.7;min-width:96px}
+.es-t td:first-child{min-width:150px}
+.es-t tr.on td{background:rgba(255,160,90,.07)}
+.es-tag{font-style:normal;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:10.5px;
+  font-weight:600;color:#2a1206;background:linear-gradient(160deg,#ffd9ae,#ffab63);white-space:nowrap}
+.es-vd{display:block;margin-top:5px;font-size:11.5px;font-weight:400;color:var(--ink3);line-height:1.7}
+.es-sc{min-width:0;font-size:16px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums}
+.es-net{margin:0;padding:0;list-style:none;min-width:150px}
+.es-net li{position:relative;padding-left:11px;line-height:1.65}
+.es-net li+li{margin-top:3px}
+.es-net li::before{content:"";position:absolute;left:0;top:.62em;width:4px;height:4px;
+  border-radius:50%;background:rgba(255,190,140,.42)}
+.es-ox{min-width:0;font-size:14px;font-weight:600;color:var(--ink2)}   /* 不置中：全表欄頭都靠左，內容跟著靠左才對得齊 */
+.es-legend{margin:26px 2px 0;font-size:11.5px;color:var(--ink3);line-height:1.9}
+/* 方案名稱就是購買連結：主要欄位不用整欄橘字，靠底線表示可點，hover 才變色 */
+.es-buy-a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;
+  text-decoration-color:rgba(255,184,114,.35)}
+.es-buy-a:hover{color:var(--amber);text-decoration-color:var(--amber)}
+.es-sum{margin:14px 2px 0;font-size:13px;color:var(--ink2);line-height:1.85}
+.es-sum b{display:block;margin-bottom:4px;font-size:11.5px;letter-spacing:.1em;color:var(--gold);font-weight:600}
 .es-rank{margin:10px 0 0;padding-left:20px;font-size:13.5px;line-height:1.9}
 .es-rank li{color:var(--ink2)}
 .es-rank li:first-child{color:var(--ink);font-weight:600}
@@ -727,7 +763,11 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
   .tkkv{grid-template-columns:1fr;gap:2px 0}
   .ac-cols{grid-template-columns:1fr;gap:18px}
   .sh-stops{padding:4px 16px 8px}
+  .es-picks{grid-template-columns:1fr}
   .sh-where{font-size:11.5px}
+  .sh-pic{width:48px;padding-right:8px}
+  .sh-img{width:48px;height:48px;border-radius:10px}
+  .sh-noimg{font-size:16px}
   .tkkv dt{margin-top:8px}
   .tkdlg{max-width:calc(100vw - 16px);max-height:calc(100dvh - 16px)}
   .tkdlg-in{padding:22px 18px 26px;max-height:calc(100dvh - 16px)}
