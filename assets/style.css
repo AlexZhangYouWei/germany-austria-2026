@@ -837,8 +837,6 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .navtbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .navtbl td{padding:10px 0;border-bottom:1px solid var(--hair2);vertical-align:middle}
 .navtbl tr:last-child td{border-bottom:0}
-/* 時間欄縮到內容寬（1%＋nowrap），再用右 padding 跟地名隔開；固定 px 會讓「08:05–09:45」撐爆後貼住地名 */
-.navt{width:1%;padding-right:18px;color:var(--ink3);font-variant-numeric:tabular-nums;white-space:nowrap}
 .navg{width:40px;text-align:right}
 .navgrp td{padding:18px 0 4px;border-bottom:0;
   font-size:11px;letter-spacing:.08em;color:var(--ink3)}
@@ -1064,7 +1062,6 @@ tr.dim td .v{color:inherit}
   .wxgrid{grid-template-columns:1fr;gap:12px}
   .wxtabs{gap:6px}
   .wxtab{padding:8px 12px;font-size:12px}
-  .navt{padding-right:14px;font-size:12.5px}
   .navg{width:46px}
   .wxc-grid{grid-template-columns:repeat(2,1fr)}
   .wxcard{padding:18px 18px 10px}

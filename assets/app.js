@@ -292,9 +292,8 @@ function navCard(d){
   const groups = dayPlaces(d), noDrive = noDriveDay(d);
   if (!groups.length) return "";
   const rows = groups.map(g =>
-    (g.label ? `<tr class="navgrp"><td colspan="3">${esc(g.label)}</td></tr>` : "")
+    (g.label ? `<tr class="navgrp"><td colspan="2">${esc(g.label)}</td></tr>` : "")
     + g.items.map(x => `<tr>
-        <td class="navt">${esc(x.time)}</td>
         <td>${esc(x.name)}</td>
         <td class="navg">${geoLink(x.cat, x.key, noDrive)}</td>
       </tr>`).join("")).join("");
