@@ -226,8 +226,10 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
 
 /* ───────── timeline ───────── */
 .tl{margin:16px 0 0;padding:0;list-style:none}
-.tl li{display:grid;grid-template-columns:118px 20px 1fr;position:relative}
-/* 時間欄只放時間（導航膠囊改掛在內容欄地點文字下方）。118 = 時間 102 ＋ 16 呼吸。 */
+.tl li{display:grid;grid-template-columns:168px 20px 1fr;position:relative}
+/* 時間欄自己再切兩軌：時間靠左、導航鈕靠右。用 grid 而不是 flex，是因為
+   flex 會讓沒有導航鈕的列把時間往左拉 65px，整頁左緣參差。
+   168 = 時間 102 ＋ gap 8 ＋ 導航鈕 58（26＋6＋26）。多地點的列沒有鈕。 */
 .tl .t{display:grid;grid-template-columns:1fr auto;align-items:center;gap:0 8px;
   font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums;padding:13px 0;line-height:1.6;letter-spacing:.02em}
 .tl .m{position:relative}
@@ -376,13 +378,14 @@ footer{
      內容欄只剩 192px ＝ 12.8 個全形字。改完 288px ＝ 19.2 字。 */
   .tl li{grid-template-columns:18px 1fr}
   .tl .m{grid-column:1;grid-row:1/3}
-  .tl .t{grid-column:2;grid-row:1;min-height:34px;padding:12px 0 2px 12px;
+  .tl .t{grid-column:2;grid-row:1;min-height:48px;padding:12px 0 2px 12px;
     font-size:12px;overflow-wrap:anywhere}
   .tl .c{grid-column:2;grid-row:2;padding:0 0 16px 12px}
-  /* .t 只剩一行 12px 文字（行高 19.2）：12 ＋ 19.2 ＋ 2 ≈ 34，圓心在 21.6px。
-     .m::before 的 top 只能是常數，所以 min-height 釘死。 */
-  .tl .m::before{top:18px}          /* 8px 圓點：21.6 − 4 */
-  .tl li.fx .m::before{top:17px}    /* 10px 圓點：21.6 − 5，同一個圓心 */
+  /* min-height 是對位的關鍵：.t 獨佔第一列，列高由自己撐開——有導航鈕的列 34px、
+     沒有的（無座標或多地點的列）只有 19.2px，時間文字圓心會差 7.4px，
+     而 .m::before 的 top 只能是一個常數。釘死 48px（12 ＋ 34 ＋ 2）之後圓心一律 29px。 */
+  .tl .m::before{top:25px}          /* 8px 圓點：29 − 4 */
+  .tl li.fx .m::before{top:24px}    /* 10px 圓點：29 − 5，同一個圓心 */
   .cards{grid-template-columns:1fr}
   .leg{grid-template-columns:1fr;padding:22px}
   .leg .side{text-align:left}
@@ -842,23 +845,6 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .geo-a:hover{color:#ffd9b0}
 .gmk{width:15px;height:15px;display:block}
 
-/* 地圖 App 偏好：兩個連結都在 HTML 裡，這裡只決定哪一顆看得見。
-   日頁的切換鈕會改 body[data-map]，票券／購物／自駕頁沒有鈕，沿用記住的偏好。 */
-body[data-map="g"] .geo-a,
-body[data-map="a"] .geo-g{display:none}
-
-/* 時間軸的導航膠囊：一顆、帶地名。目標高約 30px（手機 36px），字截斷不換行。 */
-.gorow{margin-top:7px;display:flex;min-width:0}
-.go{display:inline-flex;align-items:center;gap:7px;max-width:100%;min-width:0;
-  padding:5px 12px 5px 9px;border-radius:999px;box-sizing:border-box;
-  border:1px solid var(--hair2);background:rgba(255,255,255,.05);
-  color:var(--ink2);font-size:12.5px;line-height:1.4;text-decoration:none;transition:.2s;
-  -webkit-tap-highlight-color:transparent}
-.go .gmk{width:14px;height:14px;flex:0 0 auto}
-.go span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.go:hover{border-color:rgba(255,190,140,.34);background:rgba(255,160,90,.14);color:var(--ink)}
-.go.geo-a:hover{color:#ffd9b0}
-
 /* 今日導航表：當天的地點去重後集中在這裡，臨時改計畫時當總覽 */
 .navtbl{width:100%;border-collapse:collapse;font-size:13.5px}
 .navtbl td{padding:10px 0;border-bottom:1px solid var(--hair2);vertical-align:middle}
@@ -869,13 +855,7 @@ body[data-map="a"] .geo-g{display:none}
   font-size:11px;letter-spacing:.08em;color:var(--ink3)}
 .navtbl tr:first-child .navgrp,
 .navtbl tr.navgrp:first-child td{padding-top:0}
-.mapsw{display:inline-flex;gap:5px;flex:0 0 auto}
-.mapsw button{appearance:none;cursor:pointer;padding:4px 11px;border-radius:999px;
-  border:1px solid var(--hair2);background:transparent;color:var(--ink3);
-  font:inherit;font-size:11px;font-weight:400;line-height:1.6;
-  -webkit-tap-highlight-color:transparent;transition:.2s}
-.mapsw button[aria-pressed="true"]{border-color:rgba(255,190,140,.34);
-  background:rgba(255,160,90,.14);color:var(--ink)}
+
 .routeline{margin:14px 0 0}
 
 /* ───────── 數值色階 ─────────
@@ -1095,9 +1075,6 @@ tr.dim td .v{color:inherit}
   .wxgrid{grid-template-columns:1fr;gap:12px}
   .wxtabs{gap:6px}
   .wxtab{padding:8px 12px;font-size:12px}
-  .mapsw button{padding:6px 12px;font-size:11.5px}
-  .go{padding:7px 14px 7px 11px;font-size:13px}
-  .go .gmk{width:15px;height:15px}
   .navt{width:66px}
   .navg{width:46px}
   .wxc-grid{grid-template-columns:repeat(2,1fr)}

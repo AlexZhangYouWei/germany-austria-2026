@@ -57,28 +57,27 @@ const STAYS = [
 
 /* 地圖座標對照。2026-09-20 以 OpenStreetMap Nominatim 逐筆查證，落點超出預期範圍者已剔除；
    部分點（艾布湖纜車站、因斯布魯克 Congress、聖科洛曼、國王湖碼頭）沿用路線圖已驗證過的
-   行車航點。時間軸列的第 6 個元素填這裡的 key，沒填就不產生地圖連結。
-   第 3 個元素是導航鈕上的短名，沒填就由全名推導（去括號、去掉尾端的外文名）。 */
+   行車航點。時間軸列的第 6 個元素填這裡的 key，沒填就不產生地圖連結。 */
 const GEO = {
   // 住宿
-  "muc-stay1":["Munich Top Place（Sonnenstraße 3）","48.13840,11.56602","慕尼黑住宿"],
-  "mit-stay":["Mittenwald-Ferien（Mühlenweg 36）","47.43493,11.26288","米滕瓦爾德住宿"],
-  "szg-stay":["In the heart of the city of Salzburg（Bürglsteinstraße 19）","47.79909,13.06290","薩爾斯堡住宿"],
-  "bis-stay":["Ferienhaus Gestüt Pfaffenlehen","47.67516,12.93290","比紹夫斯維森住宿"],
-  "hal-stay":["Hallberg Apartments（Seestraße 113）","47.56135,13.64889","哈修塔特住宿"],
-  "muc-stay2":["Motel One München-Hauptbahnhof","48.13881,11.56127","Motel One"],
+  "muc-stay1":["Munich Top Place（Sonnenstraße 3）","48.13840,11.56602"],
+  "mit-stay":["Mittenwald-Ferien（Mühlenweg 36）","47.43493,11.26288"],
+  "szg-stay":["In the heart of the city of Salzburg（Bürglsteinstraße 19）","47.79909,13.06290"],
+  "bis-stay":["Ferienhaus Gestüt Pfaffenlehen","47.67516,12.93290"],
+  "hal-stay":["Hallberg Apartments（Seestraße 113）","47.56135,13.64889"],
+  "muc-stay2":["Motel One München-Hauptbahnhof","48.13881,11.56127"],
   // 交通與停車
   "muc-t1":["慕尼黑機場","48.35396,11.77859"],
-  "sixt-stachus":["SIXT 慕尼黑卡爾廣場店（Karlsplatz 3）","48.13989,11.56698","SIXT 租車"],
+  "sixt-stachus":["SIXT 慕尼黑卡爾廣場店（Karlsplatz 3）","48.13989,11.56698"],
   "muc-hbf":["慕尼黑中央車站","48.14073,11.55694"],
   "karlsplatz":["卡爾廣場 Karlsplatz Stachus","48.13949,11.56562"],
-  "nsw-p4":["新天鵝堡 P4 停車場","47.55453,10.73568","P4 停車場"],
-  "eibsee-park":["艾布湖／楚格峰纜車停車場","47.45770,10.97970","艾布湖停車場"],
-  "gap-olympia":["奧林匹克滑雪體育場停車場","47.48151,11.11765","滑雪體育場停車場"],
-  "inn-congress":["因斯布魯克 Congress／Altstadtgarage","47.27020,11.39360","Congress 停車場"],
-  "inn-hbf":["因斯布魯克中央車站","47.26330,11.40102","因斯布魯克車站"],
+  "nsw-p4":["新天鵝堡 P4 停車場","47.55453,10.73568"],
+  "eibsee-park":["艾布湖／楚格峰纜車停車場","47.45770,10.97970"],
+  "gap-olympia":["奧林匹克滑雪體育場停車場","47.48151,11.11765"],
+  "inn-congress":["因斯布魯克 Congress／Altstadtgarage","47.27020,11.39360"],
+  "inn-hbf":["因斯布魯克中央車站","47.26330,11.40102"],
   "koe-park":["國王湖停車場","47.59182,12.98953"],
-  "hal-p1":["哈修塔特 P1 停車場（Hotel-Shuttle Info-Point 在入口旁）","47.55257,13.64824","P1 停車場"],
+  "hal-p1":["哈修塔特 P1 停車場（Hotel-Shuttle Info-Point 在入口旁）","47.55257,13.64824"],
   // 慕尼黑
   "asamkirche":["阿桑教堂 Asamkirche","48.13521,11.56952"],
   "marienplatz":["瑪利亞廣場 Marienplatz","48.13714,11.57540"],
@@ -86,17 +85,17 @@ const GEO = {
   "frauenkirche":["聖母教堂 Frauenkirche","48.13858,11.57359"],
   "augustiner-keller":["奧古斯丁啤酒花園 Augustiner-Keller","48.14350,11.55157"],
   "neuhauser":["新豪瑟街 Neuhauser Straße","48.13860,11.56852"],
-  "dm-stachus":["dm 藥妝店（Karlsplatz 25，Stachus Passagen 地下層）","48.13969,11.56455","dm 藥妝店"],
-  "ludwigs-apotheke":["國際路德維希藥局 Internationale Ludwigs-Apotheke（Neuhauser Str. 11）","48.13824,11.57045","路德維希藥局"],
+  "dm-stachus":["dm 藥妝店（Karlsplatz 25，Stachus Passagen 地下層）","48.13969,11.56455"],
+  "ludwigs-apotheke":["國際路德維希藥局 Internationale Ludwigs-Apotheke（Neuhauser Str. 11）","48.13824,11.57045"],
   // 新天鵝堡周邊
   "marienbruecke":["瑪麗安橋 Marienbrücke","47.55496,10.74940"],
   "neuschwanstein":["新天鵝堡 Schloss Neuschwanstein","47.55755,10.74970"],
   "alpsee":["阿爾卑斯湖 Alpsee","47.54896,10.72132"],
-  "hohenschwangau":["霍恩施萬高村 Hohenschwangau（Alpseestraße）","47.55519,10.73948","霍恩施萬高村"],
+  "hohenschwangau":["霍恩施萬高村 Hohenschwangau（Alpseestraße）","47.55519,10.73948"],
   "st-coloman":["聖科洛曼教堂 St. Coloman","47.57160,10.76140"],
   // 米滕瓦爾德與加米施
   "obermarkt":["上市場街 Obermarkt","47.44087,11.26029"],
-  "mit-apotheke":["米滕瓦爾德車站藥局 Bahnhof-Apotheke","47.44022,11.26542","車站藥局"],
+  "mit-apotheke":["米滕瓦爾德車站藥局 Bahnhof-Apotheke","47.44022,11.26542"],
   "zugspitze":["楚格峰 Zugspitze","47.42121,10.98630"],
   "eibsee":["艾布湖 Eibsee","47.45825,10.97084"],
   "partnachklamm":["帕特納赫峽谷 Partnachklamm","47.46465,11.12212"],
@@ -106,7 +105,7 @@ const GEO = {
   "seegrube":["澤格魯貝 Seegrube","47.30746,11.37866"],
   "hafelekar":["哈菲勒卡峰 Hafelekar","47.31674,11.39331"],
   "goldenes-dachl":["黃金屋頂 Goldenes Dachl","47.26857,11.39328"],
-  "rattenberg":["拉滕貝格 Rattenberg 老城","47.43928,11.89224","拉滕貝格老城"],
+  "rattenberg":["拉滕貝格 Rattenberg 老城","47.43928,11.89224"],
   // 薩爾斯堡
   "makartplatz":["馬卡特廣場 Makartplatz","47.80295,13.04388"],
   "staatsbruecke":["薩爾察赫河 主橋 Staatsbrücke","47.80131,13.04481"],
@@ -126,7 +125,7 @@ const GEO = {
   "hintersee":["辛特湖 Hintersee","47.60653,12.85375"],
   // 哈修塔特與基姆湖
   "hal-marktplatz":["哈修塔特市集廣場 Marktplatz","47.56240,13.64905"],
-  "salzwelten-tal":["哈修塔特鹽礦纜車山下站","47.55607,13.64529","鹽礦纜車山下站"],
+  "salzwelten-tal":["哈修塔特鹽礦纜車山下站","47.55607,13.64529"],
   "salzwelten":["哈修塔特鹽礦 Salzwelten","47.56202,13.63927"],
   "skywalk":["哈修塔特天空步道 Welterbeblick","47.56120,13.64353"],
   "prien":["普里恩 Prien am Chiemsee","47.85417,12.34555"],

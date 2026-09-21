@@ -5,12 +5,6 @@
 const PAGE = document.body.dataset.page;
 const DAYN = +document.body.dataset.day || 0;
 
-/* 地圖 App 偏好：g＝Google、a＝Apple，存在各自裝置。
-   兩個連結永遠都產生，由 body[data-map] 決定哪一顆現身，切換不必重畫任何東西。 */
-let MAPAPP = "g";
-try { if (localStorage.getItem("mapapp") === "a") MAPAPP = "a"; } catch (e) {}
-document.body.dataset.map = MAPAPP;
-
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 /* 備註支援 **粗體** 與 [文字](https://…)。先 esc 再轉，所以連結文字與網址都已經跳脫過；
    只收 http/https，不接受其他協定。 */
@@ -191,14 +185,6 @@ function travelMode(cat, noDrive){
 /* 「無自駕」的日子（Day 1、5）市區景點一律步行導航，否則老城裡 300 m 的教堂會開出開車路線 */
 const noDriveDay = d => d.meta.some(m => /無自駕/.test(m));
 
-/* 導航鈕上的短名：GEO 第 3 個元素優先；沒填就去括號、去掉尾端的外文名 */
-function geoShort(key){
-  const g = GEO[key];
-  if (g[2]) return g[2];
-  const s = g[0].replace(/（.*?）/g, "").trim();
-  const m = s.match(/^(.*[\u4e00-\u9fff])\s+[A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß\s.\-']*$/);
-  return m ? m[1].trim() : s;
-}
 /* Apple Maps 的 dirflg：d 開車、w 步行、r 大眾運輸；daddr 單獨給就以目前位置為起點 */
 const APPLE_FLG = { walking:"w", transit:"r", driving:"d" };
 
@@ -230,7 +216,7 @@ function navUrls(cat, key, noDrive){
     gmap:`https://www.google.com/maps/dir/?api=1&destination=${ll}&travelmode=${mode}`,
     amap:`https://maps.apple.com/?daddr=${ll}&dirflg=${APPLE_FLG[mode]}` };
 }
-/* 純圖示版：今日導航表、票券、購物、自駕頁用 */
+/* 兩顆圖示：左 Google、右 Apple。時間軸列、今日導航表、票券、購物、自駕頁共用 */
 function geoLink(cat, key, noDrive){
   const u = navUrls(cat, key, noDrive);
   if (!u) return "";
@@ -238,15 +224,6 @@ function geoLink(cat, key, noDrive){
     + `<a class="geo-g" href="${u.gmap}" target="_blank" rel="noopener" aria-label="用 Google 地圖導航至 ${esc(u.name)}">${ICON_G}</a>`
     + `<a class="geo-a" href="${u.amap}" target="_blank" rel="noopener" aria-label="用 Apple 地圖導航至 ${esc(u.name)}">${ICON_A}</a>`
     + `</span>`;
-}
-/* 帶地名的膠囊版：時間軸列用。一列常寫三四個地點卻只有一個座標，
-   鈕上直接寫會開到哪，走在街上才不用猜。兩顆都產生，CSS 依偏好只留一顆。 */
-function goPill(cat, key, noDrive){
-  const u = navUrls(cat, key, noDrive);
-  if (!u) return "";
-  const label = esc(geoShort(key));
-  return `<a class="go geo-g" href="${u.gmap}" target="_blank" rel="noopener" aria-label="用 Google 地圖導航至 ${esc(u.name)}">${ICON_G}<span>${label}</span></a>`
-       + `<a class="go geo-a" href="${u.amap}" target="_blank" rel="noopener" aria-label="用 Apple 地圖導航至 ${esc(u.name)}">${ICON_A}<span>${label}</span></a>`;
 }
 
 /* 今日行車路線：航點與路線圖同一組，兩者永遠一致 */
@@ -262,14 +239,16 @@ function routeLink(day, variant){
     + `在 Google Maps 開啟今日路線　${r.km} km</a>`;
 }
 
-/* 時間軸列：地點文字下方一顆帶地名的導航膠囊，時間欄只放時間。 */
+/* 一列寫了好幾個地點（用「、」隔開，或「／」並列而不是「→」路線）時只有一個座標，
+   列上的按鈕會指不準，所以不掛；這種列請到下方的「今日導航」表找。 */
+const multiPlace = place => /、/.test(place) || (/／/.test(place) && !/→/.test(place));
+
 function timeline(rows, noDrive){
   return `<ul class="tl">` + rows.map(([t,cat,place,note,fx,geo]) => `
     <li class="${fx?"fx":""}">
-      <div class="t"><span>${esc(t)}</span></div><div class="m"></div>
+      <div class="t"><span>${esc(t)}</span>${geo && !multiPlace(place) ? geoLink(cat, geo, noDrive) : ""}</div><div class="m"></div>
       <div class="c">
         <div class="p"><span class="cat">${esc(cat)}</span>${esc(place)}</div>
-        ${geo ? `<div class="gorow">${goPill(cat, geo, noDrive)}</div>` : ""}
         ${note && note !== "—" ? `<div class="n">${md(note)}</div>` : ""}
       </div>
     </li>`).join("") + `</ul>`;
@@ -320,10 +299,7 @@ function navCard(d){
         <td class="navg">${geoLink(x.cat, x.key, noDrive)}</td>
       </tr>`).join("")).join("");
   return `<section class="day glass rv">
-    <div class="daybox-t">今日導航<span class="mapsw" role="group" aria-label="選擇地圖 App">
-      ${[["g","Google"],["a","Apple"]].map(([k,n]) =>
-        `<button type="button" data-map="${k}" aria-pressed="${k === MAPAPP}">${n}</button>`).join("")}
-    </span></div>
+    <div class="daybox-t">今日導航<span class="daybox-when">多地點的列在這裡點</span></div>
     <table class="navtbl">${rows}</table>
   </section>`;
 }
@@ -1121,18 +1097,6 @@ document.addEventListener("click", e => {
     .forEach(x => x.setAttribute("aria-selected", x.dataset.i === i));
   document.querySelectorAll(`.panel[data-g="${g}"]`)
     .forEach(x => x.hidden = x.dataset.i !== i);
-});
-
-/* 地圖 App 切換：只改 body 上的屬性，哪一顆圖示現身交給 CSS */
-document.addEventListener("click", e => {
-  const b = e.target.closest(".mapsw button");
-  if (!b) return;
-  const m = b.dataset.map;
-  MAPAPP = m;
-  document.body.dataset.map = m;
-  try { localStorage.setItem("mapapp", m); } catch (e2) {}
-  document.querySelectorAll(".mapsw button")
-    .forEach(x => x.setAttribute("aria-pressed", x.dataset.map === m));
 });
 
 /* 進場動畫 */
