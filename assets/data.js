@@ -734,6 +734,12 @@ const TICKETS = {
       links:[["官方頁面","https://www.salzwelten.at/en/hallstatt/"],["購票條款","https://www.salzwelten.at/en/service/legal-conditions/terms-and-conditions-ticketshop"]],
     },
   ],
+  /* 票面 QR、訂單確認信與掃描檔放在共用雲端資料夾，網站本身不存票面。 */
+  drive:{
+    url:"https://drive.google.com/drive/folders/14DUeHWMCKO3p5xdhBMM96YLZ-8TwfCP2?usp=sharing",
+    label:"票券雲端資料夾",
+    note:"票面 QR、訂單確認信與掃描檔都放這裡。出發前請自己下載成離線可開的檔案——山區與國王湖一帶訊號不穩，臨櫃時打不開雲端就等於沒有票。",
+  },
   later:[
     { day:3, date:"10/07（三）", city:"艾布湖", ac:"zug",
       name:"楚格峰纜車 Seilbahn Zugspitze", big:"08:30", bigk:"首班纜車，A 方案當天現場買",

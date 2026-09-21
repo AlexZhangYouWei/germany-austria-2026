@@ -650,6 +650,14 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .tklink{margin:16px 0 0}
 .tkaddr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 0;font-size:12.5px;line-height:1.7;color:var(--ink2)}
 .tkday{margin:8px 0 0;font-size:12px;color:var(--ink3)}
+/* 票券雲端資料夾：整塊可點，放在分頁列之前——要找票面 QR 的人第一眼就該看到 */
+.tkdrive{display:block;padding:18px 22px 20px;text-decoration:none;color:inherit;
+  border-color:rgba(255,190,140,.3);background:linear-gradient(170deg,rgba(255,170,100,.1),rgba(255,140,70,.04));
+  transition:transform .22s cubic-bezier(.2,.7,.3,1),border-color .22s}
+.tkdrive:hover{transform:translateY(-2px);border-color:rgba(255,190,140,.5)}
+.tkdrive-t{display:block;font-size:14.5px;font-weight:600;letter-spacing:-.01em;color:var(--amber)}
+.tkdrive-n{display:block;margin-top:7px;font-size:12.5px;color:var(--ink2);line-height:1.8}
+
 .tktabs{display:flex;width:100%;margin:22px 0 14px}
 .tktabs button{flex:1;text-align:center;justify-content:center}
 .tktabs button em{font-style:normal;font-size:11px;margin-left:6px;opacity:.7;font-variant-numeric:tabular-nums}

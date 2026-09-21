@@ -710,8 +710,13 @@ if (PAGE === "tickets") {
   };
 
   const groups = [["已買", TICKETS.bought], ["尚未購買", TICKETS.later]];
+  const D = TICKETS.drive;
   el("tkroot").innerHTML =
-    `<div class="tabs tktabs" role="tablist">${groups.map(([l, xs], i) =>
+    `<a class="glass rv tkdrive" href="${esc(D.url)}" target="_blank" rel="noopener">
+      <span class="tkdrive-t">${esc(D.label)}　→</span>
+      <span class="tkdrive-n">${esc(D.note)}</span>
+    </a>`
+    + `<div class="tabs tktabs" role="tablist">${groups.map(([l, xs], i) =>
       `<button role="tab" aria-selected="${i===0}" data-g="tk" data-i="${i}">${l}<em>${xs.length}</em></button>`).join("")}</div>`
     + groups.map(([l, xs], i) =>
       `<div class="panel" data-g="tk" data-i="${i}" ${i===0?"":"hidden"}><div class="cards">${xs.map(card).join("")}</div></div>`).join("")
