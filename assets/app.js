@@ -34,6 +34,12 @@ const DAY_STAY  = ["慕尼黑","米滕瓦爾德","米滕瓦爾德","薩爾斯堡
 
 el("nav").innerHTML = NAV.map(([href,label,key]) =>
   `<a href="${href}"${key === PAGE ? ' class="on" aria-current="page"' : ""}>${label}</a>`).join("");
+/* 窄螢幕導覽列會橫向捲動：把目前頁的膠囊捲到正中間，點過去後不會只剩半顆露在邊上 */
+{
+  const nb = el("nav"), on = nb.querySelector("a.on");
+  if (on && nb.scrollWidth > nb.clientWidth)
+    nb.scrollLeft = on.offsetLeft - (nb.clientWidth - on.offsetWidth) / 2;
+}
 
 const rail = el("rail");
 if (rail && PAGE === "day") {
@@ -146,18 +152,28 @@ const wxWhen = f => f.far ? `${esc(f.far.from)} 起 ${esc(f.far.src)} 就報得�
 /* AROME 沒有降雨機率，那一欄借自階梯下一個模式；借了就要標。 */
 const wxPop  = f => f.pop_src ? `　·　雨機率取自 ${esc(f.pop_src)}` : "";
 
-/* 日頁上方那條預報。Day 3 有山谷與峰頂兩筆。 */
+/* 預報卡內容（預報頁與日頁共用）：抬頭、四段表、腳註。外框由呼叫端決定。 */
+function wxBody(f, head){
+  return `<div class="wxc-head">${head}
+        <span class="wxc-date">${esc(f.date.slice(5).replace("-", "/"))}</span>
+        <span class="wxc-place">${esc(f.place)}</span>
+        ${wxSrc(f)}
+      </div>
+      ${wxPeriods(f)}
+      ${f.kind === "det"
+        ? `<p class="wxc-foot">提前 ${f.lead} 天　·　Europe/Berlin${wxPop(f)}</p>`
+        : `<p class="wxc-nodata">提前 ${f.lead} 天，超出數值模式射程。${wxWhen(f)}</p>`}`;
+}
+
+/* 日頁那張預報卡。Day 3 有山谷與峰頂兩筆，多地點時用與時辰表相同的頁籤切換。 */
 function dayWeather(n){
   const rows = FC.filter(f => f.day === n);
   if (!rows.length) return "";
-  return `<div class="daywx">` + rows.map(f =>
-    `<div class="daywx-one">`
-    + `<div class="daywx-hd">${rows.length > 1 ? `<span class="daywx-place">${esc(f.place)}</span>` : ""}${wxSrc(f)}</div>`
-    + wxPeriods(f)
-    + (f.kind === "det"
-        ? (f.pop_src ? `<p class="wxc-foot">${wxPop(f).slice(3)}</p>` : "")
-        : `<p class="wxc-nodata">提前 ${f.lead} 天，超出數值模式射程。${wxWhen(f)}</p>`)
-    + `</div>`).join("") + `</div>`;
+  if (rows.length === 1) return wxBody(rows[0], "");
+  const g = `wx${n}`;
+  return `<div class="tabs daywx-tabs" role="tablist">${rows.map((f,i) =>
+      `<button role="tab" aria-selected="${i===0}" data-g="${g}" data-i="${i}">${esc(f.place)}</button>`).join("")}</div>`
+    + rows.map((f,i) => `<div class="panel" data-g="${g}" data-i="${i}" ${i===0?"":"hidden"}>${wxBody(f, "")}</div>`).join("");
 }
 
 /* ── 逐日行程 ───────────────────────────────────────── */
@@ -276,12 +292,12 @@ function dayArticle(d){
     <div class="day-meta">${d.meta.map(m => `<span>${esc(m)}</span>`).join("")}</div>
   </article>
 
-  ${wx ? `<section class="day glass rv">
+  ${chk}
+
+  ${wx ? `<section class="day glass rv wxcard">
     <div class="daybox-t">天氣預報<a class="daylink" href="weather.html">九天完整預報</a></div>
     ${wx}
   </section>` : ""}
-
-  ${chk}
 
   <section class="day glass rv">
     <div class="daybox-t">時辰表${d.blocks.some(b => b.tabs) ? "" : routeLink(d.n, "")}</div>
@@ -604,16 +620,6 @@ if (PAGE === "weather") {
     + `<br>德國地點以 <b>DWD</b>、奧地利地點以 <b>GeoSphere Austria</b> 的官方模式為首選；超出射程時改用 ECMWF 與 GEFS＋GEM 系集，可用下方 tab 切換比對。`
     + (age >= 1 ? `　·　<b class="stale">本頁已 ${age} 天未更新，請重跑建置</b>` : "");
 
-  /* 色階圖例。手機的四段列會隱藏欄位頭，這裡補上「數字各是什麼」。 */
-  const KEY = [
-    ["氣溫 °C", [["t1","&lt;6"],["t2","6–10"],["t3","10–13"],["t4","13–16"],["t5","≥16"]]],
-    ["雨機率 %", [["r0","&lt;30"],["r1","30–50"],["r2","≥50"]]],
-    ["雨量 mm", [["r0","&lt;0.5"],["r1","0.5–1.5"],["r2","≥1.5"]]],
-  ];
-  el("wxkey").innerHTML = KEY.map(([name, xs]) =>
-    `<span class="vkey-g"><b>${name}</b>`
-    + xs.map(([c, t]) => `<i class="${c}"></i>${t}`).join("　") + `</span>`).join("");
-
   /* 三層來源 tab。FC 每筆的 v 存三層各自的結果，筆身是最準那層；「最佳」就是筆身。
      卡片結構不因 tab 而變，只換餵進去的那筆資料。 */
   const TABS = [
@@ -623,16 +629,7 @@ if (PAGE === "weather") {
     ["pool",  "GEFS＋GEM 系集", "NOAA GEFS 31＋加拿大 GEM 21 併成 52 成員多模式系集，35 天內；只看趨勢。"],
   ];
   const card = (f, shown) => `<article class="wxcard glass rv${shown ? " in" : ""}${f.kind === "none" ? " wxc-empty" : ""}">
-      <div class="wxc-head">
-        <a class="daylink" href="day${f.day}.html">Day ${f.day}</a>
-        <span class="wxc-date">${esc(f.date.slice(5).replace("-", "/"))}</span>
-        <span class="wxc-place">${esc(f.place)}</span>
-        ${wxSrc(f)}
-      </div>
-      ${wxPeriods(f)}
-      ${f.kind === "det"
-        ? `<p class="wxc-foot">提前 ${f.lead} 天　·　Europe/Berlin${wxPop(f)}</p>`
-        : `<p class="wxc-nodata">提前 ${f.lead} 天，超出數值模式射程。${wxWhen(f)}</p>`}
+      ${wxBody(f, `<a class="daylink" href="day${f.day}.html">Day ${f.day}</a>`)}
     </article>`;
   const pickRec = (f, t) => t === "best" ? f : (f.v && f.v[t]) || { day:f.day, date:f.date, place:f.place, lead:f.lead, kind:"none" };
 

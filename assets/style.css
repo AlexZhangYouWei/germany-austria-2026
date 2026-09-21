@@ -58,6 +58,7 @@ em{font-style:normal;font-weight:600;color:#ffcb9a}
 nav{position:sticky;top:0;z-index:60;padding:12px 16px 6px}
 .navbar{
   max-width:900px;margin:0 auto;display:flex;gap:2px;align-items:center;
+  position:relative;               /* 讓子項 offsetLeft 以本列為基準，置中目前頁才算得準 */
   padding:5px;border-radius:999px;overflow-x:auto;scrollbar-width:none;
   scroll-behavior:auto;            /* 不繼承 html 的 smooth，避免與頁面捲動互搶 */
   background:rgba(28,16,10,.62);
@@ -327,8 +328,6 @@ tr:last-child td{border-bottom:0}
 
 /* ───────── 每日天氣列 ───────── */
 /* 位於「天氣預報」卡內，不再自帶外框 */
-.daywx{display:grid;gap:10px}
-.daywx-place{font-size:12px;color:var(--ink3);font-weight:600}
 
 /* ───────── 天氣預報樣式 ───────── */
 .wxcond{
@@ -794,21 +793,12 @@ tr.dim td .v{color:inherit}
 .wxp-dash{color:var(--ink3);font-size:13px}
 .wxc-foot{margin:11px 0 6px;font-size:11px;color:var(--ink3)}
 
-/* 日頁：同一個元件，但外框交給 .day 卡片，這裡只收邊距 */
-.daywx-one + .daywx-one{margin-top:18px}
-.daywx-hd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
-.daywx-one .wxp{margin-left:0;margin-right:0}
-.daywx-one .wxp-hd,.daywx-one .wxp-row{padding-left:0;padding-right:0}
+/* 日頁：整節就是一張 .wxcard（邊距與出血跟預報頁一致），多地點時上方多一列頁籤 */
+.daywx-tabs{margin:0 0 14px}
 
 .wxc-lead{margin-left:auto;font-size:11px;color:var(--ink3)}
 .wxc-nodata{margin:10px 0 0;font-size:11.5px;line-height:1.75;color:var(--ink3)}
 .wxc-empty{opacity:.72}
-.vkey{display:flex;flex-wrap:wrap;gap:8px 22px;margin:12px 2px 0;font-size:11.5px;color:var(--ink3)}
-.vkey-g{display:inline-flex;align-items:center;gap:6px}
-.vkey-g b{font-weight:600;color:var(--ink2);margin-right:2px}
-.vkey i{display:inline-block;width:9px;height:9px;border-radius:3px;
-  background:currentColor;margin-left:6px;flex:0 0 auto}
-
 /* 天氣總表連回當天 */
 .daylink{color:var(--amber);text-decoration:none;border-bottom:1px solid rgba(255,184,114,.3)}
 .daylink:hover{border-bottom-color:var(--amber)}
@@ -909,7 +899,7 @@ tr.dim td .v{color:inherit}
      第一行 時段＋狀況＋氣溫，第二行 雨機率＋雨量。不另開斷點，
      免得 cssfix.js 只掃 760 區塊而漏檢。 */
   .wxp{margin:12px -18px 0}
-  .wxp-hd{display:none}            /* 兩行式之下欄位頭對不齊，改由色階圖例與單位自解釋 */
+  .wxp-hd{display:none}            /* 兩行式之下欄位頭對不齊，改由每個數字自帶的單位（°／%／mm）自解釋 */
   .wxp-row{
     grid-template-columns:52px 1fr auto;
     grid-template-areas:"when cond temp"
@@ -924,8 +914,6 @@ tr.dim td .v{color:inherit}
   .wxp-rain{grid-area:rain;justify-content:flex-start;gap:14px}
   .wxp-p,.wxp-m{width:auto;text-align:left}
   .wxp-row.na{grid-template-columns:52px 1fr;grid-template-areas:none}
-  .daywx-one .wxp{margin-left:0;margin-right:0}
-  .daywx-one .wxp-row{padding-left:0;padding-right:0}
 
   /* 導航鈕：手機放大到 34px，觸控才按得準 */
   .geo{gap:8px}
