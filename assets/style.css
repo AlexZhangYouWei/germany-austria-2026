@@ -648,7 +648,19 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 }
 .tkrules{margin-top:16px}
 .tklink{margin:16px 0 0}
-.accard .cardtitle{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.tkaddr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 0;font-size:12.5px;line-height:1.7;color:var(--ink2)}
+.tkday{margin:8px 0 0;font-size:12px;color:var(--ink3)}
+.tktabs{margin:22px 0 14px}
+.tktabs button em{font-style:normal;font-size:11px;margin-left:6px;opacity:.7;font-variant-numeric:tabular-nums}
+/* 「更多」貼在票卡底邊、與卡等寬出血；展開後內文吃 .dbody 的暗底 */
+.tkmore{margin:20px -26px -28px;border-top:1px solid var(--hair2);border-radius:0 0 var(--r) var(--r)}
+.tkmore summary{padding:14px 26px}
+.tkmore summary .s-t{font-size:13.5px;font-weight:600;color:var(--amber)}
+.tkmore .dbody{padding:4px 26px 26px}
+.tkmore .kv{margin-top:14px}
+.ac-block{margin-top:26px;padding-top:20px;border-top:1px solid var(--hair2)}
+.ac-block > .ac-h{margin-bottom:0}
+.ac-block .tkbig{margin-top:10px}
 .ac-sub{margin:4px 0 0;font-size:12.5px;color:var(--ink3)}
 .ac-lead{margin-top:14px}
 .ac-cols{display:grid;grid-template-columns:1.25fr 1fr;gap:18px 28px;margin-top:20px;padding-top:18px;border-top:1px solid var(--hair2);min-width:0}
@@ -665,6 +677,14 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .ac-down li:last-child{border-bottom:0}
 .ac-down b{display:block;color:var(--ink);font-weight:600}
 .ac-src{margin:18px 0 0;font-size:11.5px;color:var(--ink3);line-height:1.8}
+.sh-h{margin-bottom:16px}
+.dr-card{padding:10px 26px 26px}
+.dr-kv{grid-template-columns:96px 1fr}
+.dr-kv + .notes{margin-top:22px}
+.dr-fee{color:var(--gold);white-space:nowrap;font-variant-numeric:tabular-nums}
+.dr-rules td,.dr-rules th{padding-right:16px}
+.dr-tw{color:var(--ink2)}
+.dr-rules td.strong{white-space:nowrap}
 .sh-where{color:var(--ink3);font-size:12px;width:30%}
 .sh-stops{padding:6px 24px 10px;margin-top:18px}
 .sh-stops .geo{margin-left:8px}

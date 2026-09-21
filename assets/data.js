@@ -684,16 +684,15 @@ const EMERGENCY = {
 const TICKETS = {
   bought:[
     {
-      day:2, date:"10/06（二）", city:"霍恩施萬高",
+      day:2, date:"10/06（二）", city:"霍恩施萬高", ac:"nsw",
       name:"新天鵝堡 Schloss Neuschwanstein",
       big:"11:45", bigk:"入場時間 Einlasszeit",
+      addr:"Ticket Center Hohenschwangau・Alpseestraße 12, 87645 Hohenschwangau", geo:"nsw-p4",
       kv:[
         ["導覽團號","Tour 445"],
         ["語言","Audiotour Mandarin（中文語音導覽）"],
         ["票種","Erwachsen 成人 × 4"],
         ["金額","€21.00 ＋ 預售費 €2.50 ＝ €23.50／人，合計 €94.00"],
-        ["售票方","Ticket Center Hohenschwangau"],
-        ["地址","Alpseestraße 12, 87645 Hohenschwangau"],
       ],
       tel:["+49 8362 930830","+498362930830"],
       warn:"遲到不補位、不改期、不退費。遺失或未使用皆無補償，只有官方因故關閉才全額退款。",
@@ -707,9 +706,10 @@ const TICKETS = {
       links:[["官方參觀須知","https://www.hohenschwangau.de/"]],
     },
     {
-      day:6, date:"10/10（六）", city:"國王湖",
+      day:6, date:"10/10（六）", city:"國王湖", ac:"koe",
       name:"國王湖遊船 Königssee Schifffahrt",
       big:"08:45", bigk:"去程開船（Fahrt-Nr. 10）",
+      addr:"Seelände 碼頭・Seestraße 55, 83471 Schönau am Königssee", geo:"koe-seelaende",
       kv:[
         ["航段","Seelände → Salet 薩雷特，來回票"],
         ["回程","時間自由選擇，船票務必留存"],
@@ -717,7 +717,6 @@ const TICKETS = {
         ["金額","€29.80／人，合計 €119.20"],
         ["票券形式","團體票 1 張 ＋ 個人票 4 張（可分開持有）"],
         ["售票方","Bayerische Seenschifffahrt GmbH"],
-        ["地址","Seestraße 55, 83471 Schönau am Königssee"],
       ],
       tel:["+49 8652 9636-0","+49865296360"],
       warn:"票面明定開船前 20 分鐘抵達 Seelände，即 08:25 前。未按預訂時間出現即喪失搭乘權，無補搭、無退費。",
@@ -729,15 +728,15 @@ const TICKETS = {
       links:[["官方船期與公告","https://www.seenschifffahrt.de/en/koenigssee/"]],
     },
     {
-      day:8, date:"10/12（一）", city:"哈修塔特",
+      day:8, date:"10/12（一）", city:"哈修塔特", ac:"hal",
       name:"哈修塔特鹽礦＋纜車套票 Salzwelten Hallstatt",
       big:"10:50", bigk:"導覽開始 Tour-Beginn",
+      addr:"鹽礦纜車山下站・Salzbergstraße 21, 4830 Hallstatt", geo:"salzwelten-tal",
       kv:[
         ["內容","鹽礦導覽 ＋ 纜車來回（with funicular round trip）"],
         ["票種","成人套票 × 4"],
         ["金額","€49.00／人，合計 €196.00（含稅）"],
         ["售票方","Salzwelten Hallstatt"],
-        ["地址","Salzbergstraße 21, 4830 Hallstatt, Austria"],
       ],
       tel:["+43 6132 200 24 00","+4361322002400"],
       warn:"已由原訂 10/11 10:30 改期至 10/12（一）10:50 場次。依官方售票條款仍可再改期（現場售票口、info@salzwelten.at 或電話），參觀前 72 小時以上來信可免費取消，即 10/09 10:50 前。",
@@ -753,20 +752,26 @@ const TICKETS = {
     },
   ],
   later:[
-    { name:"楚格峰纜車 Zugspitze", when:"10/07（Day 3）當天現場，A 方案才買", price:"依當日票價",
+    { day:3, date:"10/07（三）", city:"艾布湖", ac:"zug",
+      name:"楚格峰纜車 Seilbahn Zugspitze", big:"08:30", bigk:"首班纜車，A 方案當天現場買",
+      addr:"艾布湖站 Talstation Eibsee・Am Eibsee 1, 82491 Grainau", geo:"eibsee-park",
+      price:"成人 €78／人（Ticket Zugspitze，含上下山與冰川纜車）",
       how:"**尚未購買，一律不預購**。07:30 依峰頂 Webcam 能見度與營運狀況決定走 A 或 B 方案，決定上山才在艾布湖站購票。官方明示天候不佳不退改。" },
-    { name:"因斯布魯克北鏈纜車 Top of Innsbruck", when:"10/08（Day 4）09:30 飢餓堡纜車站現場", price:"€56／人、4 人 €224",
+    { day:4, date:"10/08（四）", city:"因斯布魯克", ac:"nord",
+      name:"北鏈纜車 Top of Innsbruck", big:"09:30", bigk:"Congress 山下站現場買，A 方案才買",
+      addr:"Hungerburgbahn Station Congress・Rennweg 3, 6020 Innsbruck", geo:"hungerburgbahn",
+      price:"成人來回 €56／人、4 人 €224",
       how:"**尚未購買，一律不預購**。買成人來回票，**不買 Innsbruck Card**（24 小時 €69／人，本日只安排半日）。Day 3 已搭過高山纜車或當日能見度不佳時改走 B 方案，就不買。" },
-    { name:"薩爾斯堡卡 24 小時", when:"10/08 晚線上購買，使用日選 10/09（Day 5）", price:"€38／人、4 人 €152",
+    { day:5, date:"10/09（五）", city:"薩爾斯堡", ac:"fest",
+      name:"薩爾斯堡卡 Salzburg Card 24 小時", big:"10/08 晚", bigk:"線上購買，使用日選 10/09",
+      addr:"Tourist Info Mozartplatz・Mozartplatz 5, 5020 Salzburg（線上失敗時的實體購買點）", geo:"residenzplatz",
+      price:"€38／人、4 人 €152",
       how:"**尚未購買**。含要塞纜車與各館入場。單次訂單可購 4 張具名卡，收到 Email 後把每張個人卡片連結分別轉傳，並**存成離線可讀**，不要只留在信箱。線上購買失敗時，10/09 09:00–18:00 可至 Tourist Info Mozartplatz 或 Hauptbahnhof 買實體卡。" },
-    { name:"薩爾斯堡住宿交通票", when:"10/08 入住時向住宿方領取（Day 4）", price:"含於房價",
-      how:"每人一張，領到後自己收好。" },
-  ],
-  notes:[
-    ["原始票券不放網站","票券 PDF 含可掃描的 QR 與訂單編號，放上公開網頁等於任何人都能先掃掉。本頁只列文字資訊，票檔另外私下保管。"],
-    ["離線準備","出發前把 PDF 存進手機相簿或離線檔案 App，並實測在飛航模式下能開啟。同時列印一份黑白紙本放隨身包。"],
-    ["兩張不可改期","新天鵝堡與國王湖綁定日期與時間、不可改期退費。行程若因天候調整，這兩個時間點是固定錨點，其餘往前後挪。"],
-    ["鹽礦票可改期","哈修塔特鹽礦可改期，72 小時前來信可免費取消，彈性比前兩張高；但 10/12 場次已改為 10:50，Day 8 上午的時辰表需依此重排。"],
+    { day:4, date:"10/08（四）", city:"薩爾斯堡",
+      name:"薩爾斯堡住宿交通票", big:"入住時", bigk:"向住宿方領取，每人一張",
+      addr:"In the heart of the city of Salzburg・Bürglsteinstraße 19, 5020 Salzburg", geo:"szg-stay",
+      price:"含於房價",
+      how:"每人一張，領到後自己收好。Day 5 市區公車用這張；薩爾斯堡卡也含大眾運輸，兩者都帶。" },
   ],
 };
 
@@ -775,7 +780,7 @@ const TICKETS = {
    其餘取自各官方網站 2026-09-20 查證。票面 QR 與訂單編號一律不寫進此處。 */
 const ACCESS = [
   {
-    day:2, date:"10/06（二）", name:"新天鵝堡 Schloss Neuschwanstein", sub:"Tour 445・11:45 固定入場・4 張成人票已購",
+    id:"nsw", day:2, date:"10/06（二）", name:"新天鵝堡 Schloss Neuschwanstein", sub:"Tour 445・11:45 固定入場・4 張成人票已購",
     big:"09:40", bigk:"抵達 P4 停車場，提前 2 小時 05 分", geo:"nsw-p4",
     src:"票券 PDF：Online-Ticket、Information for Visitors、Site Regulations",
     lead:[
@@ -803,7 +808,7 @@ const ACCESS = [
     links:[["官方參觀須知 hohenschwangau.de","https://www.hohenschwangau.de/en/visitor-information"],["如何前往城堡","https://www.hohenschwangau.de/en/visitor-information/how-to-reach-the-castles"]],
   },
   {
-    day:3, date:"10/07（三）A 方案", name:"楚格峰纜車 Seilbahn Zugspitze", sub:"艾布湖 Eibsee 站上山・2962 m",
+    id:"zug", day:3, date:"10/07（三）A 方案", name:"楚格峰纜車 Seilbahn Zugspitze", sub:"艾布湖 Eibsee 站上山・2962 m",
     big:"08:30", bigk:"首班纜車開出時間，直接搭首班", geo:"eibsee-park",
     src:"zugspitze.de 營運時間、票價、FAQ",
     lead:[
@@ -827,7 +832,7 @@ const ACCESS = [
     links:[["營運時間與時刻","https://zugspitze.de/en/Service-information/Opening-hours-timetables"],["設施狀態","https://zugspitze.de/en/Service-information/Facilities"]],
   },
   {
-    day:4, date:"10/08（四）A 方案", name:"北鏈纜車 Nordkette・Top of Innsbruck", sub:"Congress 站 → Hungerburg → Seegrube → Hafelekar",
+    id:"nord", day:4, date:"10/08（四）A 方案", name:"北鏈纜車 Nordkette・Top of Innsbruck", sub:"Congress 站 → Hungerburg → Seegrube → Hafelekar",
     big:"09:30", bigk:"到 Congress 山下站購票", geo:"hungerburgbahn",
     src:"nordkette.com 時刻、票價、交通",
     lead:[
@@ -851,7 +856,7 @@ const ACCESS = [
     links:[["時刻與營運狀態","https://nordkette.com/en/facilities-/-timetable/"],["交通與停車","https://www.nordkette.com/en/service/approach/"]],
   },
   {
-    day:5, date:"10/09（五）", name:"薩爾斯堡要塞纜車 FestungsBahn", sub:"Festungsgasse 4 山下站・薩爾斯堡卡直接刷",
+    id:"fest", day:5, date:"10/09（五）", name:"薩爾斯堡要塞纜車 FestungsBahn", sub:"Festungsgasse 4 山下站・薩爾斯堡卡直接刷",
     big:"14:40", bigk:"到山下站，要塞 17:00 關門", geo:"festungsbahn",
     src:"festung-hohensalzburg.at、salzburg.info",
     lead:[
@@ -872,7 +877,7 @@ const ACCESS = [
     links:[["要塞開放時間","https://www.festung-hohensalzburg.at/en/your-visit/opening-hours"],["FestungsBahn 資訊","https://www.salzburg.info/en/travel-info/arrival-traffic/cable_railway"]],
   },
   {
-    day:6, date:"10/10（六）", name:"國王湖遊船 Königssee Schifffahrt", sub:"Seelände → Salet 薩雷特・Fahrt-Nr. 10・4 張成人來回票已購",
+    id:"koe", day:6, date:"10/10（六）", name:"國王湖遊船 Königssee Schifffahrt", sub:"Seelände → Salet 薩雷特・Fahrt-Nr. 10・4 張成人來回票已購",
     big:"08:25", bigk:"票面規定開船前 20 分鐘到碼頭", geo:"koe-seelaende",
     src:"票券 PDF（Bayerische Seenschifffahrt）、seenschifffahrt.de",
     lead:[
@@ -894,11 +899,11 @@ const ACCESS = [
     links:[["官方船期與公告","https://www.seenschifffahrt.de/en/koenigssee/"]],
   },
   {
-    day:8, date:"10/12（一）", name:"哈修塔特鹽礦 Salzwelten Hallstatt", sub:"鹽礦纜車 Salzbergbahn 上山・09:30 場次・尚未購票",
-    big:"08:40", bigk:"到纜車山下站，搭 09:00 首班", geo:"salzwelten-tal",
+    id:"hal", day:8, date:"10/12（一）", name:"哈修塔特鹽礦 Salzwelten Hallstatt", sub:"鹽礦纜車 Salzbergbahn 上山・10:50 場次・4 張套票已購",
+    big:"09:30", bigk:"住宿出發步行，10:05 前到纜車山下站", geo:"salzwelten-tal",
     src:"salzwelten.at 2026 開放時間、票價、參觀說明",
     lead:[
-      ["購票","鹽礦＋纜車成人套票 €49，4 人 €196。2026-08-29 起隨新纜車重新開放，購票前再確認官網未臨時關閉。"],
+      ["購票","鹽礦＋纜車成人套票 €49，4 人 €196，已購 10/12 10:50 場次。2026-08-29 起隨新纜車重新開放，出發前再確認官網未臨時關閉。"],
       ["時間","10 月纜車 09:00–18:00、鹽礦 09:30–16:30，最後一場為關閉前 30 分鐘。導覽本身約 90 分鐘，含上山、步行與天空步道全程約 3 小時。"],
       ["年齡","4 歲以上可參加；沒有身高限制。"],
     ],
@@ -989,6 +994,88 @@ const SHOP = {
     ["液體與玻璃罐","芥末、果醬、南瓜籽油、Melissengeist 都要托運，用衣物包好放行李箱中央。"],
     ["德奧分工","同品牌藥品德國通常較便宜且藥局與藥妝選擇多，先在 Day 3 米滕瓦爾德買，缺的 Day 8 慕尼黑補；奧地利只買奧地利限定品。"],
     ["退稅","單店單日滿 €50.01（德）／€75.01（奧）可辦退稅，非歐盟居民出示護照拿表格，Day 9 MUC 出境前蓋章。"],
+  ],
+};
+
+/* 開車須知。租車細節以租車確認單為準，訂單編號不寫；停車費與規則為 2026-09-21 查證，現場公告優先。
+   加油站只列本行程沿線、順路可停的站，座標未逐點查證，頁面用名稱＋地址開 Google Maps。 */
+const DRIVE = {
+  rental:{
+    kv:[
+      ["租車公司","SIXT 慕尼黑卡爾廣場店（Karlsplatz 3，Stachus 地下停車場），營業 06:00–20:00"],
+      ["取車","Day 2 10/06（二）06:55–07:40，步行 4 分鐘從住宿前往；辦手續 → 地下停車場拍照驗車 → 開回住宿裝行李"],
+      ["還車","Day 9 10/13（二）**07:00 固定還車**，還車前加滿合約指定燃油；還車後全員帶行李步行到 Karlsplatz 站搭 S-Bahn"],
+      ["跨境","行程進出奧地利兩次（Day 4 因斯布魯克→薩爾斯堡、Day 7–8 哈修塔特）。SIXT 規定跨境需在訂單勾選「Auslandsfahrt」，未申報出境保險全部失效。取車時**當面確認租約已登記奧地利**；Vignette 不附，自己買（見下）"],
+      ["燃油","確認油種（汽油 Super E10／E5 或柴油 Diesel）並拍下油箱蓋標示；政策通常為滿油取、滿油還，不滿依 SIXT 價格計費另加手續費"],
+      ["里程","全程約 900 km；取車時確認是否有里程上限"],
+      ["駕照","台灣駕照＋國際駕照（IDP）＋護照三樣一起帶，取車與臨檢都會看。駕駛人的信用卡要與租約同名，預授權押金會凍結額度"],
+      ["驗車","取車時全車四周、輪圈、擋風玻璃、內裝逐一拍照錄影，有刮痕就要求登記在租約上；還車也同樣拍一輪，保留至帳單結清"],
+    ],
+    notes:[
+      ["還車早於營業時間","07:00 還車與分店開門同時，出發前一週打電話或 Email 分店確認早鳥還車與 Key-Box 投遞方式（見緊急聯絡頁 SIXT 分店電話）。投鑰匙箱時 SIXT 會在無人在場下驗車、48 小時內寄帳單，所以一定要拍下里程表、油表、四周車況與停車位置。"],
+      ["奧地利通行票 Vignette","奧地利高速公路都要 Vignette，**SIXT 德國租車不含**。本行程只有 Day 4 因斯布魯克 → Kufstein 的 A12 需要（B177、薩爾斯堡市區、往哈修塔特的 B159／B162／B166 與經德國的 B305 都不用）。10/08 當天在 ASFINAG 官網或 App 買 **10 日數位票 €12.80**（綁車牌、立即生效），或在 Zirl 加油站買貼紙。無票被查到先付替代通行費，不付即罰 €300 起。Bischofswiesen → 哈修塔特走 Golling 下 B162，避開 A10 Tauern 另收費段。"],
+      ["環保區","慕尼黑市中心是 Umweltzone，租車都有綠色環保貼紙，不用處理。奧地利 A12 因斯布魯克段有 IG-L 環保限速 100 km/h，電子看板亮起就要遵守，測速密集。"],
+      ["車上必備","反光背心（每人一件，德奧皆規定）、三角警示牌、急救包（德奧規定）。取車時確認都在車上，缺件請分店補。"],
+    ],
+  },
+  /* [日期, 地點, 費用, 作法, GEO key] */
+  parking:[
+    ["Day 1–2 慕尼黑","住宿 Munich Top Place 周邊","依住宿方案","市中心路邊多為住戶專用或 Parkschein 付費區；取車後直接裝行李出發，不長停。","muc-stay1"],
+    ["Day 2 新天鵝堡","P4 停車場 Hohenschwangau","6 小時 €12，之後每小時 €1，日上限 €16","入口取票、出場前繳費機付款；車內不留外露行李。停車與接駁巴士皆為獨立業者，排隊時間不在門票保障。","nsw-p4"],
+    ["Day 2–3 米滕瓦爾德","Mittenwald-Ferien 住宿指定車位","含於房價","入住時確認指定車位號碼；鎮上路邊多為藍色 Parkscheibe 限時區，停車要撥時鐘牌放在擋風玻璃內。","mit-stay"],
+    ["Day 3 A 艾布湖","楚格峰纜車艾布湖停車場","4 小時 €20，之後每小時 €2；持纜車票折 €11（第三方資訊，未確認）","緊鄰纜車站，現金或卡；首班前抵達最好停。禁止過夜。","eibsee-park"],
+    ["Day 3 B 加米施","奧林匹克滑雪體育場 P21 停車場","日票 €5","走到帕特納赫峽谷入口約 25 分鐘；午後才到鎮中心 Ludwigstraße 一帶找路邊付費位。","gap-olympia"],
+    ["Day 4 A 因斯布魯克","InnenSTADT Garage 或 Congress／Altstadtgarage","InnenSTADT 纜車客全日 €4（需蓋章）；一般 €1.50／30 分、24 小時 €18","官方推薦 InnenSTADT Garage（Kaiserjägerstraße 1，24 小時），在 Altstadt 站售票處蓋章折抵；Congress Garage €1.40／30 分、日票 €17。市區路邊 Kurzparkzone €1.10／30 分、最長 90 分鐘，不划算。","inn-congress"],
+    ["Day 4 B 拉滕貝格","Rattenberg P2 停車場","收費","老城禁車，停外圍 P2 步行進入。","rattenberg"],
+    ["Day 4–6 薩爾斯堡","住宿 In the heart of the city 停車位","依住宿方案","舊城夏季（7–8 月）全日限行，10 月不受影響，但仍不開進舊城，以步行與公車進出。市區路邊 Kurzparkzone 平日 09:00–19:00 最長 3 小時、約 €2.20／小時，自動機買票或 App；週六 09:00–16:00 免費但要放時鐘牌。備援：Altstadtgarage Mönchsberg 24 小時上限 €24.20。","szg-stay"],
+    ["Day 6 國王湖","國王湖大停車場 Schönau","1 小時內 €3、3 小時內 €7、日票 €9；收費 07:00–19:00，售票機或 Parkster App","07:55 前抵達；沿 Seestraße 步行約 10 分鐘到碼頭。","koe-park"],
+    ["Day 6–7 比紹夫斯維森","Ferienhaus Gestüt Pfaffenlehen","含於房價","民宿私人車位。","bis-stay"],
+    ["Day 7–8 哈修塔特","P1 停車場（Hotel-Ticket）","住客 Hotel-Ticket 第 1 天 €20、第 2 天 €18；一般日票 €20","**不可開進舊城**（柵欄，10:00–18:00 中心禁行）。P1 入口的 Hotel-Shuttle Info-Point 登記，首次出場前在售票機把入場券換成 Hotel-Ticket；免費接駁 09:00–19:00。","hal-p1"],
+    ["Day 8–9 慕尼黑","Motel One München-Hauptbahnhof","依住宿確認結果","中央車站周邊停車場多為每小時計費的公共車庫，備援 Contipark Tiefgarage Stachus（Herzog-Wilhelm-Str. 11，24 小時，一般費率未確認）；到達後先卸行李，再依住宿指示停車。隔日 05:50 取車。","muc-stay2"],
+  ],
+  /* [路段, 站名, 地址, 備註] */
+  fuel:[
+    ["Day 2 慕尼黑 → 新天鵝堡","Aral Schwangau","König-Ludwig-Str. 2, 87645 Schwangau","B17 上、離 P4 約 5 分；每日 06:30–22:00。取車時油若不滿可在這裡補"],
+    ["Day 2 新天鵝堡 → 米滕瓦爾德","Shell Mittenwald","Am Brunnstein 2, 82481 Mittenwald","24 小時；鎮北入口，Day 3 出發前補油也在這裡"],
+    ["Day 2 備援","Aral Garmisch-Partenkirchen","Hauptstraße 20, 82467 Garmisch-Partenkirchen","一～四、日 06:00–22:00，五六到 23:00；Day 3 B 方案順路"],
+    ["Day 4 米滕瓦爾德 → 因斯布魯克（B177）","Avanti 自助站 Zirl","Meilstraße 49, 6170 Zirl","24 小時自助，現金或信用卡；**進奧地利第一站，油價比德國低約 €0.3／L**，在這裡加滿"],
+    ["Day 4 因斯布魯克 → 薩爾斯堡（A12 → A93 → A8）","Esso Rastanlage Hochfelln Süd","A8, 83346 Bergen","24 小時高速公路休息站，德國境內備援；奧地利段先加滿就不必停"],
+    ["Day 6 薩爾斯堡 → 國王湖","Aral Schönau am Königssee","Seestraße 1, 83471 Schönau am Königssee","06:30–21:00，停車場前最後一站"],
+    ["Day 6 比紹夫斯維森","Eni Bischofswiesen-Strub","Silbergstraße 91, 83483 Bischofswiesen","06:00–22:00，住宿附近；Day 7 出發前補油"],
+    ["Day 7 比紹夫斯維森 → 哈修塔特（Golling／B159）","Hettegger Eni Kuchl","Kellau 157, 5431 Kuchl","24 小時自助；B159 上、Golling 之後。回到奧地利第一個加油點"],
+    ["Day 7–8 哈修塔特周邊","Socar Bad Goisern","Bundesstraße 95, 4822 Bad Goisern","**哈修塔特鎮內沒有加油站**，最近的在 Bad Goisern。一～六 06:00–21:00、日 07:00–21:00。Day 8 離開前在此加滿，奧地利油價較低"],
+    ["Day 8 哈修塔特 → 慕尼黑（A8）","Esso Rastanlage Hochfelln Nord","A8, 83346 Bergen","24 小時；Bad Goisern 加滿後通常不需停，塞車或臨時需要才停"],
+    ["Day 9 還車前（05:50–07:00）","AVIA Hochstraße","Hochstraße 5, 81669 München","**24 小時**、有店面，Rosenheimer Platz 旁，距 Stachus 約 2.5 km、車程 10 分；加滿留發票再回 Karlsplatz 地下還車區"],
+    ["Day 9 備援","JET Landsberger Straße","Landsberger Str. 184, 80687 München","24 小時，距 Stachus 約 4.5 km；AVIA 若排隊或關閉才用"],
+  ],
+  /* [項目, 德國, 奧地利, 與台灣不同] */
+  rules:[
+    ["速限（市區／郊區／高速）","50／100／無一般速限，建議 130","50／100／130","數字看起來與台灣相近，但**取締嚴、罰單寄到租車公司再轉嫁**。德國高速公路無速限路段仍有電子可變限速與施工段，看牌不看導航。"],
+    ["路權：無標誌路口","右方車先行 Rechts vor Links","右方車先行","台灣習慣「大路優先、看誰先到」；德奧在沒有號誌與標誌的路口一律**右方來車優先**，住宅區與老城最常見。"],
+    ["路權：圓環","圓環內車輛優先；進入不打燈、出去要打右燈","同左；未標示時圓環內仍優先","台灣多數圓環無明確規則。這裡進圓環前一定要停等，出圓環才打燈。"],
+    ["紅燈右轉","禁止，除非有**綠色箭頭牌**（Grünpfeil）：先完全停止再讓行後可轉","**汽車一律禁止**；路口的綠箭頭附牌只給自行車","台灣紅燈右轉全面禁止，習慣一致；但德國看到綠箭頭牌時**要先停再轉**，不能滑行通過。"],
+    ["號誌位置","燈桿在停止線旁，不在路口對面","同左","停止線一過就看不到燈了。**停在停止線前**，別像台灣一樣往前滑到路口才看燈。"],
+    ["行人穿越道","斑馬線行人絕對優先，行人一有意圖就要停","同左；不停罰 €72 起","台灣「禮讓行人」抓得越來越嚴，這裡是本能等級：看到有人靠近斑馬線就先減速停車。"],
+    ["電車與公車","電車停靠時乘客上下車，後方車輛須停止等候；不得超越停靠的電車","同左；電車在路口優先","台灣沒有路面電車。慕尼黑、因斯布魯克市區都有電車軌道，勿在軌道上停車，遇電車讓行。"],
+    ["高速公路：靠右行駛與超車","**只能左側超車**，超完即回右線；長時間佔用左線會被罰","同左","台灣內側車道可持續行駛；德奧左線只用來超車，右線車流再慢也要回去。"],
+    ["救援通道 Rettungsgasse","塞車或走走停停時，最左線靠左、其餘車道靠右，中間空出通道","同左；未讓罰 €726 起","台灣無此規定。**一開始塞車就要讓**，不是等救護車出現才讓。"],
+    ["酒駕","0.5‰（新手與 21 歲以下 0.0）","0.5‰（試用期 0.1）","台灣 0.15‰ 更嚴。自駕日一律不喝，啤酒花園晚餐在無駕日（Day 1、Day 8 晚）。"],
+    ["手機","駕駛中手持任何電子裝置皆禁止，只可固定於架上","同左；罰 €100 起","導航手機一定要上車架；副駕負責操作。"],
+    ["冬胎","「情境式」義務：路面有雪、冰、雪泥時必須用冬胎或四季胎","11/1–4/15 情境式強制，10 月不強制但山區可能降雪","10 月初阿爾卑斯山區可能降雪。取車時確認車上是輪胎側面有雪花山形（3PMSF）標記的四季胎或冬胎。"],
+    ["高速公路收費與夜間速限","免費","需 Vignette €12.80／10 日；A12 Kufstein–Zirl 常態 IG-L 環保限速 100；A10、A12 等 22:00–05:00 夜間限速 110","台灣以 ETC 計程；奧地利是**進高速前先買票**，數位票綁車牌。"],
+    ["停車：藍線與時鐘牌","藍色 P 牌加「Parkscheibe」＝免費限時，時鐘牌撥到**抵達時間進位的下一個半小時**放擋風玻璃內，沒放罰 €20–40；停車方向須與車流同向","Kurzparkzone 藍線區＝短時付費，自動機買票或 App（Handyparken）","台灣沒有時鐘牌制度；租車手套箱通常附一塊，取車時確認。逆向路邊停車在德奧是違規。"],
+    ["市區限速 30 與住宅區","大量 Tempo-30 區與「Spielstraße」行人優先區（步行速度）","Tempo-30 區普遍；老城多為行人徒步區 Fußgängerzone 禁車","看到藍底行人與小孩圖案的牌子＝步行速度。哈修塔特舊城與薩爾斯堡舊城皆禁止開進。"],
+    ["測速與罰單","固定與移動測速多；超速 21 km/h 以上市區有可能吊照","區間測速 Section Control；罰單一樣寄租車公司","台灣測速前有預告牌，德奧**沒有**。租車公司會加收處理費，一次超速可能 €100 起跳。"],
+    ["緊急電話","112（全歐）；警察 110","112；警察 133、救護 144","事故若有人受傷或對方不配合，一定報警取得紀錄，租車理賠會要。"],
+    ["隧道","必須開近光燈，日行燈不算（罰 €25）","同左","台灣隧道多為自動亮燈或未強制；德奧進隧道前手動切近光燈，租車若為 Auto 模式仍確認燈號亮起。"],
+    ["台灣駕照","台灣駕照有效 6 個月，須附**德文翻譯或國際駕照 IDP**，兩者一起帶","非德文駕照**必須**搭配 IDP 或翻譯","所有可能開車的人都帶台灣駕照正本＋IDP；只帶 IDP 不算有效。"],
+  ],
+  notes:[
+    ["每天出發前","看一次緊急聯絡頁的即時路況連結（bayerninfo、ASFINAG、B177 攝影機），山路與隧道封閉常無法繞。"],
+    ["過境不用停","德奧邊界無海關檢查，但奧地利警方會在邊境後方抽查 Vignette 與冬季裝備。"],
+    ["加油方式","多數為先加油後進店付款或直接刷卡（Kartenzahlung）；晚間部分站只開夜窗。2026 年 9 月奧地利 Diesel 約 €2.2／Super 95 約 €1.9，德國各貴約 €0.25–0.40／L，**在奧地利加滿、離開奧地利前再加滿**（Zirl、Kuchl、Bad Goisern）。"],
+    ["還車前加油","Day 9 05:50 取車後先到 AVIA Hochstraße（24 小時）加滿，再回 Stachus 地下還車區；留發票證明滿油。"],
+    ["未確認事項","艾布湖停車費、Stachus 停車場一般費率、SIXT 跨境費金額、因斯布魯克與薩爾斯堡 Kurzparkzone 2026 秋季新費率是否已生效，皆以現場為準。"],
   ],
 };
 

@@ -23,8 +23,8 @@ const NAV = [
   ["food.html",   "特色菜",   "food"],
   ["weather.html","天氣預報", "weather"],
   ["tickets.html","票券","tickets"],
-  ["access.html","抵達攻略","access"],
   ["shop.html","伴手禮","shop"],
+  ["drive.html","開車須知","drive"],
   ["checklist.html","準備清單","checklist"],
   ["offices.html","緊急聯絡","offices"],
 ];
@@ -654,69 +654,72 @@ if (PAGE === "weather") {
 
 /* ── 駐外館處與急難救助 ─────────────────────────────── */
 
+/* 票券：第一層只有「哪張票、幾點、在哪」，點「更多」才展開票務規定與抵達攻略。
+   已買／尚未購買用與時辰表相同的頁籤切換；每張卡連回該日時辰表。 */
 if (PAGE === "tickets") {
-  const rules = r => `<ul class="notes tkrules">${r.map(([l,t]) =>
-    `<li><b class="lbl">${esc(l)}</b>${md(t)}</li>`).join("")}</ul>`;
+  const li = r => r.map(([l,t]) => `<li><b class="lbl">${esc(l)}</b>${md(t)}</li>`).join("");
 
-  el("tkbought").innerHTML = TICKETS.bought.map(t => `
+  /* 抵達攻略：怎麼上去、怎麼下來、注意，塞進票卡的「更多」裡 */
+  const access = a => !a ? "" : `
+      <div class="ac-block">
+        <h4 class="ac-h">抵達攻略</h4>
+        <div class="tkbig"><b>${esc(a.big)}</b><span>${esc(a.bigk)}</span></div>
+        <ul class="notes ac-lead">${li(a.lead)}</ul>
+        <div class="ac-cols">
+          <section>
+            <h4 class="ac-h">怎麼上去</h4>
+            <ol class="ac-steps">${a.up.map(([n,l,t]) =>
+              `<li><span class="ac-n">${esc(n)}</span><div><b>${esc(l)}</b>${md(t)}</div></li>`).join("")}</ol>
+          </section>
+          <section>
+            <h4 class="ac-h">怎麼下來</h4>
+            <ul class="ac-down">${a.down.map(([l,t]) => `<li><b>${esc(l)}</b>${md(t)}</li>`).join("")}</ul>
+            <h4 class="ac-h">注意</h4>
+            <ul class="ac-down">${a.notes.map(([l,t]) => `<li><b>${esc(l)}</b>${md(t)}</li>`).join("")}</ul>
+          </section>
+        </div>
+        <p class="ac-src">資料來源　${esc(a.src)}${a.links.map(([x,u]) =>
+          `　·　<a class="daylink" href="${esc(u)}" target="_blank" rel="noopener">${esc(x)}</a>`).join("")}</p>
+      </div>`;
+
+  const card = t => {
+    const a = t.ac ? ACCESS.find(x => x.id === t.ac) : null;
+    return `
     <article class="card glass rv tkcard">
       <div class="meta">Day ${t.day}　${esc(t.date)}　${esc(t.city)}</div>
       <h3 class="cardtitle">${esc(t.name)}</h3>
       <div class="tkbig"><b>${esc(t.big)}</b><span>${esc(t.bigk)}</span></div>
-      <dl class="kv tkkv">${t.kv.map(([k, v]) =>
-        `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}
-        ${t.tel ? `<dt>電話</dt><dd><a href="tel:${esc(t.tel[1])}">${esc(t.tel[0])}</a></dd>` : ""}
-      </dl>
-      <p class="tkwarn">${esc(t.warn)}</p>
-      ${rules(t.rules)}
-      ${t.links.map(([x, u]) =>
-        `<p class="tklink"><a class="daylink" href="${esc(u)}" target="_blank" rel="noopener">${esc(x)}</a></p>`).join("")}
-    </article>`).join("");
+      <p class="tkaddr">${esc(t.addr)}${t.geo ? geoLink("步行", t.geo) : ""}</p>
+      <p class="tkday"><a class="daylink" href="day${t.day}.html">看 Day ${t.day} 時辰表</a>${t.tel ? `　·　<a class="daylink" href="tel:${esc(t.tel[1])}">${esc(t.tel[0])}</a>` : ""}</p>
+      <details class="tkmore">
+        <summary><span class="s-t">更多</span><span class="s-d">${t.kv ? "票務規定" : "購買做法"}${a ? "・抵達攻略" : ""}</span></summary>
+        <div class="dbody">
+          ${t.kv ? `<dl class="kv tkkv">${t.kv.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : ""}
+          ${t.price ? `<dl class="kv tkkv"><dt>票價</dt><dd>${esc(t.price)}</dd><dt>做法</dt><dd>${md(t.how)}</dd></dl>` : ""}
+          ${t.warn ? `<p class="tkwarn">${esc(t.warn)}</p>` : ""}
+          ${t.rules ? `<ul class="notes tkrules">${li(t.rules)}</ul>` : ""}
+          ${(t.links || []).map(([x, u]) =>
+            `<p class="tklink"><a class="daylink" href="${esc(u)}" target="_blank" rel="noopener">${esc(x)}</a></p>`).join("")}
+          ${access(a)}
+        </div>
+      </details>
+    </article>`;
+  };
 
-  el("tklater").innerHTML = TICKETS.later.map(t => `
-    <article class="card glass rv">
-      <div class="meta">${esc(t.price)}</div>
-      <h3 class="cardtitle">${esc(t.name)}</h3>
-      <dl class="kv"><dt>時點</dt><dd>${esc(t.when)}</dd><dt>做法</dt><dd>${md(t.how)}</dd></dl>
-    </article>`).join("");
-
-  el("tknotes").innerHTML = `<ul class="notes">${TICKETS.notes.map(([l, t]) =>
-    `<li><b class="lbl">${esc(l)}</b>${esc(t)}</li>`).join("")}</ul>`;
-}
-
-if (PAGE === "access") {
-  const li = r => r.map(([l,t]) => `<li><b class="lbl">${esc(l)}</b>${md(t)}</li>`).join("");
-  el("acroot").innerHTML = ACCESS.map(a => `
-    <article class="card glass rv accard">
-      <div class="meta">Day ${a.day}　${esc(a.date)}</div>
-      <h3 class="cardtitle">${esc(a.name)}${a.geo ? geoLink("步行", a.geo) : ""}</h3>
-      <p class="ac-sub">${esc(a.sub)}</p>
-      <div class="tkbig"><b>${esc(a.big)}</b><span>${esc(a.bigk)}</span></div>
-      <ul class="notes ac-lead">${li(a.lead)}</ul>
-      <div class="ac-cols">
-        <section>
-          <h4 class="ac-h">怎麼上去</h4>
-          <ol class="ac-steps">${a.up.map(([n,l,t]) =>
-            `<li><span class="ac-n">${esc(n)}</span><div><b>${esc(l)}</b>${md(t)}</div></li>`).join("")}</ol>
-        </section>
-        <section>
-          <h4 class="ac-h">怎麼下來</h4>
-          <ul class="ac-down">${a.down.map(([l,t]) => `<li><b>${esc(l)}</b>${md(t)}</li>`).join("")}</ul>
-          <h4 class="ac-h">注意</h4>
-          <ul class="ac-down">${a.notes.map(([l,t]) => `<li><b>${esc(l)}</b>${md(t)}</li>`).join("")}</ul>
-        </section>
-      </div>
-      <p class="ac-src">資料來源　${esc(a.src)}${a.links.map(([x,u]) =>
-        `　·　<a class="daylink" href="${esc(u)}" target="_blank" rel="noopener">${esc(x)}</a>`).join("")}</p>
-    </article>`).join("");
+  const groups = [["已買", TICKETS.bought], ["尚未購買", TICKETS.later]];
+  el("tkroot").innerHTML =
+    `<div class="tabs tktabs" role="tablist">${groups.map(([l, xs], i) =>
+      `<button role="tab" aria-selected="${i===0}" data-g="tk" data-i="${i}">${l}<em>${xs.length}</em></button>`).join("")}</div>`
+    + groups.map(([l, xs], i) =>
+      `<div class="panel" data-g="tk" data-i="${i}" ${i===0?"":"hidden"}><div class="cards">${xs.map(card).join("")}</div></div>`).join("");
 }
 
 if (PAGE === "shop") {
   const tbl = rows => `<table>${rows.map(([a,b,c]) =>
     `<tr><td style="width:30%"><strong>${esc(a)}</strong></td><td>${md(b)}</td><td class="sh-where">${esc(c)}</td></tr>`).join("")}</table>`;
   const grp = (cc, label) => `
-    <h2 class="sec-h rv">${label}</h2>
-    <details class="glass rv" open>
+    <h2 class="sec-h sh-h rv">${label}</h2>
+    <details class="glass rv">
       <summary><span class="s-t">食品與伴手禮</span><span class="s-d">${SHOP[cc].food.length} 項</span></summary>
       <div class="dbody"><div class="scroll">${tbl(SHOP[cc].food)}</div></div>
     </details>
@@ -729,6 +732,29 @@ if (PAGE === "shop") {
     `<tr><td style="width:22%"><strong>${esc(t)}</strong></td><td>${esc(pl)}${geoLink("步行", g)}</td><td class="sh-where">${md(w)}</td></tr>`).join("")}</table>`;
   el("shnotes").innerHTML = `<ul class="notes">${SHOP.notes.map(([l,t]) =>
     `<li><b class="lbl">${esc(l)}</b>${esc(t)}</li>`).join("")}</ul>`;
+}
+
+/* 開車須知：租車、停車、加油站、與台灣不同的交通法規。
+   加油站沒有逐點查證座標，改用 Google Maps 名稱＋地址搜尋連結。 */
+if (PAGE === "drive") {
+  const li = r => r.map(([l,t]) => `<li><b class="lbl">${esc(l)}</b>${md(t)}</li>`).join("");
+  const q = s => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s)}`;
+  const D = DRIVE;
+
+  el("drrental").innerHTML = `
+    <dl class="kv tkkv dr-kv">${D.rental.kv.map(([k,v]) => `<dt>${esc(k)}</dt><dd>${md(v)}</dd>`).join("")}</dl>
+    <ul class="notes">${li(D.rental.notes)}</ul>`;
+
+  el("drpark").innerHTML = `<table>${D.parking.map(([d,pl,fee,how,g]) =>
+    `<tr><td style="width:16%"><strong>${esc(d)}</strong></td><td style="width:26%">${esc(pl)}${g ? geoLink("開車", g) : ""}</td><td class="dr-fee">${md(fee)}</td><td>${md(how)}</td></tr>`).join("")}</table>`;
+
+  el("drfuel").innerHTML = `<table>${D.fuel.map(([leg,st,addr,note]) =>
+    `<tr><td style="width:24%"><strong>${esc(leg)}</strong></td><td style="width:30%"><a class="fd-a" href="${q(st + " " + addr)}" target="_blank" rel="noopener">${esc(st)}</a><span class="fd-m">${esc(addr)}</span></td><td>${md(note)}</td></tr>`).join("")}</table>`;
+
+  el("drrules").innerHTML = `<table class="dr-rules"><tr><th>項目</th><th>德國</th><th>奧地利</th><th>與台灣不同、要注意</th></tr>${D.rules.map(([k,de,at,tw]) =>
+    `<tr><td class="strong">${esc(k)}</td><td>${md(de)}</td><td>${md(at)}</td><td class="dr-tw">${md(tw)}</td></tr>`).join("")}</table>`;
+
+  el("drnotes").innerHTML = `<ul class="notes">${li(D.notes)}</ul>`;
 }
 
 if (PAGE === "offices") {
