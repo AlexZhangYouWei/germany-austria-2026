@@ -5,6 +5,12 @@
 const PAGE = document.body.dataset.page;
 const DAYN = +document.body.dataset.day || 0;
 
+/* 地圖 App 偏好：g＝Google、a＝Apple，存在各自裝置。
+   兩個連結永遠都產生，由 body[data-map] 決定哪一顆現身，切換不必重畫任何東西。 */
+let MAPAPP = "g";
+try { if (localStorage.getItem("mapapp") === "a") MAPAPP = "a"; } catch (e) {}
+document.body.dataset.map = MAPAPP;
+
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 /* 備註支援 **粗體** 與 [文字](https://…)。先 esc 再轉，所以連結文字與網址都已經跳脫過；
    只收 http/https，不接受其他協定。 */
@@ -91,15 +97,12 @@ const PD_HEAD = `<div class="wxp-hd">`
   + `<span>時段</span><span>天氣</span><span class="wxp-t">最低–最高</span>`
   + `<span class="wxp-rain"><span class="wxp-p">雨機率</span><span class="wxp-m">雨量</span></span></div>`;
 
-/* low＝系集：多一行成員區間，並把「雨機率」的語意換成「有雨成員比例」。
-   兩種來源的鍵名已在資料層統一，這裡不再分支。 */
-/* 氣溫格：主體是「最低–最高」（整數），副行是均溫；系集再附成員均溫的 10／90 區間。 */
-function wxTemp(x, low){
-  const sub = `均 ${x.a}°` + (low && x.lo != null ? `<br>成員 ${x.lo}–${x.hi}°` : "");
-  return `<span class="wxp-t"><b class="${tCls(x.a)}">${Math.round(x.l)}–${Math.round(x.h)}</b><i>°</i>`
-    + `<em class="wxp-rg">${sub}</em></span>`;
+/* 氣溫格：只給「最低–最高」（整數）。色階仍依均溫 x.a 判斷，
+   因為單看極值會被一小時的尖峰帶偏。 */
+function wxTemp(x){
+  return `<span class="wxp-t"><b class="${tCls(x.a)}">${Math.round(x.l)}–${Math.round(x.h)}</b><i>°</i></span>`;
 }
-function wxRow(x, P, low, cls = ""){
+function wxRow(x, P, cls = ""){
   if (!x) return `<div class="wxp-row na${P.day ? "" : " dim"}">`
     + `<span class="wxp-when"><b>${esc(P.label)}</b><em>${esc(P.span)}</em></span>`
     + `<span class="wxp-dash">—</span></div>`;
@@ -107,7 +110,7 @@ function wxRow(x, P, low, cls = ""){
   return `<div class="wxp-row${P.day ? "" : " dim"}${cls}">`
     + `<span class="wxp-when"><b>${esc(P.label)}</b><em>${esc(P.span)}</em></span>`
     + `<span class="wxcond sm ${kind}">${icon(kind)}<span>${esc(label)}</span></span>`
-    + wxTemp(x, low)
+    + wxTemp(x)
     + `<span class="wxp-rain">`
     + `<span class="wxp-p"><b class="${pCls(x.p)}">${x.p}</b><i>%</i></span>`
     + `<span class="wxp-m"><b class="${mCls(x.mm)}">${mm1(x.mm)}</b><i>mm</i></span>`
@@ -115,7 +118,7 @@ function wxRow(x, P, low, cls = ""){
 }
 
 /* 全日概況：由四段合成。最低／最高取極值，均溫與雲量取平均，雨機率取最大，雨量加總。
-   系集的成員區間同樣取四段的極值。四段有缺就不合成，避免用半天冒充整天。 */
+   四段有缺就不合成，避免用半天冒充整天。 */
 const rd1 = v => Math.round(v * 10) / 10;
 function daySum(f){
   const xs = PD.map(P => f.p && f.p[P.k]);
@@ -125,18 +128,15 @@ function daySum(f){
   return {
     l:Math.min(...xs.map(x => x.l)), h:Math.max(...xs.map(x => x.h)), a:rd1(avg(xs.map(x => x.a))),
     c:cs.length ? Math.round(avg(cs)) : 0, p:Math.max(...xs.map(x => x.p)), mm:rd1(xs.reduce((s, x) => s + x.mm, 0)),
-    lo:xs[0].lo == null ? null : Math.min(...xs.map(x => x.lo)),
-    hi:xs[0].hi == null ? null : Math.max(...xs.map(x => x.hi)),
   };
 }
 const PD_SUM = { label:"全日", span:"概況", day:1 };
 
 function wxPeriods(f){
-  const low = f.kind === "ens";
   const sum = daySum(f);
   return `<div class="wxp">` + PD_HEAD
-    + (sum ? wxRow(sum, PD_SUM, low, " sum") : "")
-    + PD.map(P => wxRow(f.p && f.p[P.k], P, low)).join("") + `</div>`;
+    + (sum ? wxRow(sum, PD_SUM, " sum") : "")
+    + PD.map(P => wxRow(f.p && f.p[P.k], P)).join("") + `</div>`;
 }
 
 /* 出處徽章。none 沒有 src/res 可標。 */
@@ -183,10 +183,21 @@ function dayWeather(n){
    左 Google Maps、右 Apple Maps，兩者都是「從我現在的位置帶我去這裡」。
    兩邊都不寫死起點，路上臨時偏離也還是對的。
    交通方式由類別推定，使用者在 App 裡仍可一鍵改。 */
-function travelMode(cat){
-  if (/步行|散步|步道/.test(cat)) return "walking";
+function travelMode(cat, noDrive){
   if (/公車|機場線|電車|S-Bahn/.test(cat)) return "transit";
+  if (noDrive || /步行|散步|步道/.test(cat)) return "walking";
   return "driving";
+}
+/* 「無自駕」的日子（Day 1、5）市區景點一律步行導航，否則老城裡 300 m 的教堂會開出開車路線 */
+const noDriveDay = d => d.meta.some(m => /無自駕/.test(m));
+
+/* 導航鈕上的短名：GEO 第 3 個元素優先；沒填就去括號、去掉尾端的外文名 */
+function geoShort(key){
+  const g = GEO[key];
+  if (g[2]) return g[2];
+  const s = g[0].replace(/（.*?）/g, "").trim();
+  const m = s.match(/^(.*[\u4e00-\u9fff])\s+[A-Za-zÄÖÜäöüß][A-Za-zÄÖÜäöüß\s.\-']*$/);
+  return m ? m[1].trim() : s;
 }
 /* Apple Maps 的 dirflg：d 開車、w 步行、r 大眾運輸；daddr 單獨給就以目前位置為起點 */
 const APPLE_FLG = { walking:"w", transit:"r", driving:"d" };
@@ -210,17 +221,32 @@ const ICON_A = '<svg class="gmk" viewBox="0 0 24 24" aria-hidden="true">'
   + '-2-.156-3.675 1.09-4.61 1.09ZM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818'
   + '-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701Z"/></svg>';
 
-function geoLink(cat, key){
+function navUrls(cat, key, noDrive){
   const g = GEO[key];
-  if (!g) return "";
+  if (!g) return null;
   const [name, ll] = g;
-  const mode = travelMode(cat);
-  const gmap = `https://www.google.com/maps/dir/?api=1&destination=${ll}&travelmode=${mode}`;
-  const amap = `https://maps.apple.com/?daddr=${ll}&dirflg=${APPLE_FLG[mode]}`;
+  const mode = travelMode(cat, noDrive);
+  return { name,
+    gmap:`https://www.google.com/maps/dir/?api=1&destination=${ll}&travelmode=${mode}`,
+    amap:`https://maps.apple.com/?daddr=${ll}&dirflg=${APPLE_FLG[mode]}` };
+}
+/* 純圖示版：今日導航表、票券、購物、自駕頁用 */
+function geoLink(cat, key, noDrive){
+  const u = navUrls(cat, key, noDrive);
+  if (!u) return "";
   return `<span class="geo">`
-    + `<a class="geo-g" href="${gmap}" target="_blank" rel="noopener" aria-label="用 Google 地圖導航至 ${esc(name)}">${ICON_G}</a>`
-    + `<a class="geo-a" href="${amap}" target="_blank" rel="noopener" aria-label="用 Apple 地圖導航至 ${esc(name)}">${ICON_A}</a>`
+    + `<a class="geo-g" href="${u.gmap}" target="_blank" rel="noopener" aria-label="用 Google 地圖導航至 ${esc(u.name)}">${ICON_G}</a>`
+    + `<a class="geo-a" href="${u.amap}" target="_blank" rel="noopener" aria-label="用 Apple 地圖導航至 ${esc(u.name)}">${ICON_A}</a>`
     + `</span>`;
+}
+/* 帶地名的膠囊版：時間軸列用。一列常寫三四個地點卻只有一個座標，
+   鈕上直接寫會開到哪，走在街上才不用猜。兩顆都產生，CSS 依偏好只留一顆。 */
+function goPill(cat, key, noDrive){
+  const u = navUrls(cat, key, noDrive);
+  if (!u) return "";
+  const label = esc(geoShort(key));
+  return `<a class="go geo-g" href="${u.gmap}" target="_blank" rel="noopener" aria-label="用 Google 地圖導航至 ${esc(u.name)}">${ICON_G}<span>${label}</span></a>`
+       + `<a class="go geo-a" href="${u.amap}" target="_blank" rel="noopener" aria-label="用 Apple 地圖導航至 ${esc(u.name)}">${ICON_A}<span>${label}</span></a>`;
 }
 
 /* 今日行車路線：航點與路線圖同一組，兩者永遠一致 */
@@ -236,18 +262,74 @@ function routeLink(day, variant){
     + `在 Google Maps 開啟今日路線　${r.km} km</a>`;
 }
 
-function timeline(rows){
+/* 時間軸列：地點文字下方一顆帶地名的導航膠囊，時間欄只放時間。 */
+function timeline(rows, noDrive){
   return `<ul class="tl">` + rows.map(([t,cat,place,note,fx,geo]) => `
     <li class="${fx?"fx":""}">
-      <div class="t">${geo ? geoLink(cat, geo) : ""}<span>${esc(t)}</span></div><div class="m"></div>
+      <div class="t"><span>${esc(t)}</span></div><div class="m"></div>
       <div class="c">
         <div class="p"><span class="cat">${esc(cat)}</span>${esc(place)}</div>
+        ${geo ? `<div class="gorow">${goPill(cat, geo, noDrive)}</div>` : ""}
         ${note && note !== "—" ? `<div class="n">${md(note)}</div>` : ""}
       </div>
     </li>`).join("") + `</ul>`;
 }
 
+/* 今日導航：依首次出現順序把當天的地點去重列出。時間與交通方式取首次出現那列，
+   所以行為跟原本掛在列上的按鈕一致。
+   A／B／C 方案日按區塊分組，不另開一組頁籤——同一頁兩組頁籤會跟時辰表的打架。
+   共同區塊的地點只列一次；各方案只列該方案獨有的地點，方案之間不互相吃掉。 */
+function dayPlaces(d){
+  const hasTabs = d.blocks.some(b => b.tabs);
+  const common = new Set();
+  d.blocks.forEach(b => { if (!b.tabs) b.rows.forEach(r => r[5] && common.add(r[5])); });
+
+  const groups = [], done = new Set();
+  const pick = (rows, skip) => {
+    const seen = new Set(), out = [];
+    rows.forEach(([t,cat,place,note,fx,key]) => {
+      if (!key || !GEO[key] || seen.has(key) || skip.has(key)) return;
+      seen.add(key);
+      out.push({ key, cat, time:t, name:GEO[key][0] });
+    });
+    return out;
+  };
+  d.blocks.forEach(b => {
+    if (b.tabs){
+      b.tabs.forEach(p => {
+        const items = pick(p.rows, common);
+        if (items.length) groups.push({ label:p.label, items });
+      });
+    } else {
+      const items = pick(b.rows, done);
+      items.forEach(x => done.add(x.key));
+      if (items.length) groups.push({ label:hasTabs ? (b.title || "共同") : "", items });
+    }
+  });
+  return groups;
+}
+
+function navCard(d){
+  const groups = dayPlaces(d), noDrive = noDriveDay(d);
+  if (!groups.length) return "";
+  const rows = groups.map(g =>
+    (g.label ? `<tr class="navgrp"><td colspan="3">${esc(g.label)}</td></tr>` : "")
+    + g.items.map(x => `<tr>
+        <td class="navt">${esc(x.time)}</td>
+        <td>${esc(x.name)}</td>
+        <td class="navg">${geoLink(x.cat, x.key, noDrive)}</td>
+      </tr>`).join("")).join("");
+  return `<section class="day glass rv">
+    <div class="daybox-t">今日導航<span class="mapsw" role="group" aria-label="選擇地圖 App">
+      ${[["g","Google"],["a","Apple"]].map(([k,n]) =>
+        `<button type="button" data-map="${k}" aria-pressed="${k === MAPAPP}">${n}</button>`).join("")}
+    </span></div>
+    <table class="navtbl">${rows}</table>
+  </section>`;
+}
+
 function dayArticle(d){
+  const noDrive = noDriveDay(d);
   const blocks = d.blocks.map(b => {
     if (b.tabs) {
       const g = `d${d.n}`;
@@ -258,11 +340,11 @@ function dayArticle(d){
         return `<div class="panel" data-g="${g}" data-i="${i}" ${i===0?"":"hidden"}>
            ${p.cond ? `<p class="cond">${esc(p.cond)}</p>` : ""}
            ${rl ? `<p class="routeline">${rl}</p>` : ""}
-           ${timeline(p.rows)}
+           ${timeline(p.rows, noDrive)}
          </div>`; }).join("");
       return `<div class="tabs" role="tablist">${btns}</div>${panels}`;
     }
-    return (b.title ? `<div class="block-title">${esc(b.title)}</div>` : "") + timeline(b.rows);
+    return (b.title ? `<div class="block-title">${esc(b.title)}</div>` : "") + timeline(b.rows, noDrive);
   }).join("");
 
   const notes = d.notes && d.notes.length
@@ -304,7 +386,9 @@ function dayArticle(d){
     <div class="daybox-t">時辰表${d.blocks.some(b => b.tabs) ? "" : routeLink(d.n, "")}</div>
     <p class="legend"><i></i> 發光標記為不可調動的固定時間：班機、導覽、船班、固定入住與還車</p>
     ${blocks}${notes}
-  </section>`;
+  </section>
+
+  ${navCard(d)}`;
 }
 
 /* ── 各頁渲染 ───────────────────────────────────────── */
@@ -1037,6 +1121,18 @@ document.addEventListener("click", e => {
     .forEach(x => x.setAttribute("aria-selected", x.dataset.i === i));
   document.querySelectorAll(`.panel[data-g="${g}"]`)
     .forEach(x => x.hidden = x.dataset.i !== i);
+});
+
+/* 地圖 App 切換：只改 body 上的屬性，哪一顆圖示現身交給 CSS */
+document.addEventListener("click", e => {
+  const b = e.target.closest(".mapsw button");
+  if (!b) return;
+  const m = b.dataset.map;
+  MAPAPP = m;
+  document.body.dataset.map = m;
+  try { localStorage.setItem("mapapp", m); } catch (e2) {}
+  document.querySelectorAll(".mapsw button")
+    .forEach(x => x.setAttribute("aria-pressed", x.dataset.map === m));
 });
 
 /* 進場動畫 */
