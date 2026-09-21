@@ -246,7 +246,7 @@ const multiPlace = place => /、/.test(place) || (/／/.test(place) && !/→/.te
 function timeline(rows, noDrive){
   return `<ul class="tl">` + rows.map(([t,cat,place,note,fx,geo]) => `
     <li class="${fx?"fx":""}">
-      <div class="t"><span>${esc(t)}</span>${geo && !multiPlace(place) ? geoLink(cat, geo, noDrive) : ""}</div><div class="m"></div>
+      <div class="t">${geo && !multiPlace(place) ? geoLink(cat, geo, noDrive) : ""}<span>${esc(t)}</span></div><div class="m"></div>
       <div class="c">
         <div class="p"><span class="cat">${esc(cat)}</span>${esc(place)}</div>
         ${note && note !== "—" ? `<div class="n">${md(note)}</div>` : ""}
