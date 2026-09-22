@@ -390,6 +390,19 @@ if (PAGE === "index") {
           <div class="side">${l.side.map(s => esc(s)).join("<br>")}</div>
         </div>`).join("")}
     </div>`).join("");
+  /* 入住確認：何時聯絡、聯絡誰、要確認什麼、目前狀態。電話走 tel: 連結，寫法同緊急聯絡頁。 */
+  const stayConfirm = c => `
+      <details class="stay-cfm">
+        <summary><span class="s-t">入住確認</span><span class="s-d">${esc(c.status)}</span></summary>
+        <div class="dbody">
+          <dl class="kv">
+            <dt>時間點</dt><dd>${esc(c.when)}</dd>
+            <dt>聯絡</dt><dd>${esc(c.who)}${c.dial ? `　<a href="tel:${esc(c.dial)}">${esc(c.tel)}</a>` : ""}</dd>
+            <dt>要確認</dt><dd><ol class="cfm-steps">${c.steps.map(x => `<li>${esc(x)}</li>`).join("")}</ol></dd>
+            <dt>狀態</dt><dd><strong>${esc(c.status)}</strong></dd>
+          </dl>
+        </div>
+      </details>`;
   el("staylist").innerHTML = STAYS.map(s => `
     <div class="card glass rv">
       <div class="meta">${esc(s.city)}　${esc(s.date)}　${s.nights} 晚</div>
@@ -401,6 +414,7 @@ if (PAGE === "index") {
         <dt>退房</dt><dd>${esc(s.out)}</dd>
         ${s.note ? `<dt>備註</dt><dd>${esc(s.note)}</dd>` : ""}
       </dl>
+      ${s.confirm ? stayConfirm(s.confirm) : ""}
     </div>`).join("");
   /* 路線圖：內嵌 SVG。國界與行車幾何都由 make_map.js 於建置時投影好，執行期不取外部資料。 */
   const SIDE = {

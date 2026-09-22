@@ -280,6 +280,14 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
 .kv{display:grid;grid-template-columns:62px 1fr;gap:6px 14px;margin-top:18px;font-size:13px}
 .kv dt{color:var(--ink3)}
 .kv dd{margin:0;color:var(--ink2)}
+/* 住宿卡內的「入住確認」展開區：沿用 summary／.dbody，只縮小間距 */
+.stay-cfm{margin-top:16px;border:1px solid var(--hair2);border-radius:14px;overflow:hidden}
+.stay-cfm summary{padding:12px 16px;font-size:13px}
+.stay-cfm .dbody{padding:14px 16px 16px}
+.stay-cfm .kv{margin-top:0;grid-template-columns:52px 1fr}
+.cfm-steps{margin:0;padding-left:18px;display:grid;gap:4px}
+.stay-cfm a{color:var(--amber);text-decoration:none;border-bottom:1px solid rgba(255,184,114,.3)}
+.stay-cfm a:hover{border-bottom-color:var(--amber)}
 
 /* ───────── flights ───────── */
 .grouplabel{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin:0 0 12px;font-weight:600}
@@ -378,6 +386,7 @@ footer{
   .leg{grid-template-columns:1fr;padding:22px}
   .leg .side{text-align:left}
   summary{padding:16px 20px}
+  .stay-cfm summary{padding:12px 16px}
   .dbody{padding:16px 20px 20px}
   .callout{padding:22px 20px}
   .facts{grid-template-columns:1fr;gap:4px 0}
