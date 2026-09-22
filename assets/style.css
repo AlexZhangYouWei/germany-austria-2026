@@ -288,6 +288,14 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
 .cfm-steps{margin:0;padding-left:18px;display:grid;gap:4px}
 .stay-cfm a{color:var(--amber);text-decoration:none;border-bottom:1px solid rgba(255,184,114,.3)}
 .stay-cfm a:hover{border-bottom-color:var(--amber)}
+/* 日頁「今日聯絡住宿」卡 */
+.ntf-name{margin:0;font-size:15px;font-weight:600;line-height:1.5}
+.ntf-act{margin:8px 0 0;font-size:13.5px;color:var(--ink2);line-height:1.7}
+.ntf-who{margin:12px 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:13px;color:var(--ink3)}
+.ntf-tel{display:inline-flex;align-items:center;padding:8px 15px;border-radius:999px;
+  border:1px solid rgba(255,190,140,.34);background:rgba(255,160,90,.1);
+  color:var(--amber);text-decoration:none;font-size:14px;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.ntf-tel:hover{background:rgba(255,160,90,.18)}
 
 /* ───────── flights ───────── */
 .grouplabel{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink3);margin:0 0 12px;font-weight:600}

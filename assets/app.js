@@ -340,6 +340,16 @@ function dayArticle(d){
     ${d.check.foot ? `<p class="cfm-foot">${md(d.check.foot)}</p>` : ""}
   </section>` : "";
 
+  /* 今日聯絡住宿：只在需要當天聯絡或查訊息的日子出現，放在標題卡正下方 */
+  const ntf = (typeof STAY_NOTIFY === "undefined" ? [] : STAY_NOTIFY).filter(n => n.day === d.n).map(n => {
+    const s = STAYS[n.stay], c = s.confirm || {};
+    return `<section class="day glass rv ntf">
+    <div class="daybox-t">今日聯絡住宿<span class="daybox-when">${esc(n.when)}</span></div>
+    <p class="ntf-name">${esc(s.name)}</p>
+    <p class="ntf-act">${md(n.act)}</p>
+    <p class="ntf-who">${esc(c.who || "")}${c.dial ? `<a class="ntf-tel" href="tel:${esc(c.dial)}">${esc(c.tel)}</a>` : ""}</p>
+  </section>`; }).join("");
+
   return `<article class="day glass rv">
     <div class="day-head">
       <span class="day-n">DAY ${d.n}</span>
@@ -349,6 +359,8 @@ function dayArticle(d){
     <h1 class="day-title">${esc(d.title)}</h1>
     <div class="day-meta">${d.meta.map(m => `<span>${esc(m)}</span>`).join("")}</div>
   </article>
+
+  ${ntf}
 
   ${chk}
 
