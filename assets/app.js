@@ -994,11 +994,20 @@ if (PAGE === "offices") {
 
 /* ── 出發前準備清單 ─────────────────────────────────── */
 
-/* 勾選狀態存在各自裝置的 localStorage，不同步給其他人。
+/* 狀態存在各自裝置的 localStorage，不同步給其他人。
+   v2 = { checks:{id:1}, list:[區段…] }。list 只有在使用者動過結構（新增／改名／刪除／排序）之後才存，
+   沒動過就一直用 data.js 的 CHECKLIST，之後行程更新才會帶進來。
    無痕模式下讀寫會直接拋例外，兩個函式都必須包 try/catch，否則整頁會掛掉。 */
-const CK_KEY = "trip2026.checklist.v1";
+const CK_KEY = "trip2026.checklist.v2";
+const CK_KEY_V1 = "trip2026.checklist.v1";
 function ckLoad(){
-  try { return JSON.parse(localStorage.getItem(CK_KEY)) || {}; } catch (e) { return {}; }
+  try {
+    const v2 = JSON.parse(localStorage.getItem(CK_KEY));
+    if (v2 && v2.checks) return v2;
+    /* 舊版只存勾選，搬過來 */
+    const v1 = JSON.parse(localStorage.getItem(CK_KEY_V1)) || {};
+    return { checks:v1, list:null };
+  } catch (e) { return { checks:{}, list:null }; }
 }
 function ckSave(state){
   try { localStorage.setItem(CK_KEY, JSON.stringify(state)); return true; } catch (e) { return false; }
@@ -1006,49 +1015,74 @@ function ckSave(state){
 
 if (PAGE === "checklist") {
   const state = ckLoad();
-  /* 資料是三層（區段 → 群組 → 項目），統計要用的只有最底層，先攤平一次。 */
-  const allItems = CHECKLIST.flatMap(s => s.groups.flatMap(g => g.items));
-  const total = allItems.length;
-  const doneIn = g => g.items.filter(([id]) => state[id]).length;
+  const checks = state.checks;
+  /* 使用者一動結構就複製一份出來改，之後都以這份為準 */
+  const list = () => state.list || CHECKLIST;
+  const own  = () => { if (!state.list) state.list = JSON.parse(JSON.stringify(CHECKLIST)); return state.list; };
+  const newId = p => p + Date.now().toString(36) + Math.random().toString(36).slice(2,5);
+  let editing = false;
+
+  /* 資料是三層（區段 → 群組 → 項目），統計要用的只有最底層 */
+  const allItems = () => list().flatMap(s => s.groups.flatMap(g => g.items));
+  const doneIn = g => g.items.filter(([id]) => checks[id]).length;
   const secTotal = s => s.groups.reduce((a,g) => a + g.items.length, 0);
   const secDone = s => s.groups.reduce((a,g) => a + doneIn(g), 0);
-  const doneAll = () => allItems.filter(([id]) => state[id]).length;
 
-  el("ckroot").innerHTML = CHECKLIST.map(s => `
+  /* 編輯模式的控制鈕：上、下、改、刪。第一個不能再上、最後一個不能再下。 */
+  const ctl = (kind, i, n) => editing ? `<span class="ck-ctl">
+      <button type="button" data-act="up"   data-kind="${kind}" ${i === 0 ? "disabled" : ""} aria-label="上移">↑</button>
+      <button type="button" data-act="down" data-kind="${kind}" ${i === n-1 ? "disabled" : ""} aria-label="下移">↓</button>
+      <button type="button" data-act="edit" data-kind="${kind}" aria-label="修改">✎</button>
+      <button type="button" data-act="del"  data-kind="${kind}" aria-label="刪除">✕</button>
+    </span>` : "";
+
+  function render(){
+    el("ckroot").innerHTML = list().map(s => `
     <section class="ck-sec" data-s="${s.id}">
-      <div class="ck-sechead rv">
+      <div class="ck-sechead rv in">
         <div class="ck-secline">
           <h2>${esc(s.title)}</h2>
-          <span class="ck-seccount" data-seccount="${s.id}">${secDone(s)}／${secTotal(s)}</span>
+          <span class="ck-seccount" data-seccount="${s.id}"></span>
         </div>
         ${s.note ? `<p class="ck-secnote">${esc(s.note)}</p>` : ""}
         <div class="ck-track ck-sectrack"><i data-secbar="${s.id}" style="width:0%"></i></div>
       </div>
       <div class="ckgrid">
-        ${s.groups.map(g => `
-        <section class="ck-group glass rv" data-g="${g.id}">
+        ${s.groups.map((g,gi) => `
+        <section class="ck-group glass rv in${editing ? " editing" : ""}" data-g="${g.id}">
           <div class="ck-head">
             <h3>${esc(g.title)}</h3>
-            <span class="ck-count" data-count="${g.id}">${doneIn(g)}／${g.items.length}</span>
+            <span class="ck-headr">
+              <span class="ck-count" data-count="${g.id}"></span>
+              ${ctl("group", gi, s.groups.length)}
+            </span>
           </div>
-          ${g.items.map(([id,label,note]) => `
-            <label class="ck-item${state[id] ? " on" : ""}" data-item="${id}">
-              <input type="checkbox" data-id="${id}"${state[id] ? " checked" : ""}>
-              <span class="ck-text">
-                <span class="ck-label">${esc(label)}</span>
-                ${note ? `<span class="ck-note">${esc(note)}</span>` : ""}
-              </span>
-            </label>`).join("")}
+          ${g.items.map(([id,label,note],ii) => `
+            <div class="ck-row" data-item="${id}">
+              <label class="ck-item${checks[id] ? " on" : ""}">
+                <input type="checkbox" data-id="${id}"${checks[id] ? " checked" : ""}>
+                <span class="ck-text">
+                  <span class="ck-label">${esc(label)}</span>
+                  ${note ? `<span class="ck-note">${esc(note)}</span>` : ""}
+                </span>
+              </label>
+              ${ctl("item", ii, g.items.length)}
+            </div>`).join("")}
+          ${editing ? `<button type="button" class="ck-add" data-act="additem">＋ 新增項目</button>` : ""}
         </section>`).join("")}
+        ${editing ? `<button type="button" class="ck-add ck-addgroup" data-act="addgroup">＋ 新增群組</button>` : ""}
       </div>
     </section>`).join("");
+    paint();
+  }
 
   function paint(){
-    const n = doneAll();
+    const all = allItems(), total = all.length;
+    const n = all.filter(([id]) => checks[id]).length;
     el("ckbar").style.width = total ? (n / total * 100) + "%" : "0%";
     el("cknum").textContent = `${n}／${total}`;
     el("ckstate").textContent = n === total ? "全部完成" : `還有 ${total - n} 項`;
-    CHECKLIST.forEach(s => {
+    list().forEach(s => {
       const st = secTotal(s), sd = secDone(s);
       document.querySelector(`[data-seccount="${s.id}"]`).textContent = `${sd}／${st}`;
       document.querySelector(`[data-secbar="${s.id}"]`).style.width = st ? (sd / st * 100) + "%" : "0%";
@@ -1057,23 +1091,78 @@ if (PAGE === "checklist") {
       });
     });
   }
-  paint();
+  render();
 
-  /* 事件委派：只改動當下那一項，不整頁重繪 */
+  const save = () => { if (!ckSave(state)) el("cknostore").hidden = false; };
+  const swap = (arr, i, j) => { [arr[i], arr[j]] = [arr[j], arr[i]]; };
+
+  /* 勾選：只改動當下那一項，不整頁重繪 */
   el("ckroot").addEventListener("change", e => {
     const box = e.target.closest('input[type="checkbox"]');
     if (!box) return;
     const id = box.dataset.id;
-    if (box.checked) state[id] = 1; else delete state[id];
+    if (box.checked) checks[id] = 1; else delete checks[id];
     box.closest(".ck-item").classList.toggle("on", box.checked);
-    if (!ckSave(state)) el("cknostore").hidden = false;
-    paint();
+    save(); paint();
+  });
+
+  /* 編輯模式的操作：找到所在的區段／群組／項目，改完整頁重繪 */
+  el("ckroot").addEventListener("click", e => {
+    const b = e.target.closest("button[data-act]");
+    if (!b) return;
+    const act = b.dataset.act, kind = b.dataset.kind;
+    const L = own();
+    const sec = L.find(x => x.id === b.closest(".ck-sec").dataset.s);
+    const gEl = b.closest(".ck-group");
+    const gi = gEl ? sec.groups.findIndex(x => x.id === gEl.dataset.g) : -1;
+    const g = gi >= 0 ? sec.groups[gi] : null;
+    const rEl = b.closest(".ck-row");
+    const ii = rEl && g ? g.items.findIndex(x => x[0] === rEl.dataset.item) : -1;
+
+    if (act === "addgroup") {
+      const t = (prompt("群組名稱") || "").trim(); if (!t) return;
+      sec.groups.push({ id:newId("g"), title:t, items:[] });
+    } else if (act === "additem") {
+      const t = (prompt("項目名稱") || "").trim(); if (!t) return;
+      const n = (prompt("備註（可留空）") || "").trim();
+      g.items.push([newId("i"), t, n]);
+    } else if (kind === "group") {
+      if (act === "up")   swap(sec.groups, gi, gi - 1);
+      if (act === "down") swap(sec.groups, gi, gi + 1);
+      if (act === "edit") { const t = prompt("群組名稱", g.title); if (t === null) return; if (t.trim()) g.title = t.trim(); }
+      if (act === "del")  {
+        const msg = g.items.length ? `刪除「${g.title}」和裡面的 ${g.items.length} 個項目？` : `刪除「${g.title}」？`;
+        if (!confirm(msg)) return;
+        g.items.forEach(([id]) => delete checks[id]);
+        sec.groups.splice(gi, 1);
+      }
+    } else if (kind === "item") {
+      const it = g.items[ii];
+      if (act === "up")   swap(g.items, ii, ii - 1);
+      if (act === "down") swap(g.items, ii, ii + 1);
+      if (act === "edit") {
+        const t = prompt("項目名稱", it[1]); if (t === null) return;
+        const n = prompt("備註（可留空）", it[2] || ""); if (n === null) return;
+        if (t.trim()) it[1] = t.trim();
+        it[2] = n.trim();
+      }
+      if (act === "del")  { if (!confirm(`刪除「${it[1]}」？`)) return; delete checks[it[0]]; g.items.splice(ii, 1); }
+    }
+    save(); render();
+  });
+
+  el("ckedit").addEventListener("click", () => {
+    editing = !editing;
+    el("ckedit").textContent = editing ? "完成" : "編輯";
+    el("ckedit").classList.toggle("on", editing);
+    el("ckrestore").hidden = !editing;
+    render();
   });
 
   el("ckreset").addEventListener("click", () => {
     if (!confirm("確定要清空所有勾選嗎？此動作無法復原。")) return;
-    Object.keys(state).forEach(k => delete state[k]);
-    ckSave(state);
+    Object.keys(checks).forEach(k => delete checks[k]);
+    save();
     document.querySelectorAll('#ckroot input[type="checkbox"]').forEach(b => {
       b.checked = false;
       b.closest(".ck-item").classList.remove("on");
@@ -1081,8 +1170,16 @@ if (PAGE === "checklist") {
     paint();
   });
 
+  /* 把自己改過的結構丟掉，回到 data.js 的預設清單；勾選保留（同 id 的還會是勾的） */
+  el("ckrestore").addEventListener("click", () => {
+    if (!state.list) { alert("目前就是預設清單。"); return; }
+    if (!confirm("回到預設清單？你新增、修改、刪除、排序過的內容都會消失。")) return;
+    state.list = null;
+    save(); render();
+  });
+
   /* 開啟時就先探測一次能不能寫入，無痕模式直接提示 */
-  if (!ckSave(state)) el("cknostore").hidden = false;
+  save();
 }
 
 /* ── 互動 ───────────────────────────────────────────── */

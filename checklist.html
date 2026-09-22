@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0d0806">
 <title>準備清單｜德國・奧地利</title>
-<link rel="stylesheet" href="assets/style.css?v=d717e5c4">
+<link rel="stylesheet" href="assets/style.css?v=e6443f7c">
 </head>
 <body data-page="checklist">
 
@@ -26,7 +26,11 @@
       <span class="ck-state" id="ckstate"></span>
     </div>
     <div class="ck-track"><i id="ckbar" style="width:0%"></i></div>
-    <div class="ck-actions"><button type="button" class="ck-btn" id="ckreset">全部重設</button></div>
+    <div class="ck-actions">
+      <button type="button" class="ck-btn" id="ckrestore" hidden>回到預設清單</button>
+      <button type="button" class="ck-btn" id="ckreset">清空勾選</button>
+      <button type="button" class="ck-btn" id="ckedit">編輯</button>
+    </div>
   </div>
   <div id="ckroot"></div>
 </main>
@@ -39,6 +43,6 @@
 </footer>
 
 <script src="assets/data.js?v=3c17bc1d"></script>
-<script src="assets/app.js?v=b5dedf7c"></script>
+<script src="assets/app.js?v=1c5fd9c6"></script>
 </body>
 </html>
