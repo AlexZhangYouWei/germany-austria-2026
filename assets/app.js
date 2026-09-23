@@ -1083,9 +1083,56 @@ if (PAGE === "drive") {
   const q = s => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s)}`;
   const D = DRIVE;
 
-  el("drrental").innerHTML = `
-    <dl class="kv tkkv dr-kv">${D.rental.kv.map(([k,v]) => `<dt>${esc(k)}</dt><dd>${md(v)}</dd>`).join("")}</dl>
-    <ul class="notes">${li(D.rental.notes)}</ul>`;
+  /* 租車資訊（依設計稿）：桌機兩欄、手機單欄。兩版文字不同的地方都輸出，用 .dr-d／.dr-m 由 CSS 切換。
+     櫃檯確認的勾選只存在各自裝置的 localStorage，無痕模式讀寫會拋例外，所以包 try/catch。 */
+  const R = D.rental, DR_KEY = "trip2026.drive.v1";
+  let drck = {};
+  try { drck = JSON.parse(localStorage.getItem(DR_KEY)) || {}; } catch (e) {}
+  const chev = `<span class="sh-chev" aria-hidden="true"></span>`;
+  const card = (cls, title, body, tag = "") =>
+    `<article class="glass rv dr-c ${cls}"><div class="dr-hd"><h3>${esc(title)}</h3>${tag ? `<span class="dr-tag">${esc(tag)}</span>` : ""}</div>${body}</article>`;
+  /* 手機收合卡：標題＋摘要在 summary，點開看細節；桌機同樣可展開 */
+  const fold = (cls, title, sum, body) =>
+    `<article class="glass rv dr-c ${cls}"><details class="dr-fold"><summary><div class="dr-fsum"><h3>${esc(title)}</h3>${sum}</div>${chev}</summary>${body}</details></article>`;
+
+  const [shopN, shopA, shopH] = R.shop;
+  const order = card("dr-order", "租車訂單資訊", `
+    <div class="dr-orow">
+      <dl class="dr-shop"><dt>租車公司</dt><dd>${esc(shopN)}</dd><dt class="dr-m">取車地點</dt><dd>${esc(shopA)}</dd><dt class="dr-m">營業時間</dt><dd>${esc(shopH)}</dd></dl>
+      <dl class="dr-ocols">${R.order.map(([l, a, b, hi, s]) => `<div><dt>${esc(l)}</dt><dd>${esc(a)}${b ? `<span class="dr-sep">・</span><b${hi ? ` class="hi"` : ""}>${esc(b)}</b>` : ""}${s ? `<small>${esc(s)}</small>` : ""}</dd></div>`).join("")}</dl>
+    </div>
+    <p class="dr-cover">${esc(R.cover)}</p>`, "已確認");
+
+  const ctr = card("dr-ctr", "取車櫃檯確認", `<ul class="dr-cklist">${R.counter.map(([id, t, s, n]) => `<li><label>
+      <input type="checkbox" class="dr-box" data-k="${id}"${drck[id] ? " checked" : ""}>
+      <span class="dr-d">${esc(t)}</span><span class="dr-m">${esc(s)}</span><small class="dr-m">${esc(n)}</small>
+    </label></li>`).join("")}</ul>`, "到店逐項確認");
+
+  const docs = card("dr-docs", "必備文件", `<ul class="dr-doclist">${R.docs.map(([d, m, s]) =>
+    `<li><span class="dr-d">${esc(d)}</span><span class="dr-m">${esc(m)}</span><small class="dr-m">${esc(s)}</small></li>`).join("")}</ul>`);
+
+  const inspList = `<ul class="dr-plain">${R.inspect.map(t => `<li><span class="dr-sq"></span>${esc(t)}</li>`).join("")}</ul>`;
+  const insp = card("dr-insp dr-d", "取車驗車", inspList)
+    + fold("dr-insp dr-m", "取車驗車", `<p class="dr-fs">${esc(R.inspectShort)}</p>`, inspList);
+
+  const ret = fold("dr-ret", "還車安排",
+    `<p class="dr-hi">${esc(R.ret.time)}</p><p class="dr-flow">${esc(R.ret.flow)}</p><p class="dr-fs">${esc(R.ret.note)}</p>`,
+    `<p class="dr-note">${md(R.ret.more)}</p>`);
+
+  const [vg, vp, vr] = R.roadShort;
+  const road = fold("dr-road-c", "跨境與道路費",
+    `<dl class="dr-kv2 dr-d">${R.road.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>
+     <p class="dr-m dr-vg">${esc(vg)}<b>${esc(vp)}</b></p><p class="dr-m dr-fs">${esc(vr)}</p>`,
+    `<dl class="dr-kv2 dr-m">${R.road.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl><p class="dr-note">${md(R.roadNote)}</p>`);
+
+  const fuel = card("dr-fuel", "燃油原則", `<p class="dr-txt">${esc(R.fuel)}</p><p class="dr-note">${esc(R.fuelNote)}</p>`);
+
+  el("drrental").innerHTML = order + ctr + insp + docs + ret + road + fuel;
+  el("drrental").addEventListener("change", e => {
+    const b = e.target.closest(".dr-box"); if (!b) return;
+    if (b.checked) drck[b.dataset.k] = 1; else delete drck[b.dataset.k];
+    try { localStorage.setItem(DR_KEY, JSON.stringify(drck)); } catch (e2) {}
+  });
 
   el("drpark").innerHTML = `<table>${D.parking.map(([d,pl,fee,how,g]) =>
     `<tr><td style="width:16%"><strong>${esc(d)}</strong></td><td style="width:26%">${esc(pl)}${g ? geoLink("開車", g) : ""}</td><td class="dr-fee">${md(fee)}</td><td>${md(how)}</td></tr>`).join("")}</table>`;
