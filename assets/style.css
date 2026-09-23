@@ -260,32 +260,51 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
 }
 
 /* ───────── timeline ───────── */
-.tl{margin:16px 0 0;padding:0;list-style:none}
-.tl li{display:grid;grid-template-columns:150px 20px 1fr;position:relative}
-/* 時間欄：導航鈕在前、時間在後，flex 換行 */
-.tl .t{display:flex;align-items:center;flex-wrap:wrap;gap:7px;
-  font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums;padding:13px 0;line-height:1.6;letter-spacing:.02em}
+/* 桌機三欄：時間＋類別／圓點與直線／標題、標籤、地點列與「行程細節」 */
+.tl{margin:10px 0 0;padding:0;list-style:none}
+.tl>li{display:grid;grid-template-columns:170px 34px minmax(0,1fr);position:relative;border-bottom:1px solid var(--hair)}
+.tl>li:last-child{border-bottom:0}
+.tl .t{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:18px 0}
+.tl .tt-time{display:inline-flex;align-items:center;gap:8px;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.02em;line-height:1.3}
 .tl .m{position:relative}
 .tl .m::before{
-  content:"";position:absolute;left:4px;top:20px;width:8px;height:8px;border-radius:50%;
-  background:rgba(255,226,196,.26);box-shadow:0 0 0 4px rgba(255,226,196,.04);z-index:2;
+  content:"";position:absolute;left:12px;top:23px;width:10px;height:10px;border-radius:50%;
+  background:#e8b48a;box-shadow:0 0 0 4px rgba(232,180,138,.18);z-index:2;
 }
-.tl .m::after{content:"";position:absolute;left:7.5px;top:13px;bottom:-13px;width:1px;background:var(--hair2)}
-.tl li:last-child .m::after{display:none}
-.tl li.fx .m::before{
-  content:"🔒";background:none;width:16px;height:16px;left:0;top:15px;
-  border-radius:0;box-shadow:none;font-size:13px;line-height:16px;
-}
-.tl .c{padding:13px 0 13px 16px}
-.tl .p{font-size:15px;line-height:1.55}
-.tl li.fx .p{font-weight:600}
+.tl .m::after{content:"";position:absolute;left:16.5px;top:0;bottom:0;width:1px;background:var(--hair2)}
+.tl .c{padding:14px 0 12px 8px;min-width:0}
+.tl .p{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;font-size:19px;font-weight:600;line-height:1.4}
+.tt-title{display:inline-flex;align-items:center;gap:8px}
+.tt-lock{width:20px;height:20px;color:var(--amber);flex:0 0 auto}
+.tt-tag{font-size:13px;font-weight:500;color:var(--amber);border:1px solid rgba(255,184,114,.55);
+  background:rgba(255,184,114,.08);padding:2px 14px;border-radius:999px;letter-spacing:.04em;line-height:1.5}
+.tt-aside{font-size:13px;font-weight:400;color:var(--ink2)}
 .tl .cat{
-  display:inline-block;font-size:10.5px;letter-spacing:.04em;color:var(--ink3);
-  background:rgba(255,255,255,.05);border:1px solid var(--hair2);
-  padding:1px 8px;border-radius:6px;margin-right:9px;vertical-align:2px;
+  display:inline-block;font-size:13px;letter-spacing:.04em;color:var(--ink2);
+  background:rgba(255,255,255,.05);border:1px solid var(--hair2);padding:2px 14px;border-radius:8px;
 }
-.tl li.fx .cat{color:#ffb3a0;background:rgba(255,79,51,.14);border-color:rgba(255,79,51,.3)}
-.tl .n{font-size:13px;color:var(--ink2);margin-top:5px;line-height:1.65}
+.tt-stops{display:grid;gap:6px;margin-top:9px}
+.tt-stop{display:grid;grid-template-columns:22px 28px minmax(0,1fr) auto;align-items:center;gap:12px;
+  padding:6px 8px 6px 12px;border:1px solid var(--hair);border-radius:10px;background:rgba(255,255,255,.025)}
+.tt-one{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px}   /* 只有一個地點：不框、不重複名稱 */
+.tt-sub{font-size:13px;color:var(--ink3);min-width:0}
+.tt-one .geo{margin-left:auto}
+.tt-one .geo a{width:40px;height:40px}
+.tt-pin{width:22px;height:22px;color:#f3c9a0}
+.tt-no{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;
+  color:var(--ink2);background:rgba(255,255,255,.06);border:1px solid var(--hair2);font-variant-numeric:tabular-nums}
+.tt-nm{display:flex;flex-direction:column;min-width:0;line-height:1.35}
+.tt-nm b{font-size:14.5px;font-weight:600;color:var(--ink)}
+.tt-nm small{font-size:12.5px;color:var(--ink3);margin-top:1px}
+.tt-stop .geo a{width:40px;height:40px}
+.tt-more{margin-top:8px}
+.tt-more summary{list-style:none;display:inline-flex;align-items:center;gap:6px;cursor:pointer;
+  font-size:13px;color:var(--ink2);padding:2px 0}
+.tt-more summary::-webkit-details-marker{display:none}
+.tt-more summary::after{content:"";width:6px;height:6px;border:solid currentColor;border-width:0 1.5px 1.5px 0;
+  transform:translateY(-2px) rotate(45deg);transition:transform .2s}
+.tt-more[open] summary::after{transform:translateY(1px) rotate(-135deg)}
+.tl .n{font-size:13px;color:var(--ink2);margin-top:6px;line-height:1.7}
 
 /* ───────── notes ───────── */
 .notes{margin:28px 0 0;padding:0;list-style:none;display:grid;gap:10px}
@@ -425,9 +444,26 @@ footer{
   .stats{grid-template-columns:repeat(2,1fr);gap:8px}
   section{padding:58px 0 0}
   .day{padding:26px 20px 30px}
-  .tl li{grid-template-columns:88px 18px 1fr}
-  .tl .t{flex-direction:column;align-items:flex-start;gap:5px;font-size:11px;overflow-wrap:anywhere}
-  .tl .c{padding-left:12px}
+  /* 手機：每列一張卡，圓點在左、時間與類別在上，地點卡的導航鈕放右下 */
+  .timetable.day{padding-left:14px;padding-right:14px}
+  .tl>li{grid-template-columns:30px minmax(0,1fr);border:1px solid var(--hair);border-radius:16px;
+    background:rgba(255,255,255,.02);margin-bottom:12px;padding:0 12px 10px 0}
+  .tl>li:last-child{border-bottom:1px solid var(--hair)}
+  .tl .m{grid-column:1;grid-row:1/3}
+  .tl .m::before{left:10px;top:21px}
+  .tl .m::after{left:14.5px;top:0;bottom:-13px}
+  .tl .t{grid-column:2;grid-row:1;padding:14px 0 0;gap:6px}
+  .tl .tt-time{font-size:18px}
+  .tl .cat{color:#ffc9b8;background:rgba(255,120,90,.1);border-color:rgba(255,140,110,.35)}
+  .tl .c{grid-column:2;grid-row:2;padding:6px 0 0}
+  .tl .p{font-size:19px;gap:8px}
+  .tt-tag{font-size:14px;padding:3px 14px}
+  .tt-stop{grid-template-columns:22px 28px minmax(0,1fr);grid-template-rows:auto auto;align-items:start;
+    padding:10px 10px 10px 12px;row-gap:4px}
+  .tt-pin,.tt-no{margin-top:2px}
+  .tt-stop .geo{grid-column:1/-1;justify-self:end}
+  .tt-stop .geo a{width:44px;height:44px}
+  .tt-one .geo a{width:44px;height:44px}
   .cards{grid-template-columns:1fr}
   .leg{grid-template-columns:1fr;padding:22px}
   .leg .side{text-align:left}
@@ -445,8 +481,8 @@ footer{
   .cards{grid-template-columns:1fr}
   .leg{grid-template-columns:1fr}
   .leg .side{text-align:left}
-  .tl li{grid-template-columns:112px 18px minmax(0,1fr)}
-  .tl .c{padding-left:12px}
+  .tl>li{grid-template-columns:120px 30px minmax(0,1fr)}
+  .tl .tt-time{font-size:15px}
 }
 
 /* ───────── print ───────── */
@@ -725,7 +761,10 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .ck-secnote{margin:6px 0 0;font-size:12.5px;color:var(--ink3);line-height:1.65}
 .ck-sectrack{margin-top:12px}
 
-.ckgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;align-items:start}
+/* 桌機雙欄用瀑布流（CSS columns）：卡片依序往上補位，不會被同列較長的卡撐出空白 */
+.ckgrid{columns:2;column-gap:14px}
+.ckgrid>*{break-inside:avoid;margin:0 0 14px}
+.ckgrid>.ck-addgroup{width:100%}
 .ck-group{padding:20px 22px 12px}
 .ck-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
   padding-bottom:12px;border-bottom:1px solid var(--hair2)}
@@ -791,13 +830,13 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .tklink{margin:16px 0 0}
 .tkaddr{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0 0;font-size:12.5px;line-height:1.7;color:var(--ink2)}
 .tkday{margin:8px 0 0;font-size:12px;color:var(--ink3)}
-/* 票券雲端資料夾：整塊可點，放在分頁列之前——要找票面 QR 的人第一眼就該看到 */
-.tkdrive{display:block;padding:18px 22px 20px;text-decoration:none;color:inherit;
+/* 票券連結：整條可點的單行列，放在分頁列之前——要找票面 QR 的人第一眼就該看到 */
+.tkdrive{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 14px;padding:14px 20px;border-radius:16px;text-decoration:none;color:inherit;
   border-color:rgba(255,190,140,.3);background:linear-gradient(170deg,rgba(255,170,100,.1),rgba(255,140,70,.04));
   transition:transform .22s cubic-bezier(.2,.7,.3,1),border-color .22s}
 .tkdrive:hover{transform:translateY(-2px);border-color:rgba(255,190,140,.5)}
-.tkdrive-t{display:block;font-size:14.5px;font-weight:600;letter-spacing:-.01em;color:var(--amber)}
-.tkdrive-n{display:block;margin-top:7px;font-size:12.5px;color:var(--ink2);line-height:1.8}
+.tkdrive-t{font-size:14px;font-weight:600;letter-spacing:-.01em;color:var(--amber)}
+.tkdrive-n{font-size:12.5px;color:var(--ink3);line-height:1.6}
 
 .tktabs{display:flex;width:100%;margin:22px 0 14px}
 .tktabs button{flex:1;text-align:center;justify-content:center}
@@ -839,11 +878,23 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .ac-down b{display:block;color:var(--ink);font-weight:600}
 .ac-src{margin:18px 0 0;font-size:11.5px;color:var(--ink3);line-height:1.8}
 .sh-h{margin-bottom:16px}
-.sh-pic{width:64px;padding-right:12px}
+.sh-tbl{table-layout:fixed}
+.sh-tbl tr{border-bottom:1px solid var(--hair2)}
+.sh-tbl tr:last-child{border-bottom:0}
+.sh-tbl td{padding:20px 0;border:0}
+.sh-pic{width:64px}
 .sh-img{display:block;width:64px;height:64px;object-fit:cover;border-radius:12px;border:1px solid var(--hair2);background:rgba(255,255,255,.04)}
 .sh-noimg{display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:var(--ink3);background:rgba(255,184,114,.08)}
-.sh-credit{margin:18px 2px 0;font-size:11px;line-height:1.8;color:var(--ink3)}
-.sh-credit a{color:var(--ink3);text-decoration:none;border-bottom:1px dotted var(--hair2)}
+.sh-main strong{display:block;font-size:15.5px;line-height:1.45;letter-spacing:-.015em}
+.sh-note,.sh-where{font-size:13.5px;line-height:1.7;color:var(--ink2)}
+.sh-label{display:block;margin:0 0 4px;font-size:10.5px;font-weight:600;letter-spacing:.1em;color:var(--ink3)}
+@media (min-width:601px){
+  .sh-tbl tr{display:grid;grid-template-columns:64px minmax(150px,.72fr) minmax(260px,1.42fr) minmax(220px,1fr);gap:0 22px;align-items:center}
+  .sh-tbl .sh-pic{grid-column:1}
+  .sh-tbl .sh-main{grid-column:2}
+  .sh-tbl .sh-note{grid-column:3}
+  .sh-tbl .sh-where{grid-column:4;width:auto}
+}
 .dr-card{padding:10px 26px 26px}
 .dr-kv{grid-template-columns:96px 1fr}
 .dr-kv + .notes{margin-top:22px}
@@ -861,9 +912,20 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .es-no{color:var(--ink3)}
 /* 垂直比較（手機、桌機共用）：外框與欄、列分隔線都要看得出來 */
 .es-tabs{margin:0 0 16px}
+.sh-tabs{margin:0 0 10px}
+/* 第二層 tab 較輕：透明底、小一號，選中只換框色，和第一層區分主從 */
+.sh-tabs2{margin:0 0 16px}
+.sh-tabs2 .wxtab{padding:5px 12px;font-size:12px;background:transparent}
+.sh-tabs2 .wxtab.on{color:var(--amber);background:rgba(255,160,90,.12);border-color:rgba(255,190,140,.45);box-shadow:none}
+.sh-card{padding:4px 22px}
+.sh-img[src]{cursor:zoom-in}
+.sh-dlg{max-width:min(420px,calc(100vw - 32px))}
+.sh-big{display:block;max-width:100%;max-height:70dvh;margin:10px auto 0;border-radius:14px;object-fit:contain}
+.sh-bigcap{margin:14px 0 0;font-size:15px;font-weight:600;text-align:center}
+.sh-bigsrc{margin:4px 0 0;font-size:11px;color:var(--ink3);text-align:center;line-height:1.6}
 .es-cmp{border:1px solid rgba(255,222,190,.3);border-radius:18px;padding:0 14px;
   background:rgba(255,255,255,.025)}
-body[data-page="esim"] footer,body[data-page="offices"] footer{display:none}
+body[data-page="esim"] footer,body[data-page="offices"] footer,body[data-page="shop"] footer{display:none}
 .es-cv>div+div{border-left:1px solid rgba(255,222,190,.2)}
 .es-cv{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px;text-align:center}
 .es-ctop{padding:18px 0 18px}
@@ -900,8 +962,16 @@ body[data-page="esim"] footer,body[data-page="offices"] footer{display:none}
   .sh-stops{padding:4px 16px 8px}
 
 
-  .sh-where{font-size:11.5px}
-  .sh-pic{width:48px;padding-right:8px}
+  .sh-tbl,.sh-tbl tbody{display:block}
+  .sh-tbl tr{display:grid;grid-template-columns:48px minmax(0,1fr);gap:0 12px;padding:16px 0}
+  .sh-tbl td{padding:0}
+  .sh-tbl .sh-pic{grid-row:1 / span 2;width:48px}
+  .sh-tbl .sh-main{grid-column:2;align-self:center}
+  .sh-tbl .sh-note{grid-column:1 / -1;margin-top:12px}
+  .sh-tbl .sh-where{grid-column:1 / -1;width:auto;margin-top:12px;padding-top:11px;border-top:1px solid var(--hair2);font-size:12px}
+  .sh-main strong{font-size:15px}
+  .sh-label{margin-bottom:3px;font-size:10px}
+  .sh-pic{width:48px;padding-right:0}
   .sh-img{width:48px;height:48px;border-radius:10px}
   .sh-noimg{font-size:16px}
   .tkkv dt{margin-top:8px}
@@ -1254,7 +1324,7 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
   .wxcard{padding:18px 18px 10px}
       
   .dgrid{grid-template-columns:1fr}
-  .ckgrid{grid-template-columns:1fr}
+  .ckgrid{columns:1}
   .sosgrid{grid-template-columns:1fr}
   .mapwrap{padding:12px 10px 10px}
   .m-name{font-size:27px}
@@ -1274,7 +1344,8 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
 @media (width > 600px) and (max-width:800px){
   .edge{display:none}
   .dgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .wxgrid,.ckgrid,.sosgrid,.of-calls{grid-template-columns:1fr}
+  .wxgrid,.sosgrid,.of-calls{grid-template-columns:1fr}
+  .ckgrid{columns:1}
   .ac-cols{grid-template-columns:1fr}
 }
 

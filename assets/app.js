@@ -266,15 +266,33 @@ function timePeriod(t){
   return { total, period:hour >= 5 && hour < 12 ? "morning" : hour >= 12 && hour < 18 ? "afternoon" : "night" };
 }
 
+const ICON_LOCK = '<svg class="tt-lock" viewBox="0 0 24 24" aria-label="固定時間" role="img"><path fill="currentColor"'
+  + ' d="M7 10V7a5 5 0 0 1 10 0v3h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Zm2 0h6V7a3 3 0 0 0-6 0Z"/></svg>';
+const ICON_PIN = '<svg class="tt-pin" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd"'
+  + ' d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 4.2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6Z"/></svg>';
+
+/* 時辰表一列：[時間, 類別, 地點, 說明, 固定?, GEO key, 版面]。
+   第 7 格版面 { title, tags, aside, stops:[[key, 名稱, 副標]] } 選填：
+   沒給時標題用地點欄、地點只列第 6 格那一個，說明收進「行程細節」。
+   只有一個地點時標題就是它，不再重複名稱，只留副標與導航鈕。 */
 function timeline(rows, noDrive){
-  return `<ul class="tl">` + rows.map(([t,cat,place,note,fx,geo]) => {
+  return `<ul class="tl">` + rows.map(([t,cat,place,note,fx,geo,x]) => {
     const tm = timePeriod(t);
+    x = x || {};
+    const stops = x.stops || (geo && !multiPlace(place) ? [[geo]] : []);
+    const detail = note && note !== "—" && note !== x.aside;
     return `
     <li class="${fx?"fx":""}"${tm ? ` data-time-period="${tm.period}" data-time-minutes="${tm.total}"` : ""}>
-      <div class="t">${geo && !multiPlace(place) ? geoLink(cat, geo, noDrive) : ""}<span>${esc(t)}</span></div><div class="m"></div>
+      <div class="t"><span class="tt-time">${esc(t)}${fx ? ICON_LOCK : ""}</span><span class="cat">${esc(cat)}</span></div><div class="m"></div>
       <div class="c">
-        <div class="p"><span class="cat">${esc(cat)}</span>${esc(place)}</div>
-        ${note && note !== "—" ? `<div class="n">${md(note)}</div>` : ""}
+        <div class="p"><span class="tt-title">${esc(x.title || place)}</span>${(x.tags || []).map(g =>
+          `<span class="tt-tag">${esc(g)}</span>`).join("")}${x.aside ? `<span class="tt-aside">${esc(x.aside)}</span>` : ""}</div>
+        ${stops.length === 1 ? `<div class="tt-one">${stops[0][2] ? `<span class="tt-sub">${esc(stops[0][2])}</span>` : ""}${geoLink(cat, stops[0][0], noDrive)}</div>`
+          : stops.length ? `<div class="tt-stops">${stops.map(([k, name, sub], i) => `
+          <div class="tt-stop">${ICON_PIN}<span class="tt-no">${i + 1}</span>
+            <span class="tt-nm"><b>${esc(name || (GEO[k] ? GEO[k][0] : k))}</b>${sub ? `<small>${esc(sub)}</small>` : ""}</span>
+            ${geoLink(cat, k, noDrive)}</div>`).join("")}</div>` : ""}
+        ${detail ? `<details class="tt-more"><summary>行程細節</summary><div class="n">${md(note)}</div></details>` : ""}
       </div>
     </li>`;
   }).join("") + `</ul>`;
@@ -365,7 +383,7 @@ function dayArticle(d){
          </div>`; }).join("");
       return `<div class="tabs" role="tablist">${btns}</div>${panels}`;
     }
-    return (b.title ? `<div class="block-title">${esc(b.title)}</div>` : "") + timeline(b.rows, noDrive);
+    return `<div class="tlb">${b.title ? `<div class="block-title">${esc(b.title)}</div>` : ""}${timeline(b.rows, noDrive)}</div>`;
   }).join("");
 
   const notes = d.notes && d.notes.length
@@ -702,7 +720,7 @@ if (PAGE === "day") {
         timeJump.hidden = true;
         timeJump.classList.remove("show");
       };
-      if (!table) { hide(); return; }
+      if (!table || pager()) { hide(); return; }   /* 手機時辰表直接全部顯示，不掛時段跳轉 */
       const r = table.getBoundingClientRect();
       const inView = r.bottom > 72 && r.top < window.innerHeight - 24;
       const rows = visibleTimeRows(panel);
@@ -992,8 +1010,8 @@ if (PAGE === "tickets") {
       <span class="tkdrive-t">${esc(D.label)}　→</span>
       <span class="tkdrive-n">${esc(D.note)}</span>
     </a>`
-    + `<div class="tabs tktabs" role="tablist">${groups.map(([l, xs], i) =>
-      `<button role="tab" aria-selected="${i===0}" data-g="tk" data-i="${i}">${l}<em>${xs.length}</em></button>`).join("")}</div>`
+    + `<div class="tabs tktabs" role="tablist">${groups.map(([l], i) =>
+      `<button role="tab" aria-selected="${i===0}" data-g="tk" data-i="${i}">${l}</button>`).join("")}</div>`
     + groups.map(([l, xs], i) =>
       `<div class="panel" data-g="tk" data-i="${i}" ${i===0?"":"hidden"}><div class="cards">${xs.map(card).join("")}</div></div>`).join("")
     + `<dialog class="tkdlg" id="tkdlg" aria-label="票券詳情"><div class="tkdlg-in glass"><button type="button" class="tkdlg-x" data-close aria-label="關閉">×</button><div id="tkdlgbody"></div></div></dialog>`;
@@ -1013,30 +1031,49 @@ if (PAGE === "tickets") {
 }
 
 if (PAGE === "shop") {
-  /* 有圖的品項放 64px 縮圖，沒有的放品名首字母佔位；圖片 title 帶作者與授權 */
+  /* 有圖的品項放 64px 縮圖（可點開放大），沒有的放品名首字母佔位；圖片 title 帶作者與授權 */
   const CR = Object.fromEntries((SHOP.credits || []).map(([k, f, au, li]) => [k, `${f}　©${au}　${li}`]));
   const pic = (k, name) => k
     ? `<img class="sh-img" src="assets/img/shop/${k}.jpg" width="64" height="64" loading="lazy" alt="${esc(name)}" title="${esc(CR[k] || "Wikimedia Commons")}">`
     : `<span class="sh-img sh-noimg" aria-hidden="true">${esc(name.trim().charAt(0))}</span>`;
-  const tbl = rows => `<table class="sh-tbl">${rows.map(([a,b,c,k]) =>
-    `<tr><td class="sh-pic">${pic(k, a)}</td><td style="width:27%"><strong>${esc(a)}</strong></td><td>${md(b)}</td><td class="sh-where">${esc(c)}</td></tr>`).join("")}</table>`;
-  const grp = (cc, label) => `
-    <h2 class="sec-h sh-h rv">${label}</h2>
-    <details class="glass rv">
-      <summary><span class="s-t">食品與伴手禮</span><span class="s-d">${SHOP[cc].food.length} 項</span></summary>
-      <div class="dbody"><div class="scroll">${tbl(SHOP[cc].food)}</div></div>
-    </details>
-    <details class="glass rv">
-      <summary><span class="s-t">藥品與保健</span><span class="s-d">${SHOP[cc].med.length} 項</span></summary>
-      <div class="dbody"><div class="scroll">${tbl(SHOP[cc].med)}</div></div>
-    </details>`;
-  el("shroot").innerHTML = grp("DE","德國") + grp("AT","奧地利");
+  const tbl = rows => `<table class="sh-tbl"><tbody>${rows.map(([a,b,c,k]) =>
+    `<tr><td class="sh-pic">${pic(k, a)}</td>`
+    + `<td class="sh-main"><strong>${esc(a)}</strong></td>`
+    + `<td class="sh-note"><span class="sh-label">推薦理由</span><div>${md(b)}</div></td>`
+    + `<td class="sh-where"><span class="sh-label">這趟在哪買</span><div>${esc(c)}</div></td></tr>`).join("")}</tbody></table>`;
+  /* 雙層 tab：第一層國家、第二層食品／藥妝，一次只顯示一張表 */
+  const CC = [["DE","德國"],["AT","奧地利"]], KIND = [["food","食品"],["med","藥妝"]];
+  let cc = 0, kd = 0;
+  const tabs = (xs, cur, lv) => xs.map(([, l], i) =>
+    `<button type="button" role="tab" class="wxtab${i === cur ? " on" : ""}" data-lv="${lv}" data-i="${i}" aria-selected="${i === cur}">${l}</button>`).join("");
+  const show = () => {
+    el("shtabs").innerHTML = tabs(CC, cc, "cc");
+    el("shtabs2").innerHTML = tabs(KIND, kd, "kd");
+    el("shroot").innerHTML = `<div class="glass sh-card"><div class="scroll">${tbl(SHOP[CC[cc][0]][KIND[kd][0]])}</div></div>`;
+  };
+  show();
+  const onTab = e => {
+    const b = e.target.closest("[data-lv]"); if (!b) return;
+    if (b.dataset.lv === "cc") cc = +b.dataset.i; else kd = +b.dataset.i;
+    show();
+  };
+  el("shtabs").addEventListener("click", onTab);
+  el("shtabs2").addEventListener("click", onTab);
+
+  /* 點縮圖放大：沿用票券頁的 .tkdlg 彈窗 */
+  const dlg = el("shdlg");
+  el("shroot").addEventListener("click", e => {
+    const img = e.target.closest("img.sh-img");
+    if (!img || !dlg || !dlg.showModal) return;
+    el("shdlgbody").innerHTML = `<img class="sh-big" src="${esc(img.getAttribute("src"))}" alt="${esc(img.alt)}">
+      <p class="sh-bigcap">${esc(img.alt)}</p><p class="sh-bigsrc">${esc(img.title)}</p>`;
+    dlg.showModal();
+  });
+  if (dlg) dlg.addEventListener("click", e => {
+    if (dlg.open && (e.target.closest("[data-close]") || e.target === dlg)) dlg.close();
+  });
   el("shstops").innerHTML = `<table>${SHOP.stops.map(([t,pl,w,g]) =>
     `<tr><td style="width:22%"><strong>${esc(t)}</strong></td><td>${esc(pl)}${geoLink("步行", g)}</td><td class="sh-where">${md(w)}</td></tr>`).join("")}</table>`;
-  el("shnotes").innerHTML = `<ul class="notes">${SHOP.notes.map(([l,t]) =>
-    `<li><b class="lbl">${esc(l)}</b>${esc(t)}</li>`).join("")}</ul>`
-    + `<p class="sh-credit">商品照片：食品多取自 Wikimedia Commons（公有領域或 CC 授權），藥品與部分食品為品牌或網路藥局商品頁的官方商品圖；滑鼠移到圖上可見來源與授權，僅供辨識。${(SHOP.credits || []).map(([k,f,au,li,u]) =>
-      `<a href="${esc(u)}" target="_blank" rel="noopener" title="${esc(f)}　©${esc(au)}　${esc(li)}">${esc(k)}</a>`).join("・")}</p>`;
 }
 
 /* 開車須知：租車、停車、加油站、與台灣不同的交通法規。

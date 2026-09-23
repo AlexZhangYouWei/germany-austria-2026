@@ -138,6 +138,7 @@ const GEO = {
   "frauenkirche":["聖母教堂 Frauenkirche","48.13858,11.57359"],
   "augustiner-keller":["奧古斯丁啤酒花園 Augustiner-Keller","48.14350,11.55157"],
   "neuhauser":["新豪瑟街 Neuhauser Straße","48.13860,11.56852"],
+  "st-michael":["聖彌額爾教堂 St. Michael（Neuhauser Straße 6）","48.13893,11.57042"],   // 2026-09-23 Nominatim
   "dm-stachus":["dm 藥妝店（Karlsplatz 25，Stachus Passagen 地下層）","48.13969,11.56455"],
   "ludwigs-apotheke":["國際路德維希藥局 Internationale Ludwigs-Apotheke（Neuhauser Str. 11）","48.13824,11.57045"],
   // 新天鵝堡周邊
@@ -189,14 +190,30 @@ const DAYS = [
   n:1, date:"10/05（一）", title:"抵達慕尼黑、老城適應日",
   meta:["住宿 Munich Top Place","交通 機場線＋步行","無自駕"],
   blocks:[{ rows:[
-    ["08:05–09:45","航班／入境","慕尼黑機場第一航廈","CX301 抵達，入境、領行李與網路設定。08:05 是落地時間，不是可離開機場的時間",1,"muc-t1"],
-    ["09:45–11:15","機場線／寄放行李","機場 → 卡爾廣場站 Karlsplatz Stachus → Munich Top Place（Sonnenstraße 3）","**S1 或 S8 先來先上**，約 45 分到卡爾廣場，出站步行 3 分。**11:00 起可寄放行李**，確認 16:00 入住方式。備案：中央車站 DB 置物櫃（小 €4／大 €6，**只收硬幣**）",0,"muc-stay1"],
-    ["11:15–12:15","景點","阿桑教堂 Asamkirche、瑪利亞廣場 Marienplatz、新市政廳","阿桑教堂約 25 分，走到瑪利亞廣場看 **12:00 鐘琴報時**",0,"marienplatz"],
-    ["12:15–13:15","午餐／市場","維克圖阿連市場 Viktualienmarkt","散步與午餐",0,"viktualienmarkt"],
-    ["13:15–16:00","景點／自由活動","聖母教堂 Frauenkirche、聖彌額爾教堂、老城街區、卡爾廣場咖啡與藥妝店","**dm** 在 Karlsplatz 25（Stachus Passagen 地下層），**Müller**、**Rossmann** 同一條步行街，週一**營業至 20:00**。依飛行疲勞縮短；**16:00 回住宿正式入住、休息**",0,"dm-stachus"],
-    ["17:40–20:00","晚餐","奧古斯丁啤酒花園 Augustiner-Keller","**18:30 已預約**。住宿步行 1.5 km 約 20 分：Sonnenstraße 接 Bayerstraße 經中央車站，沿 Arnulfstraße 到 52 號；不想走可搭 S-Bahn 一站到 Hauptbahnhof 再步行 8 分",1,"augustiner-keller"],
-    ["20:00–20:40","採買","慕尼黑中央車站 EDEKA Ernst","S-Bahn 轉乘層（Arnulfstraße 2），**營業至 23:00**。飲水、早餐與隔日車程補給",0,"muc-hbf"],
-    ["20:40–21:15","散步","卡爾廣場 Karlsplatz、步行街","夜間散步後返回住宿。當晚確認 SIXT 電子確認單、4 人證件、10/06 城堡票 QR code",0,"karlsplatz"]
+    ["08:05–09:45","航班／入境","慕尼黑機場第一航廈","CX301 抵達，入境、領行李與網路設定。08:05 是落地時間，不是可離開機場的時間",1,"muc-t1",
+      { tags:["CX301","08:05 落地"], stops:[["muc-t1","慕尼黑機場第一航廈","Munich Airport・Terminal 1"]] }],
+    ["09:45–11:15","機場線／寄放行李","機場 → 卡爾廣場站 Karlsplatz Stachus → Munich Top Place（Sonnenstraße 3）","**S1 或 S8 先來先上**，約 45 分到卡爾廣場，出站步行 3 分。**11:00 起可寄放行李**，確認 16:00 入住方式。備案：中央車站 DB 置物櫃（小 €4／大 €6，**只收硬幣**）",0,"muc-stay1",
+      { title:"前往市區並寄放行李", tags:["S1 或 S8・約 45 分鐘"], stops:[
+        ["karlsplatz","卡爾廣場站 Karlsplatz (Stachus)","S-Bahn 出站・步行 3 分鐘"],
+        ["muc-stay1","Munich Top Place","Sonnenstraße 3・11:00 起可寄放"]] }],
+    ["11:15–12:15","景點","阿桑教堂 Asamkirche、瑪利亞廣場 Marienplatz、新市政廳","阿桑教堂約 25 分，走到瑪利亞廣場看 **12:00 鐘琴報時**",0,"marienplatz",
+      { title:"阿桑教堂 → 瑪利亞廣場", tags:["12:00 鐘琴報時"], stops:[
+        ["asamkirche","阿桑教堂 Asamkirche","Sendlinger Straße 32"],
+        ["marienplatz","瑪利亞廣場 Marienplatz","新市政廳・慕尼黑舊城"]] }],
+    ["12:15–13:15","午餐／市場","維克圖阿連市場 Viktualienmarkt","散步與午餐",0,"viktualienmarkt",
+      { aside:"散步與午餐", stops:[["viktualienmarkt","維克圖阿連市場 Viktualienmarkt","慕尼黑舊城"]] }],
+    ["13:15–16:00","景點／自由活動","聖母教堂 Frauenkirche、聖彌額爾教堂、老城街區、卡爾廣場咖啡與藥妝店","**dm** 在 Karlsplatz 25（Stachus Passagen 地下層），**Müller**、**Rossmann** 同一條步行街，週一**營業至 20:00**。依飛行疲勞縮短；**16:00 回住宿正式入住、休息**",0,"dm-stachus",
+      { title:"慕尼黑舊城散步", tags:["16:00 回住宿辦理入住"], stops:[
+        ["frauenkirche","聖母教堂 Frauenkirche","Frauenplatz 1"],
+        ["st-michael","聖彌額爾教堂 St. Michael","Neuhauser Straße 6"],
+        ["neuhauser","老城步行街 Neuhauser Straße","Müller、Rossmann 同一條街"],
+        ["dm-stachus","dm・Karlsplatz 25","Stachus Passagen 地下層・藥妝店"]] }],
+    ["17:40–20:00","晚餐","奧古斯丁啤酒花園 Augustiner-Keller","**18:30 已預約**。住宿步行 1.5 km 約 20 分：Sonnenstraße 接 Bayerstraße 經中央車站，沿 Arnulfstraße 到 52 號；不想走可搭 S-Bahn 一站到 Hauptbahnhof 再步行 8 分",1,"augustiner-keller",
+      { tags:["18:30 已預約"], stops:[["augustiner-keller","奧古斯丁啤酒花園 Augustiner-Keller","Arnulfstraße 52・住宿步行約 20 分"]] }],
+    ["20:00–20:40","採買","慕尼黑中央車站 EDEKA Ernst","S-Bahn 轉乘層（Arnulfstraße 2），**營業至 23:00**。飲水、早餐與隔日車程補給",0,"muc-hbf",
+      { title:"中央車站 EDEKA 採買", tags:["營業至 23:00"], stops:[["muc-hbf","EDEKA Ernst","Arnulfstraße 2・S-Bahn 轉乘層"]] }],
+    ["20:40–21:15","散步","卡爾廣場 Karlsplatz、步行街","夜間散步後返回住宿。當晚確認 SIXT 電子確認單、4 人證件、10/06 城堡票 QR code",0,"karlsplatz",
+      { title:"卡爾廣場夜間散步", stops:[["karlsplatz","卡爾廣場 Karlsplatz","步行街・散步後返回住宿"]] }]
   ]}],
   notes:[["雨天","老城步行縮短，改以咖啡館、教堂與室內商店為主。"]]
 },
@@ -540,7 +557,7 @@ const FC = [
    扁平物件。因此既有項目的 id 一律不得更動——即使文案改寫、即使換到別區——
    否則大家已經勾好的狀態會全部失效。只有新增項目才配新 id，且必須全域唯一。 */
 const CHECKLIST = [
-{ id:"before", title:"出發前必辦", note:"辦完就結束的事。監理所只有平日營業、門診要掛號、保險要作業時間，這區最早排。", groups:[
+{ id:"before", title:"出發前必辦", groups:[
 
   { id:"doc", title:"證件與駕駛", items:[
     ["doc1","護照效期確認",""],
@@ -625,7 +642,7 @@ const CHECKLIST = [
 
 ]},
 
-{ id:"trip", title:"旅途中待辦", note:"到了當地、到了那天才能做的事。出發前勾不完是正常的。", groups:[
+{ id:"trip", title:"旅途中待辦", groups:[
 
   { id:"arr", title:"抵達後", items:[
     ["doc4","10/05 當晚清點自己的證件","護照、駕照、信用卡；總檔 Day 1 列為當晚全員確認事項"],
@@ -735,8 +752,8 @@ const TICKETS = {
   /* 票面 QR、訂單確認信與掃描檔放在共用雲端資料夾，網站本身不存票面。 */
   drive:{
     url:"https://drive.google.com/drive/folders/14DUeHWMCKO3p5xdhBMM96YLZ-8TwfCP2?usp=sharing",
-    label:"票券雲端資料夾",
-    note:"票面 QR、訂單確認信與掃描檔都放這裡。出發前請自己下載成離線可開的檔案——山區與國王湖一帶訊號不穩，臨櫃時打不開雲端就等於沒有票。",
+    label:"票券連結",
+    note:"出發前請先下載",
   },
   later:[
     { day:3, date:"10/07（三）", city:"艾布湖", ac:"zug",
