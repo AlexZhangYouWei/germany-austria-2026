@@ -18,15 +18,15 @@ const el  = id => document.getElementById(id);
 /* ── 導覽 ───────────────────────────────────────────── */
 
 const NAV = [
-  ["index.html",  "總覽",     "index"],
-  ["day1.html",   "逐日行程", "day"],
-  ["food.html",   "特色菜",   "food"],
+  ["index.html",  "行程總覽", "index"],
+  ["day1.html",   "每日行程", "day"],
+  ["food.html",   "地區美食", "food"],
   ["weather.html","天氣預報", "weather"],
   ["tickets.html","票券","tickets"],
-  ["shop.html","伴手禮","shop"],
-  ["drive.html","開車須知","drive"],
-  ["esim.html","網路分析","esim"],
-  ["checklist.html","準備清單","checklist"],
+  ["shop.html","伴手禮與藥妝","shop"],
+  ["drive.html","自駕指南","drive"],
+  ["esim.html","eSIM 方案","esim"],
+  ["checklist.html","行李與待辦","checklist"],
   ["offices.html","緊急聯絡","offices"],
 ];
 
@@ -329,7 +329,7 @@ function navCard(d){
   const lists = groups.map(x => x.plans
     ? `<div class="navgroup">
       <div class="tabs navtabs" role="tablist">${x.plans.map((p,i) =>
-        `<button role="tab" aria-selected="${i===0}" data-g="${g}" data-i="${i}">${esc(p.label)}</button>`).join("")}</div>
+        `<button role="tab" aria-selected="${i===0}" data-g="${g}" data-i="${i}"${p.label.length >= 12 ? ' class="tab-long"' : ""}><span class="tab-label">${esc(p.label)}</span></button>`).join("")}</div>
       ${x.plans.map((p,i) => `<div class="panel" data-g="${g}" data-i="${i}" ${i===0?"":"hidden"}>${p.items.length
         ? list(p.items) : `<p class="navhint navnone">這個方案沒有另外的地點，見共同地點。</p>`}</div>`).join("")}
     </div>`

@@ -991,7 +991,7 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .navname{min-width:0;font-size:13.5px;line-height:1.5;overflow-wrap:anywhere}
 .navitem .geo{gap:6px}
 .navitem .geo a{width:38px;height:38px}
-.navtabs{margin:0 0 4px}                 /* 卡內頁籤：不要時辰表那段 24px 上距 */
+.navcard .navtabs{margin:0 0 4px}        /* 卡內頁籤：不要時辰表那段上距；多一層 class 才蓋得過手機版 .tabs 的 margin */
 .navnone{padding:14px 0 6px}
 @media print{.navcount.panel[hidden]{display:none !important}}   /* 列印展開所有方案，但地點數只留一個 */
 
