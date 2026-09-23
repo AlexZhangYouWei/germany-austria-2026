@@ -192,11 +192,6 @@ function dayWeather(n){
 /* 地圖地點連結。MAP_QUERY 以地點正式名稱＋地址逐筆核對，開啟後先顯示該地點的
    資訊卡，再由使用者按地圖 App 內的「路線」。不能只傳裸座標：Google／Apple 可能
    把座標吸附到附近店家，造成按鈕名稱與實際開啟的地點不一致。 */
-function travelMode(cat, noDrive){
-  if (/公車|機場線|電車|S-Bahn/.test(cat)) return "transit";
-  if (noDrive || /步行|散步|步道/.test(cat)) return "walking";
-  return "driving";
-}
 /* 「無自駕」的日子（Day 1、5）市區景點一律步行導航，否則老城裡 300 m 的教堂會開出開車路線 */
 const noDriveDay = d => d.meta.some(m => /無自駕/.test(m));
 
@@ -1089,7 +1084,7 @@ if (PAGE === "shop") {
   if (dlg) dlg.addEventListener("click", e => {
     if (dlg.open && (e.target.closest("[data-close]") || e.target === dlg)) dlg.close();
   });
-  el("shstops").innerHTML = `<table>${SHOP.stops.map(([t,pl,w,g]) =>
+  el("shstops").innerHTML = `<table class="ui-table">${SHOP.stops.map(([t,pl,w,g]) =>
     `<tr><td style="width:22%"><strong>${esc(t)}</strong></td><td>${esc(pl)}${geoLink("步行", g)}</td><td class="sh-where">${md(w)}</td></tr>`).join("")}</table>`;
 }
 
@@ -1151,13 +1146,13 @@ if (PAGE === "drive") {
     try { localStorage.setItem(DR_KEY, JSON.stringify(drck)); } catch (e2) {}
   });
 
-  el("drpark").innerHTML = `<table>${D.parking.map(([d,pl,fee,how,g]) =>
+  el("drpark").innerHTML = `<table class="ui-table">${D.parking.map(([d,pl,fee,how,g]) =>
     `<tr><td style="width:16%"><strong>${esc(d)}</strong></td><td style="width:26%">${esc(pl)}${g ? geoLink("開車", g) : ""}</td><td class="dr-fee">${md(fee)}</td><td>${md(how)}</td></tr>`).join("")}</table>`;
 
-  el("drfuel").innerHTML = `<table>${D.fuel.map(([leg,st,addr,note]) =>
+  el("drfuel").innerHTML = `<table class="ui-table">${D.fuel.map(([leg,st,addr,note]) =>
     `<tr><td style="width:24%"><strong>${esc(leg)}</strong></td><td style="width:30%"><a class="fd-a" href="${q(st + " " + addr)}" target="_blank" rel="noopener">${esc(st)}</a><span class="fd-m">${esc(addr)}</span></td><td>${md(note)}</td></tr>`).join("")}</table>`;
 
-  el("drrules").innerHTML = `<table class="dr-rules"><tr><th>項目</th><th>德國</th><th>奧地利</th><th>與台灣不同、要注意</th></tr>${D.rules.map(([k,de,at,tw]) =>
+  el("drrules").innerHTML = `<table class="ui-table dr-rules"><tr><th>項目</th><th>德國</th><th>奧地利</th><th>與台灣不同、要注意</th></tr>${D.rules.map(([k,de,at,tw]) =>
     `<tr><td class="strong">${esc(k)}</td><td>${md(de)}</td><td>${md(at)}</td><td class="dr-tw">${md(tw)}</td></tr>`).join("")}</table>`;
 
   el("drnotes").innerHTML = `<ul class="notes">${li(D.notes)}</ul>`;
