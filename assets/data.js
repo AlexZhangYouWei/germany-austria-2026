@@ -13,18 +13,37 @@ const FACTS = [
 ];
 
 
+/* 小費：2025 年德語區調查與旅遊指南的共通區間。兩國比例其實相同，差別在「怎麼給」與
+   咖啡館文化——奧地利點單金額直接報總額、現金為主；德國卡機跳建議金額的情況變多。
+   查詢日 2026-09-23；金額是慣例不是義務，德奧都沒有強制小費。 */
+const TIPS = {
+  rows: [
+    ["餐廳、啤酒館",  "5–10%",        "5–10%"],
+    ["咖啡館、小吃",  "湊整數或 €0.5–1", "湊整數；正式咖啡館可到 10%"],
+    ["計程車",        "湊整到下一個整數；長程 5–10%", "短程湊整；一般 5–10%"],
+    ["飯店房務",      "每晚 €1–2",    "每晚 €1–2"],
+    ["行李搬運",      "每件 €1–2",    "每件 €1–2"]
+  ],
+  how: [
+    ["結帳時報總額", "帳單 €27 就說「**30**」，找零就是小費。**不要把錢留桌上**走人。"],
+    ["盡量給現金",   "現金**直接進服務生口袋**。德國卡機常跳建議比例，**可以跳過**改給現金。"],
+    ["不是義務",     "帳單**已含稅與服務成本**，德奧都沒有強制小費，**服務不好可以不給**。"]
+  ],
+  foot: "查詢日 2026-09-23。比例為 2025 年調查與旅遊指南的共通區間，非官方規定。"
+};
+
 const FLIGHTS = [
   { label:"去程", legs:[
-    { code:"CX479", date:"10/04（日）", path:"台北 TPE → 香港 HKG", time:"21:05 – 23:05",
-      side:["飛行 2 小時","A330-300｜經濟艙輕便 Q","抵港後轉機 1 小時 55 分"] },
-    { code:"CX301", date:"10/05（一）", path:"香港 HKG → 慕尼黑 MUC", time:"01:00 – 08:05",
-      side:["飛行 13 小時 5 分","A350-900｜經濟艙輕便 Q","第一航廈抵達"] }
+    { code:"CX479", date:"10/04（日）", path:"台北 TPE → 香港 HKG", time:"21:05 – 23:05", dur:"2 小時",
+      side:["A330-300","抵港後轉機 1 小時 55 分"] },
+    { code:"CX301", date:"10/05（一）", path:"香港 HKG → 慕尼黑 MUC", time:"01:00 – 08:05", dur:"13 小時 5 分",
+      side:["A350-900","第一航廈抵達"] }
   ]},
   { label:"回程", legs:[
-    { code:"CX300", date:"10/13（二）", path:"慕尼黑 MUC → 香港 HKG", time:"13:50 – 10/14 06:50",
-      side:["飛行 11 小時","A350-900｜經濟艙輕便 S","抵港後轉機 1 小時 20 分"] },
-    { code:"CX564", date:"10/14（三）", path:"香港 HKG → 台北 TPE", time:"08:10 – 10:00",
-      side:["飛行 1 小時 50 分","777-300｜經濟艙輕便 S","抵達桃園第一航廈"] }
+    { code:"CX300", date:"10/13（二）", path:"慕尼黑 MUC → 香港 HKG", time:"13:50 – 10/14 06:50", dur:"11 小時",
+      side:["A350-900","抵港後轉機 1 小時 20 分"] },
+    { code:"CX564", date:"10/14（三）", path:"香港 HKG → 台北 TPE", time:"08:10 – 10:00", dur:"1 小時 50 分",
+      side:["777-300","抵達桃園第一航廈"] }
   ]}
 ];
 
@@ -32,42 +51,47 @@ const STAYS = [
   { city:"慕尼黑", date:"10/05 – 10/06", nights:1,
     name:"Munich Top Place Nähe Marienplatz mit 2 Schlafzimmer 70 qm Apartment Jennifer",
     addr:"Sonnenstraße 3 Etage 2, Altstadt-Lehel, 80331 München",
-    room:"整間雙臥室公寓", inn:"16:00 – 00:00", out:"10:00 前",
-    notes:["10/05 11:00 起可先寄放行李","有洗衣機"],
+    mapUrl:"https://maps.app.goo.gl/CHofehMQPcv4XWYd7",
+    room:"整間雙臥室公寓", inn:"16:00 – 00:00", out:"10:00 前", wash:true, kit:true,
+    notes:["10/05 11:00 起可先寄放行李"],
     confirm:{ when:"抵達前查看 Booking 訊息", who:"Booking 訂單內聯絡住宿方",
       steps:["門碼何時提供","11:00 寄放行李方式","16:00 後如何自行入住"],
       status:"門碼自助入住，不需現場接待" } },
   { city:"米滕瓦爾德", date:"10/06 – 10/08", nights:2,
     name:"Mittenwald-Ferien", addr:"Mühlenweg 36–38, 82481 Mittenwald",
-    room:"三臥室公寓（山景公寓 2）", inn:"16:00 – 00:00", out:"09:00 前",
+    mapUrl:"https://maps.app.goo.gl/SfZtapC3ANfqKZyz6",
+    room:"三臥室公寓（山景公寓 2）", inn:"16:00 – 00:00", out:"09:00 前", wash:false, kit:true,
     confirm:{ when:"抵達前完成旅客登記；抵達前約 1 小時致電，若 16:00 抵達最晚 15:00 聯絡",
       who:"Fam. Sprenger", tel:"+49 151 173 550 99", dial:"+4915117355099",
       steps:["使用 Deskline 登記全部旅客資料，或以 Email 提供","電話告知預計抵達時間","確認鑰匙與現場入住方式"],
       status:"需事前登記，並於抵達前約 1 小時致電" } },
   { city:"薩爾斯堡", date:"10/08 – 10/10", nights:2,
     name:"In the heart of the city of Salzburg", addr:"Bürglsteinstraße 19, 5020 Salzburg",
-    room:"四人房（兩臥室，各 1 張雙人床）", inn:"14:00 起", out:"10:00 前",
-    notes:["地址在舊城限制區外緣，不要開車進入行人舊城","兩晚以步行或公車進舊城","有洗衣機"],
+    room:"四人房（兩臥室，各 1 張雙人床）", inn:"14:00 起", out:"10:00 前", wash:true, kit:null,
+    notes:["地址在舊城限制區外緣，不要開車進入行人舊城","兩晚以步行或公車進舊城"],
     confirm:{ when:"抵達前幾天聯絡", who:"Michel Seyfried", tel:"+43 676 884001213", dial:"+43676884001213",
       steps:["告知預計抵達時間","約定實際 Check-in 時間","確認現場領鑰匙位置","確認停車方式","確認 Guest Mobility Ticket 如何取得"],
       status:"14:00 起入住；需到住宿現場領取鑰匙" } },
   { city:"比紹夫斯維森", date:"10/10 – 10/11", nights:1,
     name:"Ferienhaus Gestüt Pfaffenlehen", addr:"Pfaffenlehen 6, 83483 Bischofswiesen",
-    room:"獨立房屋（三臥室）", inn:"17:00 – 22:00", out:"08:00 – 10:00",
-    notes:["鄉間獨立住宅","有洗衣機"],
+    mapUrl:"https://maps.app.goo.gl/aw3oAPZnbiNEqEdd7", mapName:"House riding Pfaffenlehen",
+    room:"獨立房屋（三臥室）", inn:"17:00 – 22:00", out:"08:00 – 10:00", wash:true, kit:true,
+    notes:["鄉間獨立住宅"],
     confirm:{ when:"10/10 抵達當天聯絡，告知大約抵達時間", who:"管理員 Grygoriev-Kotynskyi 先生", tel:"+49 160 91481273", dial:"+4916091481273",
       steps:["告知預計抵達時間","確認碰面及接待方式","確認鑰匙與停車位置"],
       status:"17:00–22:00 入住；管理員會在住宿現場接待" } },
   { city:"哈修塔特", date:"10/11 – 10/12", nights:1,
     name:"Hallberg Apartments 哈爾貝格公寓", addr:"Seestraße 113, 4830 Hallstatt",
-    room:"2 間客房（湖景雙人房＋湖景單房公寓）", inn:"15:00 – 18:00", out:"08:00 – 10:00",
+    mapUrl:"https://maps.app.goo.gl/1ZLyto7NpZ7NQ69P9", mapName:"Pension - Hallberg",
+    room:"2 間客房（湖景雙人房＋湖景單房公寓）", inn:"15:00 – 18:00", out:"08:00 – 10:00", wash:false, kit:null,
     notes:["入住與離開均須至 Hotel-Shuttle Info-Point 辦理接駁","不可直接開車進入住宿所在舊城"],
     confirm:{ when:"10/11 抵達當天查看保險箱密碼；15:00 起入住", who:"Tamara & Igor／透過訂房訊息聯絡",
       steps:["當天接收鑰匙保險箱密碼","P1 停車後可搭 09:00–19:00 接駁車；P2 步行約 10 分鐘","準備現金支付城市稅：每人每晚 €3","退房時將鑰匙放回保險箱"],
       status:"自助入住；15:00 起鑰匙會放在保險箱，不需現場接待；10:00 前退房" } },
   { city:"慕尼黑", date:"10/12 – 10/13", nights:1,
     name:"Motel One München-Hauptbahnhof", addr:"Schillerstraße 3–3a, 80336 München",
-    room:"2 間客房", inn:"15:00 – 00:00", out:"12:00 前",
+    mapUrl:"https://maps.app.goo.gl/Uq4aRzbAwWSCKAod7",
+    room:"2 間客房", inn:"15:00 – 00:00", out:"12:00 前", wash:false, kit:false,
     confirm:{ when:"入住時向櫃檯確認", who:"Motel One 飯店櫃檯",
       steps:["辦理一般櫃檯 Check-in","確認合作停車場入口與限高","確認隔夜費用","確認 10/13 清晨能否取車"],
       status:"15:00–00:00 櫃檯入住" } }
@@ -196,6 +220,7 @@ const DAYS = [
   n:3, date:"10/07（三）", title:"米滕瓦爾德山區天候決策日", km:"A 58.8 km／B 36.5 km／C 0–6 km",
   meta:["住宿 Mittenwald-Ferien（續住）","決策 前一晚 20:00 初判、當日 07:00 最終決定"],
   check:{
+    title:"楚格峰天候確認", sub:"4 個來源都看過再決定",
     when:"07:00–07:30",
     lead:"四項都確認過再決定走哪個方案。**不在確認天候前購買高山票券**，官方明示天候不佳不退改。",
     items:[
@@ -212,7 +237,7 @@ const DAYS = [
   },
   blocks:[
     { title:"共同｜早餐與營運確認", rows:[
-      ["07:00–07:45","早餐／天候確認","Mittenwald-Ferien","早餐，同時完成上方〈當日確認〉四項。**07:30 完成 A／B／C 決定**；確認天候前不買高山票券",0,"mit-stay"]
+      ["07:00–07:45","早餐／天候確認","Mittenwald-Ferien","早餐，同時完成上方〈今日待辦〉的楚格峰天候確認四項。**07:30 完成 A／B／C 決定**；確認天候前不買高山票券",0,"mit-stay"]
     ]},
     { tabs:[
       { label:"A｜楚格峰＋艾布湖", cond:"首選方案。", rows:[

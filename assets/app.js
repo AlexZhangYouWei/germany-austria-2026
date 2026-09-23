@@ -328,27 +328,47 @@ function dayArticle(d){
 
   const wx = dayWeather(d.n);
 
-  /* 當日確認：只有需要臨場判斷的日子才有（目前 Day 3）。獨立成塊，不埋在時間軸裡。 */
-  const chk = d.check ? `<section class="day glass rv">
-    <div class="daybox-t">當日確認<span class="daybox-when">${esc(d.check.when)}</span></div>
+  /* 今日待辦：當日確認（需臨場判斷，目前只有 Day 3）與今日聯絡住宿講的是同一件事——
+     今天要主動做的動作。併成一張卡，卡面只留概覽，細節點開彈窗（沿用票券頁的 .tkdlg）。 */
+  const TD = [];
+  const tdRow = (when, title, sub, body) => {
+    const i = TD.push(body) - 1;
+    return `<button type="button" class="td-row" data-td="${i}" aria-haspopup="dialog">
+      <span class="td-when">${esc(when)}</span>
+      <span class="td-m"><b class="td-t">${esc(title)}</b><span class="td-s">${esc(sub)}</span></span>
+    </button>`;
+  };
+
+  const rows = [];
+  if (d.check) rows.push(tdRow(d.check.when, d.check.title, d.check.sub, `
+    <div class="daybox-t">${esc(d.check.title)}<span class="daybox-when">${esc(d.check.when)}</span></div>
     <p class="cfm-lead">${md(d.check.lead)}</p>
-    <ol class="cfm">${d.check.items.map(([name,url,why],i) => `
-      <li><span class="no">${"①②③④⑤⑥"[i] || i+1}</span>
+    <ol class="cfm">${d.check.items.map(([name, url, why], i) => `
+      <li><span class="no">${"①②③④⑤⑥"[i] || i + 1}</span>
         <div><a class="daylink" href="${esc(url)}" target="_blank" rel="noopener">${esc(name)}</a>
         <p>${md(why)}</p></div></li>`).join("")}
     </ol>
-    ${d.check.foot ? `<p class="cfm-foot">${md(d.check.foot)}</p>` : ""}
-  </section>` : "";
+    ${d.check.foot ? `<p class="cfm-foot">${md(d.check.foot)}</p>` : ""}`));
 
-  /* 今日聯絡住宿：只在需要當天聯絡或查訊息的日子出現，放在標題卡正下方 */
-  const ntf = (typeof STAY_NOTIFY === "undefined" ? [] : STAY_NOTIFY).filter(n => n.day === d.n).map(n => {
+  (typeof STAY_NOTIFY === "undefined" ? [] : STAY_NOTIFY).filter(n => n.day === d.n).forEach(n => {
     const s = STAYS[n.stay], c = s.confirm || {};
-    return `<section class="day glass rv ntf">
-    <div class="daybox-t">今日聯絡住宿<span class="daybox-when">${esc(n.when)}</span></div>
-    <p class="ntf-name">${esc(s.name)}</p>
-    <p class="ntf-act">${md(n.act)}</p>
-    <p class="ntf-who">${esc(c.who || "")}${c.dial ? `<a class="ntf-tel" href="tel:${esc(c.dial)}">${esc(c.tel)}</a>` : ""}</p>
-  </section>`; }).join("");
+    rows.push(tdRow(n.when, `聯絡${s.city}住宿`, c.who || "", `
+      <div class="daybox-t">聯絡${esc(s.city)}住宿<span class="daybox-when">${esc(n.when)}</span></div>
+      <p class="ntf-name">${esc(s.name)}</p>
+      <p class="ntf-act">${md(n.act)}</p>
+      <p class="ntf-who">${esc(c.who || "")}${c.dial ? `<a class="ntf-tel" href="tel:${esc(c.dial)}">${esc(c.tel)}</a>` : ""}</p>
+      ${c.steps ? `<ol class="cfm-steps td-steps">${c.steps.map(x => `<li>${esc(x)}</li>`).join("")}</ol>` : ""}`));
+  });
+
+  /* 彈窗不給 id：九天的 DOM 同時在頁面上，靠 .daypanel 往上找當天那一個 */
+  const todo = rows.length ? `<section class="day glass rv">
+    <div class="daybox-t">今日待辦<span class="daybox-when">${rows.length} 項</span></div>
+    <div class="td-list">${rows.join("")}</div>
+  </section>
+  <dialog class="tkdlg td-dlg" aria-label="待辦細節"><div class="tkdlg-in glass">
+    <button type="button" class="tkdlg-x" data-close aria-label="關閉">×</button>
+    <div class="td-body">${TD.map((b, i) => `<div data-tdi="${i}" hidden>${b}</div>`).join("")}</div>
+  </div></dialog>` : "";
 
   return `<article class="day glass rv">
     <div class="day-head">
@@ -360,9 +380,7 @@ function dayArticle(d){
     <div class="day-meta">${d.meta.map(m => `<span>${esc(m)}</span>`).join("")}</div>
   </article>
 
-  ${ntf}
-
-  ${chk}
+  ${todo}
 
   ${wx ? `<section class="day glass rv wxcard">
     <div class="daybox-t">天氣預報<a class="daylink" href="weather.html">九天完整預報</a></div>
@@ -397,7 +415,7 @@ if (PAGE === "index") {
           <div>
             <div class="code">${esc(l.code)}　${esc(l.date)}</div>
             <div class="path">${esc(l.path)}</div>
-            <div class="time">${esc(l.time)}</div>
+            <div class="time">${esc(l.time)}${l.dur ? `<em class="dur">飛行 ${esc(l.dur)}</em>` : ""}</div>
           </div>
           <div class="side">${l.side.map(s => esc(s)).join("<br>")}</div>
         </div>`).join("")}
@@ -415,10 +433,19 @@ if (PAGE === "index") {
           </dl>
         </div>
       </details>`;
-  /* 城市當標題（六張卡一眼掃出路線），旅館全名降為副標；入住／退房是最常查的兩個數字，
-     從 kv 清單拉出來獨立成一條。 */
-  const gq = a => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a)}`;
-  el("staylist").innerHTML = STAYS.map(s => `
+  /* 城市當標題（六張卡一眼掃出路線），旅館名列在下方小字。入住／退房是最常查的兩個數字，
+     拉出來獨立成一條，入住確認緊接在它下面。
+     設備只列「有」與「未確認」；沒有的不佔版面（薩爾斯堡與哈修塔特的廚房無來源可查）。 */
+  /* 優先開啟核對過的 Google Maps 商家頁；沒有可確認商家頁才用地址導航。 */
+  const addressDirections = a => `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(a)}`;
+  const amRow = s => [["洗衣機", s.wash], ["廚房", s.kit]]
+    .filter(([, v]) => v !== false)
+    .map(([label, v]) => v === true
+      ? `<span class="am am-on"><i aria-hidden="true"></i>${label}</span>`
+      : `<span class="am am-unk"><i aria-hidden="true"></i>${label}<em>未確認</em></span>`).join("");
+  el("staylist").innerHTML = STAYS.map(s => {
+    const am = amRow(s);
+    return `
     <div class="card glass rv">
       <div class="meta">${esc(s.date)}　${s.nights} 晚</div>
       <h3 class="cardtitle stay-city">${esc(s.city)}</h3>
@@ -427,13 +454,22 @@ if (PAGE === "index") {
         <div><span>入住</span><b>${esc(s.inn)}</b></div>
         <div><span>退房</span><b>${esc(s.out)}</b></div>
       </div>
-      <dl class="kv">
-        <dt>房型</dt><dd>${esc(s.room)}</dd>
-        <dt>地址</dt><dd><a class="stay-addr" href="${gq(s.addr)}" target="_blank" rel="noopener">${esc(s.addr)}</a></dd>
-      </dl>
-      ${s.notes ? `<ul class="stay-notes">${s.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}
       ${s.confirm ? stayConfirm(s.confirm) : ""}
-    </div>`).join("");
+      ${am ? `<div class="stay-am">${am}</div>` : ""}
+      ${s.notes ? `<ul class="stay-notes">${s.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}
+      <a class="stay-map" href="${esc(s.mapUrl || addressDirections(s.addr))}" target="_blank" rel="noopener"
+         aria-label="${s.mapUrl ? `在 Google 地圖查看 ${esc(s.name)} 商家` : `在 Google 地圖以地址導航至 ${esc(s.addr)}`}"
+         >${s.mapUrl ? `在 Google 地圖查看商家${s.mapName ? `（${esc(s.mapName)}）` : ""}` : "Google 地圖地址導航（未確認商家頁）"}</a>
+    </div>`; }).join("");
+  /* 小費：德奧分欄對照，數字本身兩國多半相同，真正的差別寫在下方「怎麼給」。 */
+  el("tiptable").innerHTML =
+    `<thead><tr><th>場合</th><th>德國</th><th>奧地利</th></tr></thead><tbody>`
+    + TIPS.rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")
+    + `</tbody>`;
+  el("tiphow").innerHTML = TIPS.how.map(([t, d]) =>
+    `<div><b>${esc(t)}</b><p>${md(d)}</p></div>`).join("");
+  el("tipfoot").textContent = TIPS.foot;
+
   /* 路線圖：內嵌 SVG。國界與行車幾何都由 make_map.js 於建置時投影好，執行期不取外部資料。 */
   const SIDE = {
     n:  { dx:0,   dy:-20, a:"middle" },
@@ -489,8 +525,7 @@ if (PAGE === "index") {
     }).join("")}
     <button type="button" class="m-chip m-clear" data-day="all" hidden>顯示全部</button>
   </div>
-  <p class="m-cap">路線依 OpenStreetMap 路網的實際道路繪製，與總檔的 Google 里程差 0.3–7%。
-     虛線為天候二選一的 B 方案。Day 1、5 無自駕；Day 9 僅市區短程後轉搭 S-Bahn，皆未繪製。</p>`;
+  `;
 
   /* 點日期籌碼 → 只留那一天，其餘淡出。再點一次還原。 */
   const mapBox = el("map");
@@ -546,6 +581,28 @@ if (PAGE === "day") {
   const drawEdges = n => { el("edges").innerHTML =
     zone(DAYS.find(x => x.n === n - 1), "prev") + zone(DAYS.find(x => x.n === n + 1), "next"); };
   drawEdges(DAYN);
+
+  /* 今日待辦彈窗：九天 DOM 同時存在，所以不靠 id，從被點的那天 .daypanel 往下找 */
+  const root = el("dayroot");
+  if (root && root.addEventListener) root.addEventListener("click", e => {
+    const t = e.target;
+    if (!t || !t.closest) return;
+    const panel = t.closest(".daypanel") || root;
+    const dlg = panel.querySelector ? panel.querySelector("dialog.td-dlg") : null;
+    if (!dlg) return;
+    const b = t.closest("[data-td]");
+    if (b && dlg.showModal) {
+      const body = dlg.querySelector(".td-body");
+      if (body && body.querySelectorAll) [].forEach.call(body.querySelectorAll("[data-tdi]"),
+        x => { x.hidden = x.dataset.tdi !== b.dataset.td; });
+      dlg.showModal();
+      const inner = dlg.querySelector(".tkdlg-in");
+      if (inner) inner.scrollTop = 0;
+      return;
+    }
+    /* 點關閉鈕或點到深色背景（dialog 本體而非內層）就關 */
+    if (dlg.open && (t.closest("[data-close]") || t === dlg) && dlg.close) dlg.close();
+  });
 
   const track  = el("daytrack");
   const railEl = el("rail");
@@ -660,6 +717,7 @@ if (PAGE === "day") {
     addEventListener("keydown", e => {
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) return;
+      if (document.querySelector && document.querySelector("dialog[open]")) return;
       if (e.key === "ArrowLeft")  goTo(cur - 1, true);
       if (e.key === "ArrowRight") goTo(cur + 1, true);
     });
