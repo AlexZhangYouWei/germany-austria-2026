@@ -113,16 +113,19 @@ nav{position:sticky;top:0;z-index:60;padding:12px 16px 6px}
 }
 .rail a.on b{opacity:.85}
 
-/* 桌機（>600px）：貼在主導覽列下方的 sticky 橫列。nav 是 sticky top:0、高 62px，
-   這裡用 sticky 而非 fixed，才會在正常流裡把內容往下推，不必另外補 body padding。
+/* 桌機（>600px）：與手機一樣懸浮在視窗底部，置中。
+   fixed 元素只設 left 會縮成半個視窗寬，所以 left/right 都設 0、寬度 fit-content、margin auto 置中。
+   fixed 不佔版面流，body 底部補留白，頁尾才不會被蓋住。
    容器比 900px 的內容欄寬，九個籌碼才排得開。 */
 @media (width > 600px){
   .rail{
-    position:sticky;top:62px;z-index:59;opacity:1;pointer-events:auto;
-    max-width:min(1040px, calc(100% - 32px));margin:6px auto 0;
+    left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));z-index:59;
+    width:fit-content;max-width:min(1040px, calc(100% - 32px));margin:0 auto;
     display:flex;gap:3px;padding:5px;border-radius:999px;
-    overflow-x:auto;scrollbar-width:none;
+    overflow-x:auto;scrollbar-width:none;transform:translateY(8px);
   }
+  .rail.show{transform:translateY(0)}
+  body[data-page="day"]{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
   .rail::-webkit-scrollbar{display:none}
   .rail a{flex:0 0 auto;padding:5px 14px 6px;border-radius:999px}
 }
@@ -988,6 +991,9 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .navname{min-width:0;font-size:13.5px;line-height:1.5;overflow-wrap:anywhere}
 .navitem .geo{gap:6px}
 .navitem .geo a{width:38px;height:38px}
+.navtabs{margin:0 0 4px}                 /* 卡內頁籤：不要時辰表那段 24px 上距 */
+.navnone{padding:14px 0 6px}
+@media print{.navcount.panel[hidden]{display:none !important}}   /* 列印展開所有方案，但地點數只留一個 */
 
 .routeline{margin:14px 0 0}
 
@@ -1249,6 +1255,15 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
   body[data-page="day"] .day{margin-bottom:12px}
   body[data-page="day"] article.day{padding-bottom:20px}
   .daybox-t{margin-bottom:14px}
+  /* 方案 Tab 沿用舊膠囊外觀，改成手機兩欄換行；第三個選項占滿一列。
+     長名稱優先換行，文字較多的按鈕再用小一級字體，避免橫向裁切。 */
+  .tabs{display:grid;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;
+    gap:4px;margin:20px 0 8px;padding:4px;overflow:visible;border-radius:18px}
+  .tabs button{display:flex;align-items:center;justify-content:center;min-width:0;min-height:48px;
+    padding:9px 8px;font-size:12px;line-height:1.35;text-align:center;white-space:normal;overflow-wrap:anywhere}
+  .tabs button .tab-label{display:block;width:100%;min-width:0}
+  .tabs button.tab-long{padding-inline:6px;font-size:clamp(10px,2.85vw,11px);line-height:1.4}
+  .tabs button:last-child:nth-child(odd){grid-column:1/-1}
   /* 分時預報：390px 下 2×2，每張卡淨寬約 (322-10)/2 = 156px，
      最長標籤「多雲，短暫雨」的膠囊約 101px 放得下，不需要再縮字級。 */
   .wxsum{padding:14px 15px 12px}

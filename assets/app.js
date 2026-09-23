@@ -282,14 +282,15 @@ function timeline(rows, noDrive){
 
 /* 今日導航：依首次出現順序把當天的地點去重列出。時間與交通方式取首次出現那列，
    所以行為跟原本掛在列上的按鈕一致。
-   A／B／C 方案日按區塊分組，不另開一組頁籤——同一頁兩組頁籤會跟時辰表的打架。
+   A／B／C 方案日用與時辰表同一組 data-g 的頁籤：共用的點擊處理會同步整頁同組按鈕與面板，
+   所以時辰表選 B，行程地點也跟著切到 B，反之亦然。
    共同區塊的地點只列一次；各方案只列該方案獨有的地點，方案之間不互相吃掉。 */
 function dayPlaces(d){
   const hasTabs = d.blocks.some(b => b.tabs);
   const common = new Set();
   d.blocks.forEach(b => { if (!b.tabs) b.rows.forEach(r => r[5] && common.add(r[5])); });
 
-  const groups = [], done = new Set();
+  const groups = [], done = new Set();   /* 方案區塊整組推一筆 { plans:[...] }，保留在區塊順序裡的位置 */
   const pick = (rows, skip) => {
     const seen = new Set(), out = [];
     rows.forEach(([t,cat,place,note,fx,key]) => {
@@ -301,10 +302,7 @@ function dayPlaces(d){
   };
   d.blocks.forEach(b => {
     if (b.tabs){
-      b.tabs.forEach(p => {
-        const items = pick(p.rows, common);
-        if (items.length) groups.push({ label:p.label, items });
-      });
+      groups.push({ plans:b.tabs.map(p => ({ label:p.label, items:pick(p.rows, common) })) });
     } else {
       const items = pick(b.rows, done);
       items.forEach(x => done.add(x.key));
@@ -316,22 +314,35 @@ function dayPlaces(d){
 
 function navCard(d){
   const groups = dayPlaces(d), noDrive = noDriveDay(d);
-  if (!groups.length) return "";
-  const count = groups.reduce((sum, g) => sum + g.items.length, 0);
-  const lists = groups.map(g => `
-    <section class="navgroup">
-      ${g.label ? `<div class="navgrp">${esc(g.label)}</div>` : ""}
+  const g = `d${d.n}`;                     /* 與時辰表方案頁籤同組，切換互相連動 */
+  const planSet = groups.find(x => x.plans);
+  const commonCount = groups.reduce((sum, x) => sum + (x.items ? x.items.length : 0), 0);
+  if (!commonCount && !(planSet && planSet.plans.some(p => p.items.length))) return "";
+  const list = items => `
       <ul class="navlist">
-        ${g.items.map(x => `
+        ${items.map(x => `
           <li class="navitem">
             <span class="navname">${esc(x.name)}</span>
             ${geoLink(x.cat, x.key, noDrive)}
           </li>`).join("")}
-      </ul>
-    </section>`).join("");
+      </ul>`;
+  const lists = groups.map(x => x.plans
+    ? `<div class="navgroup">
+      <div class="tabs navtabs" role="tablist">${x.plans.map((p,i) =>
+        `<button role="tab" aria-selected="${i===0}" data-g="${g}" data-i="${i}">${esc(p.label)}</button>`).join("")}</div>
+      ${x.plans.map((p,i) => `<div class="panel" data-g="${g}" data-i="${i}" ${i===0?"":"hidden"}>${p.items.length
+        ? list(p.items) : `<p class="navhint navnone">這個方案沒有另外的地點，見共同地點。</p>`}</div>`).join("")}
+    </div>`
+    : `<div class="navgroup">
+      ${x.label ? `<div class="navgrp">${esc(x.label)}</div>` : ""}${list(x.items)}
+    </div>`).join("");
+  /* 地點數＝共同＋目前方案；每個方案一個 .panel 數字，由同一個點擊處理切換 */
+  const count = planSet
+    ? planSet.plans.map((p,i) => `<span class="navcount panel" data-g="${g}" data-i="${i}" ${i===0?"":"hidden"}>${commonCount + p.items.length} 個地點</span>`).join("")
+    : `<span class="navcount">${commonCount} 個地點</span>`;
   return `<section class="day glass rv navcard">
     <div class="navhead">
-      <div class="daybox-t">行程地點<span class="navcount">${count} 個地點</span></div>
+      <div class="daybox-t">行程地點${count}</div>
       <p class="navhint">依行程順序排列，選擇地圖 App 開始導航。</p>
     </div>
     <div class="navgroups">${lists}</div>
@@ -344,7 +355,7 @@ function dayArticle(d){
     if (b.tabs) {
       const g = `d${d.n}`;
       const btns = b.tabs.map((p,i) =>
-        `<button role="tab" aria-selected="${i===0}" data-g="${g}" data-i="${i}">${esc(p.label)}</button>`).join("");
+        `<button role="tab" aria-selected="${i===0}" data-g="${g}" data-i="${i}"${p.label.length >= 12 ? ' class="tab-long"' : ""}><span class="tab-label">${esc(p.label)}</span></button>`).join("");
       const panels = b.tabs.map((p,i) => {
         const rl = routeLink(d.n, (p.label.match(/^([ABC])/) || [])[1]);
         return `<div class="panel" data-g="${g}" data-i="${i}" ${i===0?"":"hidden"}>
@@ -730,7 +741,7 @@ if (PAGE === "day") {
         const base = panel.getBoundingClientRect().top;
         panel.scrollTo({ top:panel.scrollTop + top - base - 96, behavior:"smooth" });
       } else {
-        window.scrollTo({ top:window.scrollY + top - 104, behavior:"smooth" });
+        window.scrollTo({ top:window.scrollY + top - 76, behavior:"smooth" });   /* 日期選單已移到底部，頂部只剩 62px 導覽列 */
       }
       button.focus({ preventScroll:true });
     });
