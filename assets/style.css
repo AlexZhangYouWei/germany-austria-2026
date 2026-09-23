@@ -111,10 +111,10 @@ nav{position:sticky;top:0;z-index:60;padding:12px 16px 6px}
 }
 .rail a.on b{opacity:.85}
 
-/* 桌機（≥761）：貼在主導覽列下方的 sticky 橫列。nav 是 sticky top:0、高 62px，
+/* 桌機（>600px）：貼在主導覽列下方的 sticky 橫列。nav 是 sticky top:0、高 62px，
    這裡用 sticky 而非 fixed，才會在正常流裡把內容往下推，不必另外補 body padding。
    容器比 900px 的內容欄寬，九個籌碼才排得開。 */
-@media (min-width:761px){
+@media (width > 600px){
   .rail{
     position:sticky;top:62px;z-index:59;opacity:1;pointer-events:auto;
     max-width:min(1040px, calc(100% - 32px));margin:6px auto 0;
@@ -125,12 +125,12 @@ nav{position:sticky;top:0;z-index:60;padding:12px 16px 6px}
   .rail a{flex:0 0 auto;padding:5px 14px 6px;border-radius:999px}
 }
 /* 中等寬度排不下地名，只留編號，當前那天才顯示地名 */
-@media (min-width:761px) and (max-width:1039px){
+@media (width > 600px) and (max-width:1039px){
   .rail a span{display:none}
   .rail a.on span{display:inline}
 }
-/* 手機（≤760）：底部固定膠囊列，維持左右滑動 */
-@media (max-width:760px){
+/* 手機（≤600px）：底部固定膠囊列，維持左右滑動 */
+@media (max-width:600px){
   .rail{
     left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));
     display:flex;gap:3px;padding:5px;border-radius:999px;
@@ -379,7 +379,7 @@ footer{
 @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
 
 /* ───────── responsive ───────── */
-@media (max-width:760px){
+@media (max-width:600px){
   .wrap{padding:0 16px}
   nav{padding:10px 10px 4px}
   header{padding:54px 0 52px}
@@ -399,6 +399,16 @@ footer{
   .callout{padding:22px 20px}
   .facts{grid-template-columns:1fr;gap:4px 0}
   .facts dd{margin-bottom:8px}
+}
+
+/* 窄桌機／分割視窗仍用桌機導覽，但讓內容有足夠閱讀寬度。 */
+@media (width > 600px) and (max-width:800px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .cards{grid-template-columns:1fr}
+  .leg{grid-template-columns:1fr}
+  .leg .side{text-align:left}
+  .tl li{grid-template-columns:112px 18px minmax(0,1fr)}
+  .tl .c{padding-left:12px}
 }
 
 /* ───────── print ───────── */
@@ -805,7 +815,7 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .es-rank li:first-child{color:var(--ink);font-weight:600}
 .es-car p{margin:12px 0 0;font-size:13px;color:var(--ink2);line-height:1.8}
 .es-car .es-src{font-size:11.5px;color:var(--ink3)}
-@media (max-width:760px){
+@media (max-width:600px){
   .tkkv{grid-template-columns:1fr;gap:2px 0}
   .ac-cols{grid-template-columns:1fr;gap:18px}
   .sh-stops{padding:4px 16px 8px}
@@ -981,13 +991,30 @@ tr.dim td .v{color:inherit}
 
 .cardtitle{margin:8px 0 0;font-size:16.5px;font-weight:600;line-height:1.5;letter-spacing:-.012em}
 
+/* 住宿卡：城市是掃視時唯一要看的字，給它標題字級；德文旅館全名降為副標。 */
+.stay-city{margin:10px 0 0;font-size:19px;letter-spacing:-.02em}
+.stay-name{margin:5px 0 0;font-size:12.5px;color:var(--ink3);line-height:1.6}
+/* 入住／退房並排一條，等寬數字讓六張卡的時間垂直對齊 */
+.stay-io{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:16px;
+  border:1px solid var(--hair2);border-radius:13px;overflow:hidden;background:var(--hair2)}
+.stay-io>div{display:flex;align-items:baseline;gap:9px;padding:11px 14px;background:rgba(255,255,255,.035)}
+.stay-io span{font-size:11.5px;color:var(--ink3)}
+.stay-io b{font-size:13.5px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.stay-notes{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:7px;
+  font-size:12.5px;color:var(--ink2);line-height:1.7}
+.stay-notes li{position:relative;padding-left:14px}
+.stay-notes li::before{content:"";position:absolute;left:2px;top:.66em;width:4px;height:4px;
+  border-radius:50%;background:var(--ink3)}
+a.stay-addr{color:inherit;text-decoration:none;border-bottom:1px solid var(--hair2)}
+a.stay-addr:hover{color:var(--amber);border-bottom-color:var(--amber)}
+
 /* ───────── 日頁分頁軌道 ─────────
    九天同時在 DOM 裡，靠這裡的媒體查詢決定要攤平（桌機）還是變成橫向分頁（手機）。 */
 
 /* 桌機：display:contents 把軌道與非當前面板的盒子整個拿掉，
    .day 卡片仍是 main.wrap 的直接子元素，版面與加入軌道之前完全相同。
-   用 760.02px 而不是 761px，避免瀏覽器縮放產生的小數寬度掉進兩個查詢的縫隙。 */
-@media (min-width:760.02px){
+   大於 600px 切回單日頁面，與 JS 的 600px 手機判斷相接。 */
+@media (width > 600px){
   #daytrack{display:contents}
   .daypanel{display:none}
   .daypanel.cur{display:contents}
@@ -1000,7 +1027,7 @@ tr.dim td .v{color:inherit}
 
 /* 手機：整頁不再垂直捲動，改成固定框 + 橫向 scroll-snap 分頁。
    慣性、橡皮筋與吸附全部交給瀏覽器原生捲動，JS 不模擬位移。 */
-@media (max-width:760px){
+@media (max-width:600px){
   body[data-page="day"]{
     /* position:fixed 是關鍵，不是保險。body 的 overflow 會被「上拋」給視窗
        （html 沒設 overflow 時），body 自己因此變回 visible；而 iOS Safari 對
@@ -1065,7 +1092,7 @@ tr.dim td .v{color:inherit}
   overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0;
 }
 
-@media (max-width:760px){
+@media (max-width:600px){
   /* 日頁三張卡：窄螢幕上靠近一點，不要看起來像三個不相干的畫面 */
   body[data-page="day"] .day{margin-bottom:12px}
   body[data-page="day"] article.day{padding-bottom:20px}
@@ -1073,7 +1100,7 @@ tr.dim td .v{color:inherit}
   /* 天氣數值改兩欄對齊，取代 flex 換行造成的參差 */
   /* 四段列：360px 放不下五欄，改兩行式。
      第一行 時段＋狀況＋氣溫，第二行 雨機率＋雨量。不另開斷點，
-     免得 cssfix.js 只掃 760 區塊而漏檢。 */
+     免得 cssfix.js 只掃 600px 區塊而漏檢。 */
   .wxp{margin:12px -18px 0}
   .wxp-hd{display:none}            /* 兩行式之下欄位頭對不齊，改由每個數字自帶的單位（°／%／mm）自解釋 */
   .wxp-row{
@@ -1118,6 +1145,15 @@ tr.dim td .v{color:inherit}
   .sos-big{font-size:34px}
   .ck-top{padding:20px}
   .pagehead{padding:36px 0 28px}
+}
+
+/* 601–800px 保留桌機操作，資訊卡改用適合窄視窗的欄數。 */
+@media (width > 600px) and (max-width:800px){
+  .edge{display:none}
+  .dgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wxgrid,.ckgrid,.sosgrid,.of-calls,.es-picks{grid-template-columns:1fr}
+  .ac-cols{grid-template-columns:1fr}
+  .es-tw,.es-tw .scroll{max-width:100%;min-width:0}
 }
 
 @media print{

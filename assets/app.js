@@ -415,17 +415,23 @@ if (PAGE === "index") {
           </dl>
         </div>
       </details>`;
+  /* 城市當標題（六張卡一眼掃出路線），旅館全名降為副標；入住／退房是最常查的兩個數字，
+     從 kv 清單拉出來獨立成一條。 */
+  const gq = a => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a)}`;
   el("staylist").innerHTML = STAYS.map(s => `
     <div class="card glass rv">
-      <div class="meta">${esc(s.city)}　${esc(s.date)}　${s.nights} 晚</div>
-      <h3 class="cardtitle">${esc(s.name)}</h3>
+      <div class="meta">${esc(s.date)}　${s.nights} 晚</div>
+      <h3 class="cardtitle stay-city">${esc(s.city)}</h3>
+      <p class="stay-name">${esc(s.name)}</p>
+      <div class="stay-io">
+        <div><span>入住</span><b>${esc(s.inn)}</b></div>
+        <div><span>退房</span><b>${esc(s.out)}</b></div>
+      </div>
       <dl class="kv">
-        <dt>地址</dt><dd>${esc(s.addr)}</dd>
         <dt>房型</dt><dd>${esc(s.room)}</dd>
-        <dt>入住</dt><dd>${esc(s.inn)}</dd>
-        <dt>退房</dt><dd>${esc(s.out)}</dd>
-        ${s.note ? `<dt>備註</dt><dd>${esc(s.note)}</dd>` : ""}
+        <dt>地址</dt><dd><a class="stay-addr" href="${gq(s.addr)}" target="_blank" rel="noopener">${esc(s.addr)}</a></dd>
       </dl>
+      ${s.notes ? `<ul class="stay-notes">${s.notes.map(n => `<li>${esc(n)}</li>`).join("")}</ul>` : ""}
       ${s.confirm ? stayConfirm(s.confirm) : ""}
     </div>`).join("");
   /* 路線圖：內嵌 SVG。國界與行車幾何都由 make_map.js 於建置時投影好，執行期不取外部資料。 */
@@ -514,9 +520,9 @@ if (PAGE === "index") {
 }
 
 /* ── 日頁：九天一條橫向軌道 ─────────────────────────
-   手機（≤760px）：CSS scroll-snap 做跟手的分頁捲動。慣性、橡皮筋與吸附全交給瀏覽器，
+   手機（≤600px）：CSS scroll-snap 做跟手的分頁捲動。慣性、橡皮筋與吸附全交給瀏覽器，
    JS 只在吸附完成後同步網址、標題、日期列與翻頁區。
-   桌機（≥760.02px）：CSS 以 display:contents 攤平軌道、只留 .cur 那一天，
+   桌機（>600px）：CSS 以 display:contents 攤平軌道、只留 .cur 那一天，
    盒模型與先前完全相同（.day 仍是 main.wrap 的直接子元素）。
    內容本來就是執行期由 DAYS 產生，九天合計約 84 KB，不增加任何下載量。 */
 if (PAGE === "day") {
@@ -547,7 +553,7 @@ if (PAGE === "day") {
     track && track.querySelector ? track.querySelector(`.daypanel[data-n="${d.n}"]`) : null);
 
   if (track && panels.every(Boolean)) {
-    const mq    = window.matchMedia ? matchMedia("(max-width:760px)") : null;
+    const mq    = window.matchMedia ? matchMedia("(max-width:600px)") : null;
     const pager = () => !!(mq && mq.matches);
     /* file:// 下 WebKit 視每份文件為不透明來源，replaceState 換路徑會丟 SecurityError */
     const canHist = location.protocol === "http:" || location.protocol === "https:";
@@ -658,7 +664,7 @@ if (PAGE === "day") {
       if (e.key === "ArrowRight") goTo(cur + 1, true);
     });
 
-    /* ≥760.02px 的觸控裝置沒有分頁軌道，沿用原本的整頁跳轉手勢 */
+    /* >600px 的觸控裝置沒有分頁軌道，沿用原本的整頁跳轉手勢 */
     let x0 = null, y0 = 0, t0 = 0;
     addEventListener("touchstart", e => {
       x0 = null;
@@ -703,16 +709,15 @@ if (PAGE === "weather") {
     `預報發布：<b>${esc(stamp)} UTC</b>`
     + `　·　確定性預報 <b>${FC_META.n}／${FC_META.total}</b> 天`
     + `　·　每日四時段（Europe/Berlin）`
-    + `<br>德國地點以 <b>DWD</b>、奧地利地點以 <b>GeoSphere Austria</b> 的官方模式為首選；超出射程時改用 ECMWF 與 GEFS＋GEM 系集，可用下方 tab 切換比對。`
     + (age >= 1 ? `　·　<b class="stale">本頁已 ${age} 天未更新，請重跑建置</b>` : "");
 
   /* 三層來源 tab。FC 每筆的 v 存三層各自的結果，筆身是最準那層；「最佳」就是筆身。
      卡片結構不因 tab 而變，只換餵進去的那筆資料。 */
   const TABS = [
-    ["best",  "最佳",           "每天自動採用射程內最準的一層：官方模式 → ECMWF 系集 → GEFS＋GEM 系集。"],
-    ["model", "官方模式",       "德國 DWD ICON-D2 2.2 km、奧地利 GeoSphere AROME 2.5 km，約 2 天內；再遠退到 ICON-EU／ICON／ECMWF IFS。"],
-    ["ecmwf", "ECMWF 系集",     "ECMWF ENS 51 成員，約 15 天內；中期展望公認最強，給區間不給單點。"],
-    ["pool",  "GEFS＋GEM 系集", "NOAA GEFS 31＋加拿大 GEM 21 併成 52 成員多模式系集，35 天內；只看趨勢。"],
+    ["best",  "最佳",           "每天自動採用射程內最準的一層。"],
+    ["model", "官方模式",       "德國 DWD、奧地利 GeoSphere 官方模式，約 2 天內最準。"],
+    ["ecmwf", "ECMWF 系集",     "約 15 天內的中期展望，給區間不給單點。"],
+    ["pool",  "GEFS＋GEM 系集", "35 天內的多模式系集，只看趨勢。"],
   ];
   const card = (f, shown) => `<article class="wxcard glass rv${shown ? " in" : ""}${f.kind === "none" ? " wxc-empty" : ""}">
       ${wxBody(f, `<a class="daylink" href="day${f.day}.html">Day ${f.day}</a>`)}
