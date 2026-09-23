@@ -234,23 +234,25 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
   background:rgba(255,255,255,.045);border:1px solid var(--hair2);
 }
 
-/* ───────── segmented tabs ───────── */
-.tabs{
+/* ───────── Tabs：所有頁面共用同一個 segmented control ───────── */
+.tabs,.wxtabs{
   display:inline-flex;gap:3px;margin:24px 0 4px;padding:4px;border-radius:999px;
   background:rgba(28,12,4,.42);border:1px solid var(--hair2);max-width:100%;
   overflow-x:auto;scrollbar-width:none;
 }
-.tabs::-webkit-scrollbar{display:none}
-.tabs button{
+.tabs::-webkit-scrollbar,.wxtabs::-webkit-scrollbar{display:none}
+.tabs button,.wxtab{
+  appearance:none;
   font:inherit;font-size:12.5px;padding:7px 16px;border:0;border-radius:999px;
   background:transparent;color:var(--ink3);cursor:pointer;white-space:nowrap;transition:.22s;
 }
-.tabs button:hover{color:var(--ink2)}
-.tabs button[aria-selected="true"]{
+.tabs button:hover,.wxtab:hover{color:var(--ink2)}
+.tabs button[aria-selected="true"],.wxtab.on{
   color:#2a1206;font-weight:600;
   background:linear-gradient(160deg,#fff2e2,#ffc38c);
   box-shadow:0 2px 12px -2px rgba(255,150,70,.45);
 }
+.tabs button:focus-visible,.wxtab:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .cond{font-size:12.5px;color:var(--ink3);margin:16px 0 4px;padding-left:2px}
 .panel[hidden]{display:none}
 
@@ -314,11 +316,6 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
   display:block;font-size:10.5px;letter-spacing:.14em;color:var(--ink3);
   text-transform:uppercase;margin-bottom:5px;font-weight:700;
 }
-.legend{font-size:12.5px;color:var(--ink3);margin:0 0 26px;display:flex;align-items:center;gap:10px}
-.legend i{
-  width:10px;height:10px;border-radius:50%;background:var(--hot);display:inline-block;flex:0 0 auto;
-  box-shadow:0 0 12px rgba(255,79,51,.9);
-}
 
 /* ───────── cards ───────── */
 .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
@@ -375,20 +372,20 @@ details[open] summary::after{transform:rotate(225deg) translate(-2px,-2px)}
 details[open] summary{border-bottom:1px solid var(--hair2)}
 details[open] summary .s-t{color:var(--amber)}
 .dbody{padding:18px 24px 22px;background:rgba(0,0,0,.16)}
-.fd-h{font-size:10.5px;letter-spacing:.12em;color:var(--amber);text-transform:uppercase;font-weight:600;margin:20px 0 2px}
 .fd-a{color:inherit;text-decoration:none;border-bottom:1px dotted var(--amber)}
 .fd-a::after{content:"↗";font-size:11px;color:var(--amber);margin-left:4px}
 .fd-a:hover{color:var(--gold)}
 .fd-m{display:block;font-size:11.5px;color:var(--ink3);margin-top:3px;font-variant-numeric:tabular-nums}
 
-table{width:100%;border-collapse:collapse;font-size:13px}
+/* 所有資料表共用相同的字級、欄距與橫向捲動容器。 */
+table,.ui-table{width:100%;border-collapse:collapse;font-size:13px}
 th,td{text-align:left;padding:10px 14px 10px 0;border-bottom:1px solid var(--hair2);vertical-align:top}
 th{font-size:10.5px;letter-spacing:.12em;color:var(--ink3);text-transform:uppercase;font-weight:600}
 td.strong{color:var(--ink);font-weight:600}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;padding-right:0}
 tr:last-child td{border-bottom:0}
 .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.tblcard{padding:8px 24px 14px}
+.tblcard,.sh-stops{padding:8px 24px 14px}
 
 /* ───────── 基本資料 ───────── */
 .facts{display:grid;grid-template-columns:76px 1fr;gap:12px 20px;margin:0;font-size:14px}
@@ -418,10 +415,6 @@ tr.dim td{color:var(--ink3)}
   background:rgba(255,255,255,.05);border:1px solid var(--hair2);vertical-align:1px}
 
 
-.callout{padding:24px 26px;font-size:13px;color:var(--ink2);line-height:1.8}
-.callout b{color:var(--ink)}
-.callout p{margin:0 0 10px}
-.callout p:last-child{margin:0}
 
 footer{
   margin-top:96px;padding:36px 30px 40px;font-size:12px;color:var(--ink3);line-height:2;
@@ -469,7 +462,6 @@ footer{
   summary{padding:16px 20px}
   .stay-cfm summary{padding:12px 16px}
   .dbody{padding:16px 20px 20px}
-  .callout{padding:22px 20px}
   .facts{grid-template-columns:1fr;gap:4px 0}
   .facts dd{margin-bottom:8px}
 }
@@ -645,8 +637,6 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 
 .m-c{fill:rgba(255,226,196,.045);stroke:rgba(255,214,178,.20);stroke-width:1;
   stroke-linejoin:round;vector-effect:non-scaling-stroke}
-.m-de{fill:rgba(255,196,130,.075);stroke:rgba(255,206,150,.34)}
-.m-at{fill:rgba(242,144,154,.075);stroke:rgba(246,168,176,.34)}
 
 /* 逐日路線：深色 casing 在下、彩色線在上。重疊時上層線有深色描邊把下層切開，
    不必依賴平行位移就分得出來。位移只是額外加分。 */
@@ -858,7 +848,6 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .ac-block{margin-top:26px;padding-top:20px;border-top:1px solid var(--hair2)}
 .ac-block > .ac-h{margin-bottom:0}
 .ac-block .tkbig{margin-top:10px}
-.ac-sub{margin:4px 0 0;font-size:12.5px;color:var(--ink3)}
 .ac-lead{margin-top:14px}
 .ac-cols{display:grid;grid-template-columns:1.25fr 1fr;gap:18px 28px;margin-top:20px;padding-top:18px;border-top:1px solid var(--hair2);min-width:0}
 .ac-cols section{min-width:0}
@@ -896,7 +885,7 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .dr-tw{color:var(--ink2)}
 .dr-rules td.strong{white-space:nowrap}
 .sh-stops .sh-where{color:var(--ink3);font-size:12px;width:30%}
-.sh-stops{padding:6px 24px 10px;margin-top:18px}
+.sh-stops{margin-top:18px}
 .sh-stops .geo{margin-left:8px}
 
 /* ───────── 租車資訊（設計稿：桌機兩欄、手機單欄，純文字卡） ───────── */
@@ -1082,9 +1071,9 @@ body[data-page="esim"] footer,body[data-page="offices"] footer,body[data-page="s
 .es-rank b.on{color:var(--amber)}
 .es-rank i{font-style:normal;margin:0 8px;color:var(--ink3)}
 @media (max-width:600px){
+  .tblcard,.sh-stops{padding:6px 16px 10px}
   .tkkv{grid-template-columns:1fr;gap:2px 0}
   .ac-cols{grid-template-columns:1fr;gap:18px}
-  .sh-stops{padding:4px 16px 8px}
 
 
   .sh-list{grid-template-columns:1fr;gap:12px}
@@ -1110,13 +1099,6 @@ body[data-page="esim"] footer,body[data-page="offices"] footer,body[data-page="s
 .wxc-head .daylink{font-size:13px;font-weight:600}
 .wxc-date{font-size:26px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .wxc-place{margin-left:auto;font-size:16px;font-weight:500;color:var(--ink)}
-.wxc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 10px;margin:14px 0 4px}
-.wxc-grid div{min-width:0}
-.wxc-grid b{display:block;font-size:19px;font-weight:700;letter-spacing:-.025em;
-  font-variant-numeric:tabular-nums;line-height:1.2}
-.wxc-grid span{display:block;font-size:11px;color:var(--ink3);margin-top:3px}
-.wxc-grid .base{margin-top:3px;font-size:10px}
-.wxc-grid .base b{display:inline;font-size:10px;margin-left:5px}
 
 /* 時間軸列的導航按鈕：兩顆獨立圓鈕，中間留空，不再是黏在一起的膠囊。
    桌機 26px、手機放大到 34px——手機原本只有約 20px，遠低於觸控建議值。 */
@@ -1167,22 +1149,14 @@ tr.dim td .v{color:inherit}
 /* 近五年十月基準：附在當期數值下方，刻意做小做暗，不要搶走主數字 */
 .base{display:block;margin-top:4px;font-size:10.5px;color:var(--ink3);white-space:nowrap}
 .base b{margin-left:6px;font-weight:600}
-.base b.wetter{color:#f2909a} .base b.drier{color:#86d6b4} .base b.same{color:var(--ink3)}
 
 /* 資料產出時間戳，放在頁首標題下方 */
 .asof{margin:-6px 2px 16px;font-size:11.5px;line-height:1.7;color:var(--ink3)}
 .asof b{font-weight:600;color:var(--ink2)}
 .asof b.stale{color:#ffb9a0}
 
-/* 預報來源 tab。放在卡片區上方，不進卡片，卡片版面不受影響。 */
-.wxtabs{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 10px;min-width:0}
-.wxtab{appearance:none;cursor:pointer;min-width:0;padding:7px 14px;border-radius:999px;
-  border:1px solid var(--hair2);background:rgba(255,255,255,.05);color:var(--ink2);
-  font:inherit;font-size:12.5px;font-weight:600;letter-spacing:.02em;line-height:1.3}
-.wxtab:hover{border-color:var(--amber);color:var(--ink)}
-.wxtab.on{color:#2a1206;border-color:transparent;background:linear-gradient(160deg,#ffd9ae,#ffab63);
-  box-shadow:0 2px 14px -2px rgba(255,150,70,.5)}
-.wxtab:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+/* 預報、購物與 eSIM 的 tab 放在內容起點，沿用共用元件。 */
+.wxtabs{margin:0 0 10px;min-width:0}
 .wxtabnote{margin:0 2px 14px}
 
 /* 預報出處：抬頭下的一行小字。low = 系集或尚無資料，壓暗與行文區隔。 */
@@ -1262,7 +1236,6 @@ body[data-page="day"] .wxc-place{margin-left:0;font-size:15px;color:var(--ink2)}
   body[data-page="day"] .wxsum-kv{grid-template-columns:repeat(2,minmax(0,220px))}
 }
 
-.wxc-lead{margin-left:auto;font-size:11px;color:var(--ink3)}
 .wxc-nodata{margin:10px 0 0;font-size:11.5px;line-height:1.75;color:var(--ink3)}
 .wxc-empty{opacity:.72}
 /* 天氣總表連回當天 */
@@ -1423,13 +1396,13 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
   .daybox-t{margin-bottom:14px}
   /* 方案 Tab 沿用舊膠囊外觀，改成手機兩欄換行；第三個選項占滿一列。
      長名稱優先換行，文字較多的按鈕再用小一級字體，避免橫向裁切。 */
-  .tabs{display:grid;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;
+  .tabs,.wxtabs{display:grid;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));align-items:stretch;
     gap:4px;margin:20px 0 8px;padding:4px;overflow:visible;border-radius:18px}
-  .tabs button{display:flex;align-items:center;justify-content:center;min-width:0;min-height:48px;
+  .tabs button,.wxtab{display:flex;align-items:center;justify-content:center;min-width:0;min-height:48px;
     padding:9px 8px;font-size:12px;line-height:1.35;text-align:center;white-space:normal;overflow-wrap:anywhere}
   .tabs button .tab-label{display:block;width:100%;min-width:0}
   .tabs button.tab-long{padding-inline:6px;font-size:clamp(10px,2.85vw,11px);line-height:1.4}
-  .tabs button:last-child:nth-child(odd){grid-column:1/-1}
+  .tabs button:last-child:nth-child(odd),.wxtab:last-child:nth-child(odd){grid-column:1/-1}
   /* 分時預報：390px 下 2×2，每張卡淨寬約 (322-10)/2 = 156px，
      最長標籤「多雲，短暫雨」的膠囊約 101px 放得下，不需要再縮字級。 */
   .wxsum{padding:14px 15px 12px}
@@ -1444,12 +1417,9 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
   .gmk{width:18px;height:18px}
 
   .wxgrid{grid-template-columns:1fr;gap:12px}
-  .wxtabs{gap:6px}
-  .wxtab{padding:8px 12px;font-size:12px}
   .navitem{grid-template-columns:minmax(0,1fr) auto;gap:8px;min-height:62px}
   .navitem .geo{gap:6px}
   .navitem .geo a{width:38px;height:38px}
-  .wxc-grid{grid-template-columns:repeat(2,1fr)}
   .wxcard{padding:18px 18px 10px}
       
   .dgrid{grid-template-columns:1fr}
