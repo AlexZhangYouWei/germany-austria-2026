@@ -415,7 +415,6 @@ function dayArticle(d){
 
   <section class="day glass rv timetable">
     <div class="daybox-t">時辰表${d.blocks.some(b => b.tabs) ? "" : routeLink(d.n, "")}</div>
-    <p class="legend"><i></i> 發光標記是不可調動的固定時間（班機、導覽、船班、入住與還車）；右側「上／下／晚」可快速跳轉，高亮依目前顯示的行程時間更新。</p>
     ${blocks}${notes}
   </section>
 

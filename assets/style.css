@@ -270,8 +270,8 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
 .tl .m::after{content:"";position:absolute;left:7.5px;top:13px;bottom:-13px;width:1px;background:var(--hair2)}
 .tl li:last-child .m::after{display:none}
 .tl li.fx .m::before{
-  background:var(--hot);width:10px;height:10px;left:3px;
-  box-shadow:0 0 16px rgba(255,79,51,.95),0 0 0 5px rgba(255,79,51,.16);
+  content:"🔒";background:none;width:16px;height:16px;left:0;top:15px;
+  border-radius:0;box-shadow:none;font-size:13px;line-height:16px;
 }
 .tl .c{padding:13px 0 13px 16px}
 .tl .p{font-size:15px;line-height:1.55}
