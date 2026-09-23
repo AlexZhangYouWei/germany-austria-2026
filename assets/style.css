@@ -1178,26 +1178,30 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
   body[data-page="day"] .day{margin-bottom:12px}
   body[data-page="day"] article.day{padding-bottom:20px}
   .daybox-t{margin-bottom:14px}
-  /* 天氣數值改兩欄對齊，取代 flex 換行造成的參差 */
-  /* 四段列：360px 放不下五欄，改兩行式。
-     第一行 時段＋狀況＋氣溫，第二行 雨機率＋雨量。不另開斷點，
-     免得 cssfix.js 只掃 600px 區塊而漏檢。 */
+  /* 四段列：單行式。390px 的預算是 322px，四欄剛好塞得下——
+       時段 59（「上午 06–12」併一行）＋ 氣溫 56 ＋ 雨勢 81 ＋ 三個 7px 間距 = 217，
+       狀況欄剩 105，最長標籤「多雲，短暫雨」的膠囊約 101px（見下方縮排版），餘裕 4px。
+     動這裡任何一個數字前先重算。狀況欄用 minmax(0,1fr)：真的不夠時靠既有的
+     text-overflow:ellipsis 收尾，而不是把整列撐出螢幕。
+     不另開斷點，免得 cssfix.js 只掃 600px 區塊而漏檢。 */
   .wxp{margin:12px -18px 0}
-  .wxp-hd{display:none}            /* 兩行式之下欄位頭對不齊，改由每個數字自帶的單位（°／%／mm）自解釋 */
+  .wxp-hd{display:none}            /* 單行式之下欄位頭對不齊，改由每個數字自帶的單位（°／%／mm）自解釋 */
   .wxp-row{
-    grid-template-columns:52px 1fr auto;
-    grid-template-areas:"when cond temp"
-                        "when rain rain";
-    gap:3px 10px;padding:10px 18px;
+    grid-template-columns:auto minmax(0,1fr) auto auto;
+    grid-template-areas:"when cond temp rain";
+    gap:0 7px;padding:10px 18px;align-items:center;
   }
-  .wxp-when{grid-area:when;align-self:center}
-  .wxp-row .wxcond{grid-area:cond}
-  .wxp-t{grid-area:temp}
-  .wxp-t b{font-size:16px}
-  .wxp-t{text-align:right}
-  .wxp-rain{grid-area:rain;justify-content:flex-start;gap:14px}
-  .wxp-p,.wxp-m{width:auto;text-align:left}
-  .wxp-row.na{grid-template-columns:52px 1fr;grid-template-areas:none}
+  .wxp-when{grid-area:when;white-space:nowrap}
+  /* 時段併成一行，整列才只有一行高 */
+  .wxp-when em{display:inline;margin:0 0 0 5px;font-size:9.5px}
+  .wxp-row .wxcond{grid-area:cond;justify-self:start}
+  /* 膠囊在手機收窄一點，把省下的寬度讓給標籤本身 */
+  .wxp-row .wxcond.sm{padding:3px 8px 3px 6px;gap:4px}
+  .wxp-t{grid-area:temp;text-align:right}
+  .wxp-t b{font-size:15px}
+  .wxp-rain{grid-area:rain;justify-content:flex-end;gap:8px}
+  .wxp-p,.wxp-m{width:auto;text-align:right}
+  .wxp-row.na{grid-template-columns:auto 1fr;grid-template-areas:none}
 
   /* 導航鈕：手機放大到 34px，觸控才按得準 */
   .geo{gap:8px}
