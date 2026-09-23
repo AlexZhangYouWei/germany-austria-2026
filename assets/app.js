@@ -890,17 +890,34 @@ if (PAGE === "day") {
 }
 
 if (PAGE === "food") {
-  el("foodlist").innerHTML = FOOD.map(f => `
-    <details class="glass rv">
-      <summary><span class="s-t">${esc(f.region)}</span><span class="s-d">${esc(f.days)}</span></summary>
-      <div class="dbody">
-        ${f.items.length ? `<table>${f.items.map(([a,b]) =>
-          `<tr><td style="width:44%"><strong>${esc(a)}</strong></td><td>${esc(b)}</td></tr>`).join("")}</table>` : ""}
-        ${f.spots ? `<p class="fd-h">口袋名單 · 取自 Google Maps 清單「德奧」</p><table>${f.spots.map(([n,m,t,c]) =>
-          `<tr><td style="width:44%"><a class="fd-a" href="https://maps.google.com/?cid=${c}" target="_blank" rel="noopener" aria-label="在 Google 地圖開啟 ${esc(n)}"><strong>${esc(n)}</strong></a><span class="fd-m">${esc(m)}</span></td><td>${esc(t)}</td></tr>`).join("")}</table>` : ""}
-        ${f.text ? `<p style="font-size:13px;color:var(--ink2);margin:${f.items.length?"16px":"0"} 0 0">${esc(f.text)}</p>` : ""}
+  /* 時間軸清單：左側 Day 徽章，中文地名＋英文副標。
+     徽章由 days 推出：「Day 1、8、9」→ 1·8·9、相連兩天「Day 2、3」→ 2–3、「Day 3 A 方案」→ 3A */
+  const badge = d => {
+    const ab = d.match(/Day (\d+) ([A-Z]) 方案/);
+    if (ab) return ab[1] + ab[2];
+    const n = d.replace(/^Day /, "").split("、");
+    return n.length === 2 && +n[1] === +n[0] + 1 ? n.join("–") : n.join("·");
+  };
+  const name = f => {
+    const i = f.region.search(/[A-Za-zÀ-ž]/);
+    return f.en ? [f.region, f.en] : i > 0 ? [f.region.slice(0, i).trim(), f.region.slice(i)] : [f.region, ""];
+  };
+  el("foodcount").textContent = `${FOOD.length} 個地區`;
+  el("foodlist").innerHTML = FOOD.map(f => { const [zh, en] = name(f); return `
+    <details class="fd-row">
+      <summary><span class="fd-dot" aria-hidden="true"></span>
+        <span class="fd-day"><small>DAY</small>${esc(badge(f.days))}</span>
+        <span class="fd-t"><strong>${esc(zh)}</strong>${en ? `<span>${esc(en)}</span>` : ""}</span>
+        <span class="fd-chev" aria-hidden="true"></span></summary>
+      <div class="fd-body">
+        ${f.items.length ? `<p class="fd-bh"><span>必吃菜色</span><span>${f.items.length} 項</span></p>
+        <ul class="fd-items">${f.items.map(([a,b]) => `<li><strong>${esc(a)}</strong>${b ? `<span>${esc(b)}</span>` : ""}</li>`).join("")}</ul>` : ""}
+        ${f.spots ? `<p class="fd-bh"><span>口袋名單 · 取自 Google Maps 清單「德奧」</span><span>${f.spots.length} 家</span></p>
+        <ul class="fd-items">${f.spots.map(([n,m,t,c]) => `<li><a class="fd-a" href="https://maps.google.com/?cid=${c}" target="_blank" rel="noopener" aria-label="在 Google 地圖開啟 ${esc(n)}"><strong>${esc(n)}</strong></a><span class="fd-m">${esc(m)}</span><span>${esc(t)}</span></li>`).join("")}</ul>` : ""}
+        ${f.text ? `<p class="fd-txt">${esc(f.text)}</p>` : ""}
+        <a class="fd-map" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(en || zh)}" target="_blank" rel="noopener">查看地點<span aria-hidden="true">→</span></a>
       </div>
-    </details>`).join("");
+    </details>`; }).join("");
 }
 
 if (PAGE === "weather") {

@@ -485,6 +485,7 @@ const DAYS = [
 }
 ];
 
+/* region 裡沒有英文名的，用 en 補上副標 */
 const FOOD = [
   { region:"慕尼黑 München", days:"Day 1、8、9", items:[
     ["Münchner Weißwurst 白香腸","搭甜芥末與蝴蝶餅，傳統上偏早餐或午前食用"],
@@ -498,7 +499,7 @@ const FOOD = [
     ["Hofbräuhaus 皇家啤酒屋","4.3 ★ 11 萬則 · 巴伐利亞菜 · 每人 €20–30","Platzl 9，瑪利亞廣場步行 5 分；現場銅管樂、大桌併坐，觀光客多但體驗完整；營業至 24:00，官網可訂位","12232182229576260143"],
     ["Viktualienmarkt 維克圖阿連市場","4.6 ★ 6.4 萬則 · 露天市場","Day 1 午餐地點。週一至週六 08:00 起、週日休；攤位現金為主，Leberkässemmel、Obazda、果汁與起司分攤買","2677954517243457902"]
   ]},
-  { region:"霍恩施萬高／新天鵝堡山腳", days:"Day 2", items:[
+  { region:"霍恩施萬高／新天鵝堡山腳", en:"Hohenschwangau", days:"Day 2", items:[
     ["Allgäuer Kässpatzen 阿爾高起司麵疙瘩","當地代表"],
     ["Schnitzel 炸豬排",""],
     ["Kaiserschmarrn 皇帝煎餅","甜點類主食"]
@@ -523,7 +524,7 @@ const FOOD = [
     ["Käsespätzle 起司麵疙瘩",""],
     ["湯品與山區簡餐","依當日山頂營運與熱食時段"]
   ]},
-  { region:"加米施－帕滕基興", days:"Day 3 B 方案", items:[
+  { region:"加米施－帕滕基興", en:"Garmisch-Partenkirchen", days:"Day 3 B 方案", items:[
     ["Werdenfelser 山區野味","當地特色"],
     ["Knödel、Käsespätzle",""],
     ["Apfelstrudel 蘋果捲",""]
@@ -555,7 +556,7 @@ const FOOD = [
     ["Historische Gaststätte St. Bartholomä 國王湖漁夫餐廳","4.5 ★ 414 則 · 湖魚 · 每人 €10–20","Kessel-St Bartholomä 3，聖巴多羅買碼頭旁；燻鱒魚、燻紅點鮭、鱒魚麵包。只有在該站下船才吃得到，本日船程不中途下船","16716103692613234265"],
     ["Fischunkelalm 釣魚牧場","4.6 ★ 893 則 · 牧場冷盤 · 每人 €10–20","上湖步道終點；Brotzeit 冷盤、自製起司、酪乳。只收現金、不訂位；2026 營業至 10/04，Day 6 已休，僅供參考","7121190574320796912"]
   ]},
-  { region:"比紹夫斯維森／貝希特斯加登", days:"Day 6、7", items:[
+  { region:"比紹夫斯維森／貝希特斯加登", en:"Bischofswiesen & Berchtesgaden", days:"Day 6、7", items:[
     ["Berchtesgadener Land 起司","當地乳製品"],
     ["烤豬肉、Knödel、野味",""]
   ], text:"正式安排為超市採買後在住宿用餐。" },
