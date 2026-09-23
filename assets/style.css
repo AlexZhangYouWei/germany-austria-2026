@@ -1216,7 +1216,7 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
     /* 橫軸一定要寫死。留 visible 的話，規範會因為另一軸是 auto 而把它也算成 auto，
        面板就變成可橫捲、跟分頁搶手勢。寬表格各自包在 .scroll 裡自行捲動。 */
     overflow-x:hidden;
-    overflow-y:auto;overscroll-behavior-y:contain;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-y:none;
     scroll-snap-align:start;
     scroll-snap-stop:always;             /* 一次只翻一天，等同 UIScrollView 的 isPagingEnabled */
     padding:6px 16px calc(84px + env(safe-area-inset-bottom));
