@@ -87,29 +87,9 @@ const mm1  = v  => v.toFixed(1);     /* 1 → 「1.0 mm」，同一欄小數位�
 /* 時段定義的唯一來源在 fetch_fc.js，經 FC_META 下傳。 */
 const PD = FC_META.periods;
 
-const PD_HEAD = `<div class="wxp-hd">`
-  + `<span>時段</span><span>天氣</span><span class="wxp-t">最低–最高</span>`
-  + `<span class="wxp-rain"><span class="wxp-p">雨機率</span><span class="wxp-m">雨量</span></span></div>`;
-
-/* 氣溫格：只給「最低–最高」（整數）。色階仍依均溫 x.a 判斷，
+/* 氣溫一律給「最低–最高」（整數）。色階仍依均溫 x.a 判斷，
    因為單看極值會被一小時的尖峰帶偏。 */
-function wxTemp(x){
-  return `<span class="wxp-t"><b class="${tCls(x.a)}">${Math.round(x.l)}–${Math.round(x.h)}</b><i>°</i></span>`;
-}
-function wxRow(x, P, cls = ""){
-  if (!x) return `<div class="wxp-row na${P.day ? "" : " dim"}">`
-    + `<span class="wxp-when"><b>${esc(P.label)}</b><em>${esc(P.span)}</em></span>`
-    + `<span class="wxp-dash">—</span></div>`;
-  const [label, kind] = cond(x.c, x.p);
-  return `<div class="wxp-row${P.day ? "" : " dim"}${cls}">`
-    + `<span class="wxp-when"><b>${esc(P.label)}</b><em>${esc(P.span)}</em></span>`
-    + `<span class="wxcond sm ${kind}">${icon(kind)}<span>${esc(label)}</span></span>`
-    + wxTemp(x)
-    + `<span class="wxp-rain">`
-    + `<span class="wxp-p"><b class="${pCls(x.p)}">${x.p}</b><i>%</i></span>`
-    + `<span class="wxp-m"><b class="${mCls(x.mm)}">${mm1(x.mm)}</b><i>mm</i></span>`
-    + `</span></div>`;
-}
+const wxT = x => `<b class="${tCls(x.a)}">${Math.round(x.l)}–${Math.round(x.h)}</b><i>°</i>`;
 
 /* 全日概況：由四段合成。最低／最高取極值，均溫與雲量取平均，雨機率取最大，雨量加總。
    四段有缺就不合成，避免用半天冒充整天。 */
@@ -124,21 +104,50 @@ function daySum(f){
     c:cs.length ? Math.round(avg(cs)) : 0, p:Math.max(...xs.map(x => x.p)), mm:rd1(xs.reduce((s, x) => s + x.mm, 0)),
   };
 }
-const PD_SUM = { label:"全日", span:"概況", day:1 };
-
-function wxPeriods(f){
-  const sum = daySum(f);
-  return `<div class="wxp">` + PD_HEAD
-    + (sum ? wxRow(sum, PD_SUM, " sum") : "")
-    + PD.map(P => wxRow(f.p && f.p[P.k], P)).join("") + `</div>`;
+/* 全日概況：整張卡最先被看到的東西，獨立成一個面板，底色隨天氣狀況微調。
+   四段有缺就不畫，避免用半天冒充整天。 */
+function wxSum(f){
+  const s = daySum(f);
+  if (!s) return "";
+  const [label, kind] = cond(s.c, s.p);
+  return `<div class="wxsum ${kind}">
+      <div class="wxsum-lbl">全日概況</div>
+      <div class="wxsum-row">
+        <span class="wxcond lg ${kind}">${icon(kind)}<span>${esc(label)}</span></span>
+        <span class="wxsum-t">${wxT(s)}</span>
+      </div>
+      <div class="wxsum-kv">
+        <div><span>降雨機率</span><b class="${pCls(s.p)}">${s.p}</b><i>%</i></div>
+        <div><span>預估雨量</span><b class="${mCls(s.mm)}">${mm1(s.mm)}</b><i>mm</i></div>
+      </div>
+    </div>`;
 }
 
-/* 出處徽章。none 沒有 src/res 可標。 */
+/* 分時預報：四段各一張小卡，排成 2×2。缺格仍畫卡，卡片高度才不會忽高忽低。 */
+function wxCell(x, P){
+  const head = `<div class="wxpc-h"><b>${esc(P.label)}</b><em>${esc(P.span)}</em></div>`;
+  if (!x) return `<div class="wxpc na${P.day ? "" : " dim"}">${head}<span class="wxpc-dash">—</span></div>`;
+  const [label, kind] = cond(x.c, x.p);
+  return `<div class="wxpc${P.day ? "" : " dim"}">${head}
+      <span class="wxcond sm ${kind}">${icon(kind)}<span>${esc(label)}</span></span>
+      <div class="wxpc-t">${wxT(x)}</div>
+      <div class="wxpc-r"><span>降雨 <b class="${pCls(x.p)}">${x.p}%</b></span>`
+    + `<span><b class="${mCls(x.mm)}">${mm1(x.mm)}</b> mm</span></div>
+    </div>`;
+}
+
+function wxPeriods(f){
+  return wxSum(f)
+    + `<div class="wxph"><span>分時預報</span><em>溫度 °C　·　降雨</em></div>`
+    + `<div class="wxpg">` + PD.map(P => wxCell(f.p && f.p[P.k], P)).join("") + `</div>`;
+}
+
+/* 出處：抬頭下的一行小字，不再做成徽章。none 沒有 src/res 可標。 */
 function wxSrc(f){
-  if (f.kind === "none") return `<span class="wxsrc low">尚無預報</span>`;
-  return `<span class="wxsrc${f.kind === "ens" ? " low" : ""}">${esc(f.src)} ${esc(f.res)}`
-    + (f.kind === "ens" ? `<em>${f.members} 成員 · 低信度</em>` : `<em>提前 ${f.lead} 天</em>`)
-    + `</span>`;
+  if (f.kind === "none") return `<p class="wxc-src low">尚無預報</p>`;
+  return `<p class="wxc-src${f.kind === "ens" ? " low" : ""}">${esc(f.src)} ${esc(f.res)}`
+    + (f.kind === "ens" ? `　·　${f.members} 成員　·　低信度` : `　·　提前 ${f.lead} 天`)
+    + `</p>`;
 }
 
 /* 「X 月 X 日起 Y 就報得到這天」。far 由資料層算出射程最遠的模式；
@@ -146,18 +155,24 @@ function wxSrc(f){
 const wxWhen = f => f.far ? `${esc(f.far.from)} 起 ${esc(f.far.src)} 就報得到這天。` : "";
 /* AROME 沒有降雨機率，那一欄借自階梯下一個模式；借了就要標。 */
 const wxPop  = f => f.pop_src ? `　·　雨機率取自 ${esc(f.pop_src)}` : "";
+/* 腳註：確定性預報標時區，系集標信度——後者才是看這張卡時真正要留意的事。 */
+const wxFoot = f => `<p class="wxc-foot">`
+  + (f.kind === "ens" ? `長期預報　·　低信度，請於出發前再次查看`
+                      : `預報時間：Europe/Berlin　·　模型數值僅供參考`)
+  + wxPop(f) + `</p>`;
 
-/* 預報卡內容（預報頁與日頁共用）：抬頭、四段表、腳註。外框由呼叫端決定。 */
+/* 預報卡內容（預報頁與日頁共用）：抬頭、出處、全日概況、分時預報、腳註。
+   外框由呼叫端決定。 */
 function wxBody(f, head){
   return `<div class="wxc-head">${head}
         <span class="wxc-date">${esc(f.date.slice(5).replace("-", "/"))}</span>
         <span class="wxc-place">${esc(f.place)}</span>
-        ${wxSrc(f)}
       </div>
+      ${wxSrc(f)}
       ${wxPeriods(f)}
-      ${f.kind === "det"
-        ? `<p class="wxc-foot">提前 ${f.lead} 天　·　Europe/Berlin${wxPop(f)}</p>`
-        : `<p class="wxc-nodata">提前 ${f.lead} 天，超出數值模式射程。${wxWhen(f)}</p>`}`;
+      ${f.kind === "none"
+        ? `<p class="wxc-nodata">提前 ${f.lead} 天，超出數值模式射程。${wxWhen(f)}</p>`
+        : wxFoot(f)}`;
 }
 
 /* 日頁那張預報卡。Day 3 有山谷與峰頂兩筆，多地點時用與時辰表相同的頁籤切換。 */
@@ -243,15 +258,25 @@ function routeLink(day, variant){
    列上的按鈕會指不準，所以不掛；這種列請到下方的「今日導航」表找。 */
 const multiPlace = place => /、/.test(place) || (/／/.test(place) && !/→/.test(place));
 
+function timePeriod(t){
+  const m = String(t).match(/(?:^|[^0-9])([0-2]?[0-9]):([0-5][0-9])/);
+  if (!m) return null;
+  const hour = +m[1], minute = +m[2], total = hour * 60 + minute;
+  return { total, period:hour >= 5 && hour < 12 ? "morning" : hour >= 12 && hour < 18 ? "afternoon" : "night" };
+}
+
 function timeline(rows, noDrive){
-  return `<ul class="tl">` + rows.map(([t,cat,place,note,fx,geo]) => `
-    <li class="${fx?"fx":""}">
+  return `<ul class="tl">` + rows.map(([t,cat,place,note,fx,geo]) => {
+    const tm = timePeriod(t);
+    return `
+    <li class="${fx?"fx":""}"${tm ? ` data-time-period="${tm.period}" data-time-minutes="${tm.total}"` : ""}>
       <div class="t">${geo && !multiPlace(place) ? geoLink(cat, geo, noDrive) : ""}<span>${esc(t)}</span></div><div class="m"></div>
       <div class="c">
         <div class="p"><span class="cat">${esc(cat)}</span>${esc(place)}</div>
         ${note && note !== "—" ? `<div class="n">${md(note)}</div>` : ""}
       </div>
-    </li>`).join("") + `</ul>`;
+    </li>`;
+  }).join("") + `</ul>`;
 }
 
 /* 今日導航：依首次出現順序把當天的地點去重列出。時間與交通方式取首次出現那列，
@@ -387,9 +412,9 @@ function dayArticle(d){
     ${wx}
   </section>` : ""}
 
-  <section class="day glass rv">
+  <section class="day glass rv timetable">
     <div class="daybox-t">時辰表${d.blocks.some(b => b.tabs) ? "" : routeLink(d.n, "")}</div>
-    <p class="legend"><i></i> 發光標記為不可調動的固定時間：班機、導覽、船班、固定入住與還車</p>
+    <p class="legend"><i></i> 發光標記是不可調動的固定時間（班機、導覽、船班、入住與還車）；右側「上／下／晚」可快速跳轉，高亮依目前顯示的行程時間更新。</p>
     ${blocks}${notes}
   </section>
 
@@ -569,6 +594,20 @@ if (PAGE === "day") {
     + `</div>`
     + `<p class="srlive" id="daylive" aria-live="polite"></p>`;
 
+  const timeJump = document.createElement("nav");
+  timeJump.id = "timejump";
+  timeJump.className = "timejump";
+  timeJump.setAttribute("aria-label", "時辰表時段快速跳轉");
+  timeJump.hidden = true;
+  timeJump.innerHTML = [
+    ["morning", "上", "上午"],
+    ["afternoon", "下", "下午"],
+    ["night", "晚", "晚上"]
+  ].map(([key, short, label]) =>
+    `<button type="button" data-period="${key}" aria-label="跳到${label}" title="${label}" aria-pressed="false">${short}</button>`
+  ).join("");
+  document.body.appendChild(timeJump);
+
   /* 左右側點擊區翻頁：桌機用。手機由 CSS 隱藏——它是覆在軌道上的固定條，
      會把滑動誤判成點擊，而且正好落在 iOS 邊緣返回手勢的地盤。 */
   const chev = dir => `<span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -628,6 +667,61 @@ if (PAGE === "day") {
       return best;
     };
 
+    const timeButtons = timeJump.querySelectorAll("button[data-period]");
+    let timeFrame = 0;
+    const timePanel = () => pager() ? panels[nearest()] : panels.find(p => p.classList.contains("cur"));
+    const visibleTimeRows = panel => panel ? [].filter.call(panel.querySelectorAll(".timetable .tl li[data-time-period]"), row =>
+      !row.closest(".panel[hidden]") && !row.closest("[hidden]")) : [];
+    const updateTimeJump = () => {
+      const panel = timePanel();
+      const table = panel && panel.querySelector(".timetable");
+      if (!table) { timeJump.hidden = true; timeJump.classList.remove("show"); return; }
+      const r = table.getBoundingClientRect();
+      const inView = r.bottom > 72 && r.top < window.innerHeight - 24;
+      const rows = visibleTimeRows(panel);
+      if (!inView || !rows.length) { timeJump.hidden = true; timeJump.classList.remove("show"); return; }
+
+      const available = new Set(rows.map(row => row.dataset.timePeriod));
+      const anchor = Math.min(Math.max(window.innerHeight * .3, 140), 260);
+      let current = rows[0];
+      rows.forEach(row => { if (row.getBoundingClientRect().top <= anchor) current = row; });
+      const active = current.dataset.timePeriod;
+      timeButtons.forEach(button => {
+        const selected = button.dataset.period === active;
+        button.disabled = !available.has(button.dataset.period);
+        button.setAttribute("aria-pressed", String(selected));
+      });
+      timeJump.hidden = false;
+      timeJump.classList.add("show");
+    };
+    const scheduleTimeJump = () => {
+      if (timeFrame) return;
+      timeFrame = requestAnimationFrame(() => { timeFrame = 0; updateTimeJump(); });
+    };
+    timeJump.addEventListener("click", e => {
+      const button = e.target.closest("button[data-period]");
+      if (!button || button.disabled) return;
+      const panel = timePanel();
+      const row = visibleTimeRows(panel).find(item => item.dataset.timePeriod === button.dataset.period);
+      if (!panel || !row) return;
+      const top = row.getBoundingClientRect().top;
+      if (pager()) {
+        const base = panel.getBoundingClientRect().top;
+        panel.scrollTo({ top:panel.scrollTop + top - base - 96, behavior:"smooth" });
+      } else {
+        window.scrollTo({ top:window.scrollY + top - 104, behavior:"smooth" });
+      }
+      button.focus({ preventScroll:true });
+    });
+    panels.forEach(panel => panel.addEventListener("scroll", scheduleTimeJump, { passive:true }));
+    track.addEventListener("scroll", scheduleTimeJump, { passive:true });
+    addEventListener("scroll", scheduleTimeJump, { passive:true });
+    addEventListener("resize", scheduleTimeJump);
+    document.addEventListener("click", e => {
+      if (e.target.closest && e.target.closest(".tabs button")) scheduleTimeJump();
+    });
+    scheduleTimeJump();
+
     const syncRail = n => {
       if (!railEl) return;
       railEl.querySelectorAll("a").forEach(a => {
@@ -660,6 +754,7 @@ if (PAGE === "day") {
       if (canHist) { try { history.replaceState(null, "", `day${n}.html`); } catch (err) {} }
       setLive(n);
       drawEdges(n);
+      scheduleTimeJump();
       const say = el("daylive");
       if (say) say.textContent = `Day ${n}　${esc(d.title)}`;
     };
@@ -676,6 +771,7 @@ if (PAGE === "day") {
     track.addEventListener("scroll", () => {
       if (!pager()) return;
       setLive(nearest() + 1);
+      scheduleTimeJump();
       arm();
     }, { passive:true });
     if ("onscrollend" in window) track.addEventListener("scrollend", check);
@@ -694,7 +790,7 @@ if (PAGE === "day") {
     panels.forEach(p => { p.inert = +p.dataset.n !== cur; });
     if (window.requestAnimationFrame) requestAnimationFrame(place); else place();
 
-    addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(place, 150); });
+    addEventListener("resize", () => { clearTimeout(resizeT); resizeT = setTimeout(place, 150); scheduleTimeJump(); });
     addEventListener("pageshow", e => { if (e.persisted) place(); });
 
     const goTo = (n, smooth) => {

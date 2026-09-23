@@ -186,7 +186,9 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
   font-size:11.5px;font-weight:700;letter-spacing:.16em;padding:5px 12px;border-radius:999px;
   color:#ffd9b0;background:rgba(255,160,90,.15);border:1px solid rgba(255,175,110,.3);
 }
-.day-date{font-size:12.5px;color:var(--ink3);font-variant-numeric:tabular-nums;letter-spacing:.04em}
+/* 日期是這一頁的身分，跟 DAY N 徽章同等重要，不該是旁邊的灰字 */
+.day-date{font-size:17px;font-weight:600;color:var(--ink);
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 .km{
   font-size:11.5px;color:#f5b9bf;background:rgba(235,120,135,.12);
   border:1px solid rgba(240,140,155,.26);padding:4px 11px;border-radius:999px;
@@ -347,17 +349,20 @@ tr:last-child td{border-bottom:0}
 /* 位於「天氣預報」卡內，不再自帶外框 */
 
 /* ───────── 天氣預報樣式 ───────── */
-.wxcond{
-  display:inline-flex;align-items:center;gap:7px;flex:0 0 auto;white-space:nowrap;
-  font-size:12px;font-weight:600;padding:6px 12px 6px 9px;border-radius:999px;
-  background:rgba(255,255,255,.05);border:1px solid var(--hair2);
-}
+/* 天氣狀況：圖示＋文字，不做成膠囊——全日概況與時段卡本身已經是有框的面板，
+   再套一層膠囊會變成框中框。顏色由 kind 決定，圖示與文字同色。 */
+.wxcond{display:inline-flex;align-items:center;gap:8px;min-width:0;font-weight:600}
+.wxcond span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wxcond.lg{font-size:19px;letter-spacing:-.015em}
+.wxcond.lg .wicon{width:26px;height:26px}
+.wxcond.sm{font-size:12.5px;gap:6px}
+.wxcond.sm .wicon{width:16px;height:16px}
 .wicon{width:17px;height:17px;flex:0 0 auto}
-.wxcond.sun{color:#ffce7a;background:rgba(255,196,110,.13);border-color:rgba(255,196,110,.26)}
-.wxcond.part{color:#ffd9a8;background:rgba(255,196,110,.09);border-color:rgba(255,196,110,.18)}
-.wxcond.cloud{color:#d9cfc6;background:rgba(232,220,210,.07);border-color:rgba(232,220,210,.15)}
-.wxcond.shower{color:#f3b6a2;background:rgba(255,140,100,.11);border-color:rgba(255,140,100,.22)}
-.wxcond.rain{color:#f2909a;background:rgba(235,120,135,.13);border-color:rgba(240,140,155,.26)}
+.wxcond.sun{color:#ffce7a}
+.wxcond.part{color:#ffd9a8}
+.wxcond.cloud{color:#d9cfc6}
+.wxcond.shower{color:#f3b6a2}
+.wxcond.rain{color:#f2909a}
 tr.dim td{color:var(--ink3)}
 .tag{font-size:9.5px;letter-spacing:.06em;padding:1px 5px;border-radius:5px;
   background:rgba(255,255,255,.05);border:1px solid var(--hair2);vertical-align:1px}
@@ -448,6 +453,39 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
   margin:0 0 16px;font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--ink2)}
 .daybox-t .daylink{font-size:11.5px;font-weight:400}
 .daybox-when{font-size:11.5px;font-weight:400;color:var(--ink3);font-variant-numeric:tabular-nums}
+
+/* 時辰表右側快速跳轉：只在時辰表進入畫面時顯示，焦點依目前畫面附近的行程時間移動。 */
+.timejump{
+  position:fixed;top:50%;right:max(8px,env(safe-area-inset-right));z-index:75;
+  display:flex;flex-direction:column;gap:5px;padding:4px;border-radius:999px;
+  background:rgba(22,14,11,.78);border:1px solid var(--hair);
+  box-shadow:0 8px 22px rgba(0,0,0,.28);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  opacity:0;visibility:hidden;pointer-events:none;transform:translate(8px,-50%);
+  transition:opacity .18s,visibility .18s,transform .18s;
+}
+.timejump[hidden]{display:none !important}
+.timejump.show{opacity:1;visibility:visible;pointer-events:auto;transform:translate(0,-50%)}
+.timejump button{
+  width:38px;height:44px;padding:0;border:1px solid transparent;border-radius:999px;
+  background:transparent;color:var(--ink3);font:inherit;font-size:13px;font-weight:600;line-height:1;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;transition:background .18s,color .18s,border-color .18s;
+}
+.timejump button:hover:not(:disabled){color:var(--ink);background:rgba(255,255,255,.08)}
+.timejump button[aria-pressed="true"]{
+  color:#2a1206;background:linear-gradient(160deg,#fff2e2,#ffc38c);
+  border-color:rgba(255,210,164,.72);box-shadow:0 2px 12px -2px rgba(255,150,70,.4)
+}
+.timejump button:disabled{opacity:.32;cursor:default}
+.timejump button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+@media (min-width:1040px){
+  .timejump{right:max(12px,calc((100vw - 900px)/2 - 52px))}
+}
+@media (max-width:600px){
+  .timejump{right:max(4px,env(safe-area-inset-right));gap:4px;padding:0;border:0;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+  .timejump button{width:34px;height:44px;border-radius:999px;background:rgba(22,14,11,.84);border-color:var(--hair);box-shadow:0 5px 14px rgba(0,0,0,.28);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+  .timejump button[aria-pressed="true"]{background:linear-gradient(160deg,#fff2e2,#ffc38c);border-color:rgba(255,210,164,.72)}
+}
+@media print{.timejump{display:none !important}}
 
 /* 當日確認 */
 .cfm-lead{margin:0 0 16px;font-size:13.5px;color:var(--ink2);line-height:1.75}
@@ -874,10 +912,11 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 /* 天氣：每天一張卡 */
 .wxgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:20px;align-items:start}
 .wxcard{padding:20px 22px 12px}
-.wxc-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-.wxc-head .daylink{font-size:14.5px;font-weight:600}
-.wxc-date{font-size:11.5px;color:var(--ink3);font-variant-numeric:tabular-nums}
-.wxc-place{margin-left:auto;font-size:12.5px;color:var(--ink2)}
+/* 抬頭：日期是這張卡的身分，給它標題字級；地點靠右平衡。 */
+.wxc-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:0}
+.wxc-head .daylink{font-size:13px;font-weight:600}
+.wxc-date{font-size:26px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.wxc-place{margin-left:auto;font-size:16px;font-weight:500;color:var(--ink)}
 .wxc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 10px;margin:14px 0 4px}
 .wxc-grid div{min-width:0}
 .wxc-grid b{display:block;font-size:19px;font-weight:700;letter-spacing:-.025em;
@@ -942,81 +981,73 @@ tr.dim td .v{color:inherit}
 .wxtab:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .wxtabnote{margin:0 2px 14px}
 
-/* 預報出處徽章。low = 系集後備或尚無資料，用灰調與行文區隔。 */
-.wxsrc{display:inline-flex;align-items:baseline;gap:6px;flex:0 0 auto;
-  padding:3px 9px;border:1px solid var(--hair2);border-radius:999px;
-  background:rgba(255,255,255,.05);
-  font-size:10.5px;font-weight:600;letter-spacing:.02em;color:var(--ink2)}
-.wxsrc em{font-style:normal;font-weight:400;color:var(--ink3)}
-.wxsrc.low{color:var(--ink3);border-style:dashed}
-/* ───────── 四段時段表（預報頁卡片與日頁共用） ───────── */
-/* 與卡片等寬出血，用分隔線分段而不是卡中卡。手機的負邊距要跟著 padding 一起改。 */
-/* 軌道預算：天氣頁是兩欄卡，每列實際可用 375px（900 − 48 padding → 852，兩欄 gap 14 → 419，再扣列 padding 44）。
-   58 ＋ 104 ＋ 62 ＋ 110 ＋ gap 30 = 364，狀況欄靠 1fr 吃掉剩下的 11px。
-   動任何一個數字前先重算這條，超過 375 狀況欄就會被壓到下限、把「多雲，短暫雨」切成刪節號。 */
-.wxp{margin:14px -22px 0;border-top:1px solid var(--hair2)}
-.wxp-hd,.wxp-row{
-  display:grid;align-items:center;gap:0 10px;padding:11px 22px;
-  grid-template-columns:58px minmax(104px,1fr) 62px 110px;
-}
-/* grid 子項預設 min-width:auto，裡面的 nowrap 會把軌道撐開、整列溢出螢幕。
-   .daywx-row 就是踩了這個坑，新元件直接寫死。 */
-.wxp-hd > *,.wxp-row > *{min-width:0}
-.wxp-row{border-top:1px solid var(--hair2)}
-.wxp-hd{padding-top:9px;padding-bottom:7px;
-  font-size:10px;letter-spacing:.1em;color:var(--ink3)}
-.wxp-hd .wxp-rain span{font-size:10px;letter-spacing:.1em}
+/* 預報出處：抬頭下的一行小字。low = 系集或尚無資料，壓暗與行文區隔。 */
+.wxc-src{margin:6px 0 0;font-size:11px;color:var(--ink3);letter-spacing:.02em}
+.wxc-src.low{color:rgba(251,242,234,.34)}
 
-.wxp-when{font-size:12px;color:var(--ink2);white-space:nowrap}
-.wxp-when b{font-weight:600;color:var(--ink)}
-.wxp-when em{display:block;margin-top:1px;font-style:normal;font-size:10px;
-  color:var(--ink3);letter-spacing:.02em;font-variant-numeric:tabular-nums}
+/* ───────── 全日概況面板（預報頁卡片與日頁共用） ─────────
+   整張卡最先要被看到的東西，獨立成面板；底色與框線隨天氣狀況微調，
+   讓「今天大致上是什麼天氣」在掃過去的瞬間就成立。 */
+.wxsum{margin-top:14px;padding:16px 18px 14px;border-radius:16px;
+  border:1px solid var(--hair2);background:rgba(255,255,255,.035)}
+.wxsum.sun{border-color:rgba(255,196,110,.22);background:rgba(255,196,110,.06)}
+.wxsum.part{border-color:rgba(255,196,110,.16);background:rgba(255,196,110,.045)}
+.wxsum.cloud{border-color:rgba(232,220,210,.14);background:rgba(232,220,210,.035)}
+.wxsum.shower{border-color:rgba(255,140,100,.2);background:rgba(255,140,100,.05)}
+.wxsum.rain{border-color:rgba(240,140,155,.22);background:rgba(235,120,135,.06)}
+.wxsum-lbl{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--ink3)}
+.wxsum-row{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:12px}
+.wxsum-t{font-variant-numeric:tabular-nums;white-space:nowrap}
+.wxsum-t b{font-size:27px;font-weight:700;letter-spacing:-.03em}
+.wxsum-t i{font-style:normal;font-size:16px;color:var(--ink3);margin-left:1px}
+/* 機率與雨量：標籤在左、數值靠右，兩格等寬才對得齊 */
+.wxsum-kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;
+  margin-top:14px;padding-top:12px;border-top:1px solid var(--hair2)}
+.wxsum-kv > div{display:flex;align-items:baseline;gap:8px;min-width:0}
+.wxsum-kv span{font-size:11px;color:var(--ink3);margin-right:auto;white-space:nowrap}
+.wxsum-kv b{font-size:15px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.wxsum-kv i{font-style:normal;font-size:11px;color:var(--ink3)}
 
-.wxcond.sm{padding:4px 9px 4px 7px;gap:5px;font-size:11.5px;
-  justify-self:start;max-width:100%;overflow:hidden}
-.wxcond.sm span{overflow:hidden;text-overflow:ellipsis}
-.wxcond.sm .wicon{width:14px;height:14px}
-
-.wxp-t,.wxp-p,.wxp-m{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.wxp-t b{font-size:15.5px;font-weight:700;letter-spacing:-.025em}
-/* 全日概況列：四段合成，放在最上面，用琥珀底色與四段區隔 */
-.wxp-row.sum{background:rgba(255,184,114,.07)}
-.wxp-row.sum .wxp-when b{color:var(--amber)}
-.wxp-row.sum .wxp-when em{color:rgba(255,184,114,.7)}
-.wxp-p b,.wxp-m b{font-size:13.5px;font-weight:600;letter-spacing:-.02em}
-.wxp-t i,.wxp-p i,.wxp-m i{font-style:normal;font-size:10.5px;color:var(--ink3);margin-left:1px}
-.wxp-rain{display:flex;gap:10px;justify-content:flex-end}
-.wxp-p{width:44px}
-.wxp-m{width:56px}
-
-/* 夜間與清晨：只淡化時段標籤與底色，數值色階保留——
-   晚上會不會下雨跟白天一樣要緊，不該整列洗掉。 */
-.wxp-row.dim{background:rgba(255,255,255,.018)}
-.wxp-row.dim .wxp-when b{color:var(--ink2);font-weight:500}
-
-/* 無資料：仍畫四列佔位，卡片高度才不會在兩欄版面裡忽高忽低 */
-.wxp-row.na{grid-template-columns:58px 1fr}
-.wxp-dash{color:var(--ink3);font-size:13px}
+/* ───────── 分時預報 2×2 ───────── */
+.wxph{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:22px 0 10px}
+.wxph span{font-size:12.5px;font-weight:600;color:var(--ink2);letter-spacing:.02em}
+.wxph em{font-style:normal;font-size:10.5px;color:var(--ink3)}
+.wxpg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.wxpc{padding:13px 14px 12px;border-radius:14px;
+  border:1px solid var(--hair2);background:rgba(255,255,255,.028);min-width:0}
+.wxpc-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:11px}
+.wxpc-h b{font-size:13px;font-weight:600;color:var(--ink)}
+.wxpc-h em{font-style:normal;font-size:10px;color:var(--ink3);
+  font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.wxpc-t{margin-top:9px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.wxpc-t b{font-size:22px;font-weight:700;letter-spacing:-.03em}
+.wxpc-t i{font-style:normal;font-size:13px;color:var(--ink3);margin-left:1px}
+.wxpc-r{display:flex;align-items:baseline;justify-content:space-between;gap:8px;
+  margin-top:11px;padding-top:10px;border-top:1px solid var(--hair2);
+  font-size:11px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.wxpc-r b{font-weight:700;font-size:11.5px}
+/* 夜間與清晨：只壓暗時段標籤與底色，數值色階保留——
+   晚上會不會下雨跟白天一樣要緊，不該整張洗掉。 */
+.wxpc.dim{background:rgba(255,255,255,.014)}
+.wxpc.dim .wxpc-h b{color:var(--ink2);font-weight:500}
+/* 無資料：仍畫四張佔位，卡片高度才不會在兩欄版面裡忽高忽低 */
+.wxpc.na{display:flex;flex-direction:column}
+.wxpc.na .wxpc-h{margin-bottom:0}
+.wxpc-dash{margin:14px 0 6px;color:var(--ink3);font-size:15px}
 .wxc-foot{margin:11px 0 6px;font-size:11px;color:var(--ink3)}
 
 /* 日頁：整節就是一張 .wxcard（邊距與出血跟預報頁一致），多地點時上方多一列頁籤 */
 .daywx-tabs{margin:0 0 14px}
 
-/* .wxp 的欄寬是照預報頁「兩欄卡片、約 375px」算的（見上方那條算式）。日頁的預報卡是
-   滿版 900px，同一組欄寬會讓狀況欄的 1fr 獨吞約 450px，整列看起來就是一個大洞。
-   這裡只在日頁桌機版把四欄改成按比例分攤，並把數值欄固定寬度後置中——
-   欄內仍靠右對齊，所以跨列的數字照樣對得齊。手機版另有兩行式排法，不套用。 */
+/* 日期已經在頁首的標題卡上，預報卡不必再報一次；地點跟著回到左側。
+   預報頁不套用——那裡十張卡並列，日期正是分辨它們的依據。 */
+body[data-page="day"] .wxc-date{display:none}
+body[data-page="day"] .wxc-place{margin-left:0;font-size:15px;color:var(--ink2)}
+
+/* 日頁的預報卡是滿版 900px，2×2 會把每張時段卡拉得又寬又空，改成四張並排。 */
 @media (width > 600px){
-  body[data-page="day"] .wxp-hd,
-  body[data-page="day"] .wxp-row{
-    grid-template-columns:112px minmax(104px,1.15fr) minmax(62px,1fr) minmax(110px,1fr);
-    gap:0 18px;
-  }
-  body[data-page="day"] .wxp-row.na{grid-template-columns:112px 1fr}
-  /* 時段欄橫著放得下，就不要疊成兩行——每列少一行，整卡矮一截 */
-  body[data-page="day"] .wxp-when em{display:inline;margin:0 0 0 7px}
-  body[data-page="day"] .wxp-t{width:62px;justify-self:center}
-  body[data-page="day"] .wxp-rain{width:110px;justify-self:center}
+  body[data-page="day"] .wxpg{grid-template-columns:repeat(4,1fr)}
+  body[data-page="day"] .wxsum-kv{grid-template-columns:repeat(2,minmax(0,220px))}
 }
 
 .wxc-lead{margin-left:auto;font-size:11px;color:var(--ink3)}
@@ -1178,35 +1209,13 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
   body[data-page="day"] .day{margin-bottom:12px}
   body[data-page="day"] article.day{padding-bottom:20px}
   .daybox-t{margin-bottom:14px}
-  /* 四段列：單行式，四欄全部寫死寬度。
-     每個 .wxp-row 都是獨立的 grid，所以 auto 欄會各自依「那一列」的內容收縮——
-     「3–9°」與「11–14°」算出來不一樣寬，整卡看下來每列都對不齊，這是上一版
-     看起來忽鬆忽緊的真正原因。寫死寬度後，四欄由上到下切齊成真正的表格。
-       時段 58（「上午 06–12」）＋ 氣溫 54 ＋ 雨勢 72 ＋ 三個 9px 間距 = 211，
-       390px 下狀況欄剩 111，最長標籤「多雲，短暫雨」膠囊約 101px，餘裕 10px。
-     動這裡任何一個數字前先重算。狀況欄留 minmax(0,1fr)：真的不夠時靠既有的
-     text-overflow:ellipsis 收尾，而不是把整列撐出螢幕。
-     不另開斷點，免得 cssfix.js 只掃 600px 區塊而漏檢。 */
-  .wxp{margin:12px -18px 0}
-  .wxp-hd{display:none}            /* 單行式之下欄位頭對不齊，改由每個數字自帶的單位（°／%／mm）自解釋 */
-  .wxp-row{
-    grid-template-columns:58px minmax(0,1fr) 54px 72px;
-    grid-template-areas:"when cond temp rain";
-    gap:0 9px;padding:10px 18px;align-items:center;
-  }
-  .wxp-when{grid-area:when;white-space:nowrap}
-  /* 時段併成一行，整列才只有一行高；時間帶是次要資訊，縮小並壓暗 */
-  .wxp-when em{display:inline;margin:0 0 0 4px;font-size:9.5px}
-  .wxp-row .wxcond{grid-area:cond;justify-self:start}
-  /* 膠囊在手機收窄一點，把省下的寬度讓給標籤本身 */
-  .wxp-row .wxcond.sm{padding:3px 8px 3px 6px;gap:4px}
-  .wxp-t{grid-area:temp;text-align:right}
-  .wxp-t b{font-size:15px}
-  /* 雨機率與雨量也各自定寬，兩個數字才會跟上下列對齊 */
-  .wxp-rain{grid-area:rain;justify-content:flex-end;gap:0}
-  .wxp-p{width:31px;text-align:right}
-  .wxp-m{width:41px;text-align:right}
-  .wxp-row.na{grid-template-columns:58px 1fr;grid-template-areas:none}
+  /* 分時預報：390px 下 2×2，每張卡淨寬約 (322-10)/2 = 156px，
+     最長標籤「多雲，短暫雨」的膠囊約 101px 放得下，不需要再縮字級。 */
+  .wxsum{padding:14px 15px 12px}
+  .wxsum-t b{font-size:25px}
+  .wxpg{gap:9px}
+  .wxpc{padding:12px 12px 11px}
+  .wxpc-t b{font-size:20px}
 
   /* 導航鈕：手機放大到 34px，觸控才按得準 */
   .geo{gap:8px}
