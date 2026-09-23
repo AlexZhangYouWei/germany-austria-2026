@@ -317,15 +317,26 @@ function dayPlaces(d){
 function navCard(d){
   const groups = dayPlaces(d), noDrive = noDriveDay(d);
   if (!groups.length) return "";
-  const rows = groups.map(g =>
-    (g.label ? `<tr class="navgrp"><td colspan="2">${esc(g.label)}</td></tr>` : "")
-    + g.items.map(x => `<tr>
-        <td>${esc(x.name)}</td>
-        <td class="navg">${geoLink(x.cat, x.key, noDrive)}</td>
-      </tr>`).join("")).join("");
-  return `<section class="day glass rv">
-    <div class="daybox-t">今日導航<span class="daybox-when">多地點的列在這裡點</span></div>
-    <table class="navtbl">${rows}</table>
+  const count = groups.reduce((sum, g) => sum + g.items.length, 0);
+  let order = 0;
+  const lists = groups.map(g => `
+    <section class="navgroup">
+      ${g.label ? `<div class="navgrp">${esc(g.label)}</div>` : ""}
+      <ol class="navlist"${order ? ` start="${order + 1}"` : ""}>
+        ${g.items.map(x => `
+          <li class="navitem">
+            <span class="navindex" aria-hidden="true">${String(++order).padStart(2,"0")}</span>
+            <span class="navname">${esc(x.name)}</span>
+            ${geoLink(x.cat, x.key, noDrive)}
+          </li>`).join("")}
+      </ol>
+    </section>`).join("");
+  return `<section class="day glass rv navcard">
+    <div class="navhead">
+      <div class="daybox-t">今日導航<span class="navcount">${count} 個地點</span></div>
+      <p class="navhint">依行程順序排列，點地圖圖示即可開始導航。</p>
+    </div>
+    <div class="navgroups">${lists}</div>
   </section>`;
 }
 

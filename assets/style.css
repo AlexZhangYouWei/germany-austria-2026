@@ -971,15 +971,25 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .geo-a:hover{color:#ffd9b0}
 .gmk{width:15px;height:15px;display:block}
 
-/* 今日導航表：當天的地點去重後集中在這裡，臨時改計畫時當總覽 */
-.navtbl{width:100%;border-collapse:collapse;font-size:13.5px}
-.navtbl td{padding:10px 0;border-bottom:1px solid var(--hair2);vertical-align:middle}
-.navtbl tr:last-child td{border-bottom:0}
-.navg{width:40px;text-align:right}
-.navgrp td{padding:18px 0 4px;border-bottom:0;
-  font-size:11px;letter-spacing:.08em;color:var(--ink3)}
-.navtbl tr:first-child .navgrp,
-.navtbl tr.navgrp:first-child td{padding-top:0}
+/* 今日導航：按行程順序編號，地點名稱與地圖入口清楚分欄。 */
+.navhead{margin-bottom:16px}
+.navhead .daybox-t{justify-content:flex-start;align-items:center;gap:10px;margin:0 0 5px;font-size:15px;color:var(--ink)}
+.navcount{padding:3px 9px;border:1px solid var(--hair2);border-radius:999px;
+  background:rgba(255,255,255,.045);font-size:11px;font-weight:500;color:var(--ink3);letter-spacing:0}
+.navhint{margin:0;font-size:12px;line-height:1.6;color:var(--ink3)}
+.navgroups{display:grid;gap:12px}
+.navgroup{min-width:0}
+.navgrp{margin:0 0 4px;padding:0 0 4px;border-bottom:1px solid var(--hair2);
+  font-size:11px;letter-spacing:.04em;color:var(--ink3);line-height:1.5}
+.navlist{margin:0;padding:0;list-style:none;counter-reset:none}
+.navitem{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;
+  min-height:58px;padding:8px 0;border-bottom:1px solid var(--hair2)}
+.navitem:last-child{border-bottom:0}
+.navindex{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;
+  background:rgba(255,177,109,.09);color:#ffc38c;font-size:10px;font-weight:700;font-variant-numeric:tabular-nums}
+.navname{min-width:0;font-size:13.5px;line-height:1.5;overflow-wrap:anywhere}
+.navitem .geo{gap:6px}
+.navitem .geo a{width:38px;height:38px}
 
 .routeline{margin:14px 0 0}
 
@@ -1257,7 +1267,9 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
   .wxgrid{grid-template-columns:1fr;gap:12px}
   .wxtabs{gap:6px}
   .wxtab{padding:8px 12px;font-size:12px}
-  .navg{width:46px}
+  .navitem{grid-template-columns:28px minmax(0,1fr) auto;gap:8px;min-height:62px}
+  .navitem .geo{gap:6px}
+  .navitem .geo a{width:38px;height:38px}
   .wxc-grid{grid-template-columns:repeat(2,1fr)}
   .wxcard{padding:18px 18px 10px}
       
