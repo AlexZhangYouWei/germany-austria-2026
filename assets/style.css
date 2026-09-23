@@ -971,7 +971,7 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .geo-a:hover{color:#ffd9b0}
 .gmk{width:15px;height:15px;display:block}
 
-/* 今日導航：按行程順序編號，地點名稱與地圖入口清楚分欄。 */
+/* 行程地點：地名與地圖入口清楚分欄。 */
 .navhead{margin-bottom:16px}
 .navhead .daybox-t{justify-content:flex-start;align-items:center;gap:10px;margin:0 0 5px;font-size:15px;color:var(--ink)}
 .navcount{padding:3px 9px;border:1px solid var(--hair2);border-radius:999px;
@@ -982,11 +982,9 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .navgrp{margin:0 0 4px;padding:0 0 4px;border-bottom:1px solid var(--hair2);
   font-size:11px;letter-spacing:.04em;color:var(--ink3);line-height:1.5}
 .navlist{margin:0;padding:0;list-style:none;counter-reset:none}
-.navitem{display:grid;grid-template-columns:30px minmax(0,1fr) auto;align-items:center;gap:10px;
+.navitem{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;
   min-height:58px;padding:8px 0;border-bottom:1px solid var(--hair2)}
 .navitem:last-child{border-bottom:0}
-.navindex{display:grid;place-items:center;width:28px;height:28px;border-radius:9px;
-  background:rgba(255,177,109,.09);color:#ffc38c;font-size:10px;font-weight:700;font-variant-numeric:tabular-nums}
 .navname{min-width:0;font-size:13.5px;line-height:1.5;overflow-wrap:anywhere}
 .navitem .geo{gap:6px}
 .navitem .geo a{width:38px;height:38px}
@@ -1267,7 +1265,7 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
   .wxgrid{grid-template-columns:1fr;gap:12px}
   .wxtabs{gap:6px}
   .wxtab{padding:8px 12px;font-size:12px}
-  .navitem{grid-template-columns:28px minmax(0,1fr) auto;gap:8px;min-height:62px}
+  .navitem{grid-template-columns:minmax(0,1fr) auto;gap:8px;min-height:62px}
   .navitem .geo{gap:6px}
   .navitem .geo a{width:38px;height:38px}
   .wxc-grid{grid-template-columns:repeat(2,1fr)}

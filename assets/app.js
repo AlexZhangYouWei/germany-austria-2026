@@ -318,23 +318,21 @@ function navCard(d){
   const groups = dayPlaces(d), noDrive = noDriveDay(d);
   if (!groups.length) return "";
   const count = groups.reduce((sum, g) => sum + g.items.length, 0);
-  let order = 0;
   const lists = groups.map(g => `
     <section class="navgroup">
       ${g.label ? `<div class="navgrp">${esc(g.label)}</div>` : ""}
-      <ol class="navlist"${order ? ` start="${order + 1}"` : ""}>
+      <ul class="navlist">
         ${g.items.map(x => `
           <li class="navitem">
-            <span class="navindex" aria-hidden="true">${String(++order).padStart(2,"0")}</span>
             <span class="navname">${esc(x.name)}</span>
             ${geoLink(x.cat, x.key, noDrive)}
           </li>`).join("")}
-      </ol>
+      </ul>
     </section>`).join("");
   return `<section class="day glass rv navcard">
     <div class="navhead">
-      <div class="daybox-t">今日導航<span class="navcount">${count} 個地點</span></div>
-      <p class="navhint">依行程順序排列，點地圖圖示即可開始導航。</p>
+      <div class="daybox-t">行程地點<span class="navcount">${count} 個地點</span></div>
+      <p class="navhint">依行程順序排列，選擇地圖 App 開始導航。</p>
     </div>
     <div class="navgroups">${lists}</div>
   </section>`;
