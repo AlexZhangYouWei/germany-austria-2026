@@ -855,83 +855,50 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .sh-stops{padding:6px 24px 10px;margin-top:18px}
 .sh-stops .geo{margin-left:8px}
 
-/* ───────── 網路分析（eSIM） ─────────
-   結論卡是全頁唯一該被先讀到的東西，用比一般卡片重的邊框與底色把它拉出來。 */
-.es-conc{padding:24px 26px 22px;border-color:rgba(255,190,140,.3);
-  background:linear-gradient(170deg,rgba(255,160,90,.1),rgba(255,141,60,.03))}
-.es-k{margin:0;font-size:11.5px;letter-spacing:.1em;color:var(--ink3)}
-/* 結論卡裡三種型態並排，綜合首選那格加底色拉出層次 */
-.es-picks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}
-.es-pick{padding:16px 18px 18px;border-radius:14px;border:1px solid var(--hair2);
-  background:rgba(255,255,255,.03)}
-.es-pick.on{border-color:rgba(255,190,140,.42);background:rgba(255,160,90,.09)}
-.es-pt{font-size:11.5px;letter-spacing:.08em;color:var(--ink3)}
-.es-pick.on .es-pt{color:var(--gold)}
-.es-pt em{font-style:normal;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:10.5px;
-  letter-spacing:.04em;color:#2a1206;background:linear-gradient(160deg,#ffd9ae,#ffab63)}
-.es-plan{margin:8px 0 0;font-size:15.5px;font-weight:700;letter-spacing:-.02em;line-height:1.45}
-.es-pick .tkbig{margin:8px 0 0}
-.es-pick .tkbig b{font-size:24px}
-.es-why{margin:12px 0 0;font-size:12.5px;color:var(--ink2);line-height:1.8}
-.es-asof{margin:16px 0 0;font-size:11.5px;color:var(--ink3);line-height:1.7}
-
-/* 方案比較：依計費型態分組，每組一排卡片 */
-.es-gh{margin:30px 0 14px;font-size:15px;font-weight:600;letter-spacing:-.01em;
-  display:flex;align-items:baseline;gap:10px}
-.es-gh:first-child{margin-top:0}
-.es-gh span{font-size:11.5px;font-weight:400;color:var(--ink3)}
-/* 方案比較表：欄位多，整張橫捲；首選那列打底色。 */
-.es-how{margin:0 0 4px}
-.es-tw{padding-top:2px}
-.es-t td{font-size:12.5px;line-height:1.7;min-width:96px}
-.es-t td:first-child{min-width:150px}
-.es-t tr.on td{background:rgba(255,160,90,.07)}
-.es-tag{font-style:normal;margin-left:8px;padding:2px 8px;border-radius:999px;font-size:10.5px;
-  font-weight:600;color:#2a1206;background:linear-gradient(160deg,#ffd9ae,#ffab63);white-space:nowrap}
-.es-vd{display:block;margin-top:5px;font-size:11.5px;font-weight:400;color:var(--ink3);line-height:1.7}
+/* ───────── 網路分析（eSIM） ───────── */
 .es-sc{min-width:0;font-size:16px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums}
-.es-net{margin:0;padding:0;list-style:none;min-width:150px}
-.es-net li{position:relative;padding-left:11px;line-height:1.65}
-.es-net li+li{margin-top:3px}
-.es-net li::before{content:"";position:absolute;left:0;top:.62em;width:4px;height:4px;
-  border-radius:50%;background:rgba(255,190,140,.42)}
-.es-ox{min-width:0;font-size:14px;font-weight:600;color:var(--ink2)}   /* 不置中：全表欄頭都靠左，內容跟著靠左才對得齊 */
-.es-legend{margin:26px 2px 0;font-size:11.5px;color:var(--ink3);line-height:1.9}
-/* 方案名稱就是購買連結：主要欄位不用整欄橘字，靠底線表示可點，hover 才變色 */
-.es-buy-a{color:var(--ink);text-decoration:underline;text-underline-offset:3px;
-  text-decoration-color:rgba(255,184,114,.35)}
-.es-buy-a:hover{color:var(--amber);text-decoration-color:var(--amber)}
-.es-sum{margin:14px 2px 0;font-size:13px;color:var(--ink2);line-height:1.85}
-.es-sum b{display:block;margin-bottom:4px;font-size:11.5px;letter-spacing:.1em;color:var(--gold);font-weight:600}
-.es-rank{margin:10px 0 0;padding-left:20px;font-size:13.5px;line-height:1.9}
-.es-rank li{color:var(--ink2)}
-.es-rank li:first-child{color:var(--ink);font-weight:600}
-.es-car p{margin:12px 0 0;font-size:13px;color:var(--ink2);line-height:1.8}
-.es-car .es-src{font-size:11.5px;color:var(--ink3)}
+.es-ok{color:var(--amber);font-weight:700}
+.es-no{color:var(--ink3)}
+/* 垂直比較（手機、桌機共用）：外框與欄、列分隔線都要看得出來 */
+.es-tabs{margin:0 0 16px}
+.es-cmp{border:1px solid rgba(255,222,190,.3);border-radius:18px;padding:0 14px;
+  background:rgba(255,255,255,.025)}
+body[data-page="esim"] footer,body[data-page="offices"] footer{display:none}
+.es-cv>div+div{border-left:1px solid rgba(255,222,190,.2)}
+.es-cv{display:grid;grid-template-columns:repeat(auto-fit,minmax(0,1fr));gap:10px;text-align:center}
+.es-ctop{padding:18px 0 18px}
+.es-ctop>div{display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+/* 欄頭下拉選單：外觀是圓角框＋⌄，裡面的字是 span（可換行、13px）；真正的 select
+   透明疊在上面，保持 16px，iOS 點選時才不會放大整頁 */
+.es-cname{position:relative;display:flex;align-items:center;width:100%;min-height:52px;margin-top:auto;
+  padding:7px 24px 7px 10px;border:1px solid rgba(255,222,190,.28);border-radius:10px;background:rgba(255,255,255,.05);
+  font-size:13px;font-weight:600;line-height:1.35;text-align:left;cursor:pointer}
+.es-cname select{position:absolute;inset:0;width:100%;opacity:0;font-size:16px;cursor:pointer}
+.es-cname::after{content:"";position:absolute;right:10px;top:50%;width:6px;height:6px;margin-top:-5px;
+  border-right:1.6px solid var(--amber);border-bottom:1.6px solid var(--amber);transform:rotate(45deg);pointer-events:none}
+.es-cprice{margin-top:10px;font-size:22px;font-weight:700;letter-spacing:-.02em}
+.es-cbuy{display:inline-block;margin-top:12px;padding:6px 0;width:min(100%,88px);text-align:center;border-radius:999px;font-size:12px;font-weight:600;
+  color:#2a1206;background:var(--amber);text-decoration:none}
+.es-crow{border-top:1px solid rgba(255,222,190,.22);padding:14px 0 16px}
+.es-crow p{margin:0 0 8px;font-size:11.5px;letter-spacing:.04em;color:var(--ink3);text-align:left}
+.es-crow small{display:block;font-size:11px;color:var(--ink3)}
+.es-crow .es-cv{font-size:13px;line-height:1.55}
+.es-crow .es-ok,.es-crow .es-no{font-size:18px}
+.es-crow .es-sc{font-size:18px;color:var(--ink)}
+.es-crow .es-sc.on{color:var(--amber)}
+/* 結論：tab 下方，目前三欄依評分排序，最高分那個標橘色 */
+.es-rank{margin:0 0 14px;padding:12px 16px 14px;border:1px solid rgba(255,222,190,.3);border-radius:14px;
+  background:rgba(255,160,90,.06)}
+.es-rank p{margin:0 0 4px;font-size:11.5px;letter-spacing:.04em;color:var(--ink3)}
+.es-rank>div{font-size:14px;line-height:1.8}
+.es-rank b{font-weight:600}
+.es-rank b.on{color:var(--amber)}
+.es-rank i{font-style:normal;margin:0 8px;color:var(--ink3)}
 @media (max-width:600px){
   .tkkv{grid-template-columns:1fr;gap:2px 0}
   .ac-cols{grid-template-columns:1fr;gap:18px}
   .sh-stops{padding:4px 16px 8px}
-  .es-picks{grid-template-columns:1fr}
 
-  /* 方案比較表在窄螢幕攤成卡片：7 欄約 860px，手機得橫捲兩個螢幕寬，
-     而且一捲出去最左邊的方案名稱就看不到了。改成每列一張卡，欄名由
-     td 的 data-l 印在值前面（欄頭列藏起來）。桌機完全不受影響。 */
-  .es-tw{background:none;border:0;box-shadow:none;padding:0}
-  .es-tw .scroll{overflow-x:visible}
-  .es-t,.es-t tbody,.es-t tr,.es-t td{display:block;width:auto}
-  .es-t tr:first-child{display:none}          /* 欄頭列 */
-  .es-t tr{margin-top:10px;padding:20px 22px 18px;
-    background:var(--glass);border:1px solid var(--hair);border-radius:var(--r);
-    box-shadow:var(--glass-hi),var(--shadow)}
-  .es-t tr.on{border-color:rgba(255,190,140,.34)}
-  .es-t tr.on td{background:none}
-  .es-t td{min-width:0;padding:0;border-bottom:0}
-  .es-t td:first-child{font-size:14.5px;margin-bottom:12px}
-  .es-t td+td{display:grid;grid-template-columns:68px 1fr;gap:0 10px;margin-top:8px}
-  .es-t td+td::before{content:attr(data-l);color:var(--ink3);font-size:11.5px;
-    letter-spacing:.04em;line-height:1.7}
-  .es-net{min-width:0}
 
   .sh-where{font-size:11.5px}
   .sh-pic{width:48px;padding-right:8px}
@@ -1307,9 +1274,8 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
 @media (width > 600px) and (max-width:800px){
   .edge{display:none}
   .dgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .wxgrid,.ckgrid,.sosgrid,.of-calls,.es-picks{grid-template-columns:1fr}
+  .wxgrid,.ckgrid,.sosgrid,.of-calls{grid-template-columns:1fr}
   .ac-cols{grid-template-columns:1fr}
-  .es-tw,.es-tw .scroll{max-width:100%;min-width:0}
 }
 
 @media print{

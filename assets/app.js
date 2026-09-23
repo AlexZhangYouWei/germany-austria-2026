@@ -1062,90 +1062,71 @@ if (PAGE === "drive") {
   el("drnotes").innerHTML = `<ul class="notes">${li(D.notes)}</ul>`;
 }
 
-/* 網路分析：eSIM 方案比較。這是決策頁，所以結論放最上面，比較表在後面備查。
-   全頁只報單人價，因為選方案是個人決定。
+/* 網路分析：eSIM 方案比較。只放比較表與各組總結，全頁只報單人價。
    方案依吃到飽／總量型／每日定量分三組——選錯計費型態比選錯平台更痛。 */
 if (PAGE === "esim") {
   const E = ESIM;
 
-  el("esconc").innerHTML = `
-    <p class="es-k">結論・三種計費型態各一個首選</p>
-    <div class="es-picks">${E.pick.map(p => `
-      <div class="es-pick${p.best ? " on" : ""}">
-        <span class="es-pt">${esc(p.type)}${p.best ? `<em>綜合首選</em>` : ""}</span>
-        <p class="es-plan">${esc(p.plan)}</p>
-        <div class="tkbig"><b>${esc(p.one)}</b><span>／人</span></div>
-        <p class="es-why">${md(p.why)}</p>
-      </div>`).join("")}</div>
-    <p class="es-asof">價格與合作網路查詢日 ${esc(E.asof)}，一律為單人價；促銷與方案內容隨時會變，購買前以各平台結帳頁為準。</p>`;
+  /* O／X 一律顯示成 ✓／— */
+  const ox = v => v === "O" ? `<span class="es-ok">✓</span>` : `<span class="es-no">—</span>`;
 
-  /* 方案比較表：每個計費型態一張表，表下接該型態的總結。
-     方案名稱本身就是購買連結（buy[0] 的平台名不顯示，留在資料裡備用）。
-     評分是本次行程的加權判斷，不是平台星等——依據寫在表格上方。
-     每個 td 都帶 data-l 欄名：窄螢幕把表格攤成卡片時，欄頭列會藏起來，
-     改由 CSS 的 ::before 把 data-l 印在每個值前面。 */
-  el("esplans").innerHTML = `<p class="sub rv es-how">${md(E.scorehow)}</p>`
-    + E.groups.map(g => {
-    const dcol = g.type === "吃到飽" ? "是否降速" : "流量";
-    return `
-    <h3 class="es-gh rv">${esc(g.type)}<span>${g.rows.length} 個方案</span></h3>
-    <div class="glass rv sh-stops es-tw" style="margin-top:0"><div class="scroll"><table class="es-t">
-      <tr><th>方案</th><th>評分</th><th>單人價</th><th>${dcol}</th><th>可用網路</th><th>熱點</th><th>通話</th></tr>
-      ${g.rows.map(r => `<tr${r.pick ? ` class="on"` : ""}>
-        <td class="strong"><a class="es-buy-a" href="${esc(r.buy[1])}" target="_blank" rel="noopener">${esc(r.name)}</a>${r.pick ? `<em class="es-tag">本組首選</em>` : ""}
-          <span class="es-vd">${esc(r.verdict)}</span></td>
-        <td class="es-sc" data-l="評分">${r.score}</td>
-        <td class="dr-fee" data-l="單人價">${esc(r.price)}</td>
-        <td data-l="${dcol}">${esc(r.data)}</td>
-        <td data-l="可用網路"><ul class="es-net">${r.net.map(t => `<li>${esc(t)}</li>`).join("")}</ul></td>
-        <td class="es-ox" data-l="熱點">${esc(r.hotspot)}</td>
-        <td class="es-ox" data-l="通話">${esc(r.call)}</td>
-      </tr>`).join("")}
-    </table></div></div>
-    <p class="es-sum rv"><b>總結</b>${md(g.sum)}</p>`; }).join("")
-    + `<p class="es-legend rv">${md(E.legend)}</p>`;
+  /* Apple「比較機型」式的垂直比較（手機、桌機共用），最多三欄並排。
+     每欄欄頭是下拉選單，可換成同組任一方案來比較。 */
+  /* 流量／降速欄：「主文，補充」拆成主文＋灰色小字 */
+  const dataCell = r => { const [m, sub] = r.data.split("，");
+    return `${esc(m)}${sub ? `<small>${esc(sub)}</small>` : ""}`; };
+  const cmpRows = dcol => [
+    ["評分", (r, top) => `<b class="es-sc${r.score === top ? " on" : ""}">${r.score.toFixed(1)}</b>`],
+    [dcol, dataCell],
+    ["德國 Telekom", r => ox(r.tk)],
+    ["奧地利 A1", r => ox(r.a1)],
+    ["熱點分享", r => ox(r.hotspot)],
+    ["通話", r => ox(r.call)],
+  ];
+  const cmpBody = (g, sel, dcol) => {
+    const cols = sel.map(i => g.rows[i]), top = Math.max(...cols.map(r => r.score));
+    return `<div class="es-cv es-ctop">${cols.map((r, k) => `<div>
+        <label class="es-cname"><span>${esc(r.name)}</span><select data-k="${k}" aria-label="切換比較方案">${
+          g.rows.map((o, i) => `<option value="${i}"${i === sel[k] ? " selected" : ""}>${esc(o.name)}</option>`).join("")}</select></label>
+        <div class="es-cprice">${esc(r.price)}</div>
+        <a class="es-cbuy" href="${esc(r.buy[1])}" target="_blank" rel="noopener">購買</a>
+      </div>`).join("")}</div>`
+      + cmpRows(dcol).map(([l, f]) => `<div class="es-crow"><p>${esc(l)}</p>
+        <div class="es-cv">${cols.map(r => `<div>${f(r, top)}</div>`).join("")}</div></div>`).join("");
+  };
+  /* 結論（tab 下方、表格上方）：目前選的方案依評分排序，同分用「＝」；同一方案選兩次只列一次 */
+  const rankLine = cols => {
+    const uniq = [...new Set(cols)].sort((a, b) => b.score - a.score);
+    return uniq.map((r, i) => (i ? `<i>${r.score === uniq[i - 1].score ? "＝" : "＞"}</i>` : "")
+      + `<b${i === 0 ? ` class="on"` : ""}>${esc(r.name)}</b>`).join("");
+  };
 
-  el("escallnote").innerHTML = `<p class="tkwarn">${md(E.callnote)}</p>`;
+  /* 三種計費型態用 tab 切換，一次只顯示一組比較 */
+  let cur = 0;
+  const showGroup = () => {
+    const g = E.groups[cur], dcol = g.type === "吃到飽" ? "降速" : "流量";
+    const sel = g.rows.slice(0, 3).map((_, i) => i);
+    el("estabs").innerHTML = E.groups.map((x, i) =>
+      `<button type="button" role="tab" class="wxtab${i === cur ? " on" : ""}" data-i="${i}" aria-selected="${i === cur}">${esc(x.type)}</button>`).join("");
+    el("esplans").innerHTML = `
+    <div class="es-rank"><p>結論</p><div>${rankLine(sel.map(i => g.rows[i]))}</div></div>
+    <div class="es-cmp" data-g="${cur}" data-sel="${sel.join(",")}">${cmpBody(g, sel, dcol)}</div>`;
+  };
+  showGroup();
+  el("estabs").addEventListener("click", e => {
+    const b = e.target.closest("[data-i]");
+    if (b && +b.dataset.i !== cur) { cur = +b.dataset.i; showGroup(); }
+  });
 
-  el("escost").innerHTML = `<table><tr><th>方案</th><th>單人價</th><th>適合情境</th></tr>`
-    + E.cost.map(([p,one,who]) =>
-      `<tr><td class="strong">${esc(p)}</td><td class="dr-fee">${esc(one)}</td><td>${esc(who)}</td></tr>`).join("") + `</table>`;
+  el("esplans").addEventListener("change", e => {
+    const box = e.target.closest(".es-cmp"); if (!box) return;
+    const g = E.groups[box.dataset.g], sel = box.dataset.sel.split(",").map(Number);
+    sel[e.target.dataset.k] = +e.target.value;
+    box.dataset.sel = sel.join(",");
+    box.innerHTML = cmpBody(g, sel, g.type === "吃到飽" ? "降速" : "流量");
+    el("esplans").querySelector(".es-rank div").innerHTML = rankLine(sel.map(i => g.rows[i]));
+  });
 
-  el("escarrier").innerHTML = E.carriers.map(c => `
-    <article class="card glass rv es-car">
-      <h4>${esc(c.cc)}</h4>
-      <ol class="es-rank">${c.rank.map(r => `<li>${esc(r)}</li>`).join("")}</ol>
-      <p>${md(c.note)}</p>
-      <p>${md(c.note2)}</p>
-      <p class="es-src">${md(c.src)}</p>
-    </article>`).join("");
-
-  /* 官方覆蓋數據：說明 → 兩塊判讀 → 道路表 → 對本次行程的結論 → 保留條款 */
-  el("escover").innerHTML = `
-    <p class="sub rv" style="margin:0 0 18px">${md(E.cover.how)}</p>
-    <div class="cards">${E.cover.blocks.map(b => `
-      <article class="card glass rv es-car">
-        <h4>${esc(b.h)}</h4>
-        ${b.points.map(t => `<p>${md(t)}</p>`).join("")}
-      </article>`).join("")}</div>
-    <p class="sub rv" style="margin:22px 0 10px">${md(E.cover.road.note)}</p>
-    <div class="glass rv sh-stops" style="margin-top:0"><div class="scroll"><table>
-      <tr>${E.cover.road.head.map(h => `<th>${esc(h)}</th>`).join("")}</tr>
-      ${E.cover.road.rows.map(r => `<tr><td class="strong">${esc(r[0])}</td>`
-        + r.slice(1).map(c => `<td>${esc(c)}</td>`).join("") + `</tr>`).join("")}
-    </table></div></div>
-    <ul class="notes rv" style="margin-top:22px">${E.cover.concl.map(t => `<li>${md(t)}</li>`).join("")}</ul>
-    <p class="tkwarn rv" style="margin-top:18px">${md(E.cover.caveat)}</p>
-    <p class="es-src rv">${E.cover.src.map(s => md(s)).join("　")}</p>`;
-
-  el("esdetail").innerHTML = E.detail.map(d => `
-    <details class="glass rv">
-      <summary><span class="s-t">${esc(d.name)}</span><span class="s-d">${esc(d.tag)}</span></summary>
-      <div class="dbody"><ul class="notes">${d.points.map(t => `<li>${md(t)}</li>`).join("")}</ul></div>
-    </details>`).join("");
-
-  el("escheck").innerHTML = `<ul class="notes">${E.check.map(([l,t]) =>
-    `<li><b class="lbl">${esc(l)}</b>${md(t)}</li>`).join("")}</ul>`;
 }
 
 if (PAGE === "offices") {

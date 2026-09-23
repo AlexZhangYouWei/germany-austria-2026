@@ -1068,215 +1068,62 @@ const DRIVE = {
   ],
 };
 
-/* 網路（eSIM）方案分析。內容來自 德奧旅行_eSIM方案分析.md，資料查詢日 2026-09-21。
+/* 網路（eSIM）方案分析。內容來自 德奧旅行_eSIM方案分析.md，資料查詢日 2026-09-21，2026-09-23 重新核對。
    價格、促銷與合作網路都會變動，購買前一律以各平台結帳頁為準——所以這裡每個
    數字都標了查詢日，不要把它當成即時報價。 */
 const ESIM = {
-  asof:"2026-09-21",
-
-  /* 每種計費型態各一個首選。全頁一律以「一人」為單位。 */
-  pick:[
-    { type:"吃到飽", best:true, plan:"DJB 歐鑽卡　9 天", one:"NT$1,720",
-      why:"本次行程的**綜合首選**。德國同時列出 Telekom／Vodafone／O2，奧地利同時列出 A1／T-Mobile／Drei，且不降速、支援熱點。「德國山區＋奧地利湖區＋跨境自駕」的覆蓋需求，只有多網路方案撐得住。想在 DJB 內省錢可改 **歐樂卡 9 天 NT$1,030**，但要接受德國沒有 Telekom、奧地利沒有 Magenta。" },
-    { type:"總量型", plan:"DJB 歐Fun卡　10 天 20GB", one:"NT$1,350",
-      why:"和歐鑽卡同一組網路資源，平均每日約 2.22GB，夠導航、通訊與一般照片上傳。只比吃到飽便宜 NT$370，**省下的錢要換來用量焦慮**，值不值得自己衡量。" },
-    { type:"每日定量", plan:"KKday 每日 3GB　9 天", one:"NT$476",
-      why:"**價格最低的可用方案**。但合作網路是 Vodafone／Orange／O2／EE，不包含明確的 Telekom 與 A1，山區表現不能視為同等級，務必搭配離線地圖。" },
-  ],
-
-  /* 電信網路優先順序 */
-  carriers:[
-    { cc:"德國", rank:["Telekom／T-Mobile","Vodafone","O2"],
-      note:"Telekom 較適合作為米滕瓦爾德、加米施、楚格峰周邊、國王湖及德國境內公路移動的優先網路。O2 在城市通常可用，但**不應只因價格較低就假設山區表現相同**。",
-      note2:"德國官方資料顯示，不同業者之間仍存在「灰色覆蓋區」——某一家有 4G／5G 而另一家未必有，因此多網路方案具有實際價值。",
-      src:"[德國聯邦網路局 Mobilfunk-Monitoring](https://www.bundesnetzagentur.de/DE/Fachthemen/Telekommunikation/Breitband/Mobilfunk-Monitoring/artikel.html)" },
-    { cc:"奧地利", rank:["A1","Magenta／T-Mobile Austria","Drei／3"],
-      note:"2025 年全奧地利實測：A1 平均下載約 147.78 Mbps、Magenta 約 134.62 Mbps、Drei 約 134.75 Mbps。A1 的整體實測表現略優，Magenta 在部分上傳指標較強。**這是獨立測試，不是 RTR 官方測量。**",
-      note2:"山區訊號仍會受地形、湖谷、建築與天候影響，**不能把全國平均速度直接視為哈修塔特或山頂的實際速度**。",
-      src:"[SMARTPHONE Magazin 奧地利網路測試](https://www.dietester.de/test/das-groesste-netztest-2025-oesterreich)" },
-  ],
-
-  /* 官方覆蓋數據補充：用來回答「歐鑽卡多付的錢買到什麼」。重點是差距只有
-     0.5 個百分點級別，不要把它說成壓倒性領先——原始文件特別強調這點。 */
-  cover:{
-    how:"先釐清算法：「4G＋5G」**不能把兩個百分比相加**。正確的意思是——該業者在一個地點只要有 4G 或 5G，就算行動寬頻可用。官方通常分別公布 4G 與 5G，所以以下用聯集的概念判讀，不把 5G 單獨當成整體訊號。",
-    blocks:[
-      { h:"德國：Telekom 仍略居第一，但差距很小",
-        points:[
-          "德國官方名稱是 **Deutsche Telekom／Telekom Deutschland**；DJB 方案中的「T-Mobile」指的是同一個德國 Telekom 網路，**不是奧地利的 T-Mobile Austria**。",
-          "聯邦網路局 2025 年 10 月的年度資料：4G 面積覆蓋 Telekom 98.8%、Vodafone 98.3%、Telefónica／O2 98.3%。4G 本身已涵蓋絕大多數可用區域，所以用「4G 或 5G 皆算可用」的口徑判斷，差距主要落在這 0.5 個百分點。",
-          "對德國山區與郊區行程，Telekom 是「略優、值得作備援」的網路，**但不能說它在 4G＋5G 總體覆蓋上大幅領先**。",
-        ] },
-      { h:"奧地利：不能把 Magenta 當成山區唯一主力",
-        points:[
-          "奧地利的 T-Mobile Austria 目前品牌是 **Magenta**。官方 RTR 確認全國主要自有網路是 A1、Magenta／T-Mobile Austria 與 Drei。",
-          "RTR 以 100×100 公尺網格與各業者公開 CSV 提供覆蓋資料，但**官方摘要沒有公布哈修塔特、薩爾斯堡湖區或山區道路的三家速度排名**。",
-          "監管要求顯示截至 2025 年底，A1 需達到至少 80% 人口以 30 Mbps 覆蓋，Magenta 與 Drei 合計需達至少 93%。這是最低覆蓋目標，不是實際山區測速，**也不能解讀成 Magenta 比 A1 快**。",
-        ] },
-    ],
-    /* 道路專項報告：官方只給各技術分列值，沒有去重後的聯集，所以只放次級道路這一列 */
-    road:{ note:"聯邦網路局較早期的道路專項報告分技術列出；對「4G＋5G 至少一種可用」最有參考價值的是 4G 基礎覆蓋。",
-      head:["德國道路類型","Telekom 4G","Vodafone 4G","O2 4G","Telekom 差距"],
-      rows:[
-        ["次級道路","92.8%","92.3%","91.2%","比 Vodafone 高 0.5、比 O2 高 1.6 個百分點"],
-        ["聯邦主要道路","—","—","—","官方報告未於本段採用，不以單一技術判斷"],
-      ] },
-    concl:[
-      "只看 4G＋5G 合計：**Telekom 是德國三大網路中略優的主力候選，但不是壓倒性領先。**",
-      "德國段：歐鑽卡多出的 Telekom，主要是增加山區、公路與局部地點的**替代網路**，不應解讀成整體覆蓋一定多出十幾個百分點。",
-      "奧地利段：**A1 才是兩張 DJB 卡共同具備的關鍵網路**；歐鑽卡額外多的 Magenta 與 H3G，官方資料不足以證明每個山區點都比 A1 好。",
-      "所以歐鑽卡的價值，較大部分來自**德國山區與公路的 Telekom 備援**，而不是奧地利一定由 Magenta 主導。",
-    ],
-    caveat:"官方沒有提供一個涵蓋整條自駕路線、且已把 4G 與 5G 去重合併的單一「平均訊號差距」數字，所以不該虛構成精確的景點平均值。可直接佐證的是：德國業者差距約為 0.5 個百分點級別；**山谷中的單點差異仍可能比全國平均大得多**。官方地圖是 100×100 公尺戶外預測網格，山谷、森林、室內與手機型號都會造成實際差異。",
-    src:[
-      "[德國聯邦網路局 2025 年 5G／4G 年度資料](https://www.bundesnetzagentur.de/SharedDocs/Pressemitteilungen/DE/2025/20251215_5G.html?r=1)",
-      "[德國官方道路覆蓋報告（PDF）](https://data.bundesnetzagentur.de/Bundesnetzagentur/GIGA/DE/MobilfunkMonitoring/Downloads/202310_kurzbericht_verkehrswegeversorgung.pdf)",
-      "[RTR 官方網路與覆蓋資料說明](https://www.rtr.at/TKP/was_wir_tun/telekommunikation/spectrum/framework/Open_Data.en.html)",
-    ],
-  },
-
   /* 方案比較，依計費型態分三組。price 一律是「一人」的價格。
-     call：原始分析文件只有環亞 Orange 那列提到門號／通話，其餘平台的產品頁
-     沒有標示，2026-09-21 查證時 DJB 頁面內容不完整、KKday 回 403，所以一律
-     標「未標示」而不是推測為「無」。需要通話請看下方 callnote。 */
+     call：2026-09-23 查證，全部方案都是純數據——DJB 規格「語音：無」、KKday 規格
+     「不包含語音通話、簡訊功能」、Klook 商品頁「僅提供數據服務，不提供通話、簡訊」。
+     hotspot：Klook 商品頁標示支援熱點；KKday 規格表寫「可以」但 FAQ 寫「不支援」，
+     互相矛盾，維持 X。
+     tk／a1：合作網路是否明確列出德國 Telekom、奧地利 A1。
+     2026-09-23 逐項重查：DJB 三張的價格（歐鑽 9 天 1,720、歐樂 9 天 1,030、歐Fun 10 天
+     20GB 1,350）、德奧網路、「語音：無、熱點：可」皆與官網一致，歐Fun 為「量到斷網」。
+     KKday 9 天實價：吃到飽 764、每日 3GB 474（5 折促銷價）；電信 Vodafone／Orange／O2／EE、
+     僅 4G、漫遊 MVNO，未列奧地利用哪家網路。Klook 頁面擋自動讀取，德奧網路與 9 天價無法核實。 */
   groups:[
     { type:"吃到飽",
-      sum:"六張裡只有 DJB 兩張明確標示不降速，也只有這兩張把德奧合作網路寫清楚。歐鑽卡與歐樂卡差 NT$690，買的就是**德國 Telekom 與奧地利 Magenta 的備援**——本次有米滕瓦爾德、楚格峰、國王湖與大量公路移動，這筆錢值得。KKday 吃到飽便宜但會降到約 384kbps，不是真正的全程高速；Klook 與兩張蝦皮更便宜，代價是奧地利合作網路得自己去問賣家。",
       rows:[
-      { score:4.5, name:"DJB 歐鑽卡", data:"不降速", price:"$1,720", pick:true,
+      { score:4.5, name:"DJB 歐鑽卡", tk:"O", a1:"O", data:"不降速", price:"$1,720", pick:true,
         net:["德國：O2、Telekom、Vodafone","奧地利：A1、T-Mobile、H3G"], hotspot:"O",
         call:"X", verdict:"網路覆蓋最符合本次路線，但價格最高",
         buy:["DJB 官網","https://djbcard.com/product/europe-esim/"] },
-      { score:3.5, name:"DJB 歐樂卡", data:"不降速", price:"$1,030",
+      { score:3.5, name:"DJB 歐樂卡", tk:"X", a1:"O", data:"不降速", price:"$1,030",
         net:["德國：O2、Vodafone","奧地利：A1、3"], hotspot:"O",
         call:"X", verdict:"每人比歐鑽卡便宜 NT$690，代價是德國少了 Telekom",
         buy:["DJB 歐洲上網卡方案頁","https://djbcard.com/product/europe-card-series/"] },
-      { score:3.0, name:"KKday 歐洲 42 國", data:"高速後降速，約 384kbps", price:"$767",
+      { score:3.0, name:"KKday 歐洲 42 國", tk:"X", a1:"X", data:"高速後降速，約 384 kbps", price:"$764",
         net:["Vodafone、Orange、Telefonica O2、EE","僅 4G，不含 Telekom 與 A1"], hotspot:"X",
         call:"X", verdict:"比每日 3GB 彈性高，但不是真正全程高速",
         buy:["KKday 商品頁","https://www.kkday.com/zh-tw/product/120977-europe-unlimited-data-esim"] },
-      { score:2.0, name:"Klook 歐洲 35 國（吃到飽選項）", data:"未標示", price:"—",
-        net:["僅標示「各國主要電信商」","未明確承諾 Telekom 或 A1"], hotspot:"X",
+      { score:2.0, name:"Klook 歐洲 35 國（吃到飽選項）", tk:"X", a1:"X", data:"未標示", price:"—",
+        net:["僅標示「各國主要電信商」","未明確承諾 Telekom 或 A1"], hotspot:"O",
         call:"X", verdict:"可作低價候選，但不宜視為山區首選",
         buy:["Klook 商品頁","https://www.klook.com/zh-TW/activity/127552-europe-esim/"] },
-      { score:2.0, name:"蝦皮 寰宇通訊 Vodafone", data:"未標示", price:"$220 起",
-        net:["商品標示 Vodafone","奧地利合作網路需問賣家"], hotspot:"X",
-        call:"X", verdict:"便宜，但路由與公平使用政策需確認",
-        buy:["蝦皮搜尋","https://shopee.tw/search?keyword=%E6%AD%90%E6%B4%B2%20eSIM%20Vodafone%20%E5%90%83%E5%88%B0%E9%A3%BD"] },
-      { score:2.0, name:"蝦皮 Umi Vodafone", data:"有不降速選項", price:"$220 起",
-        net:["商品標示 Vodafone","奧地利是否可選 A1 未明確"], hotspot:"X",
-        call:"X", verdict:"便宜，但資訊透明度低於 DJB",
-        buy:["蝦皮搜尋","https://shopee.tw/search?keyword=Umi%20%E6%AD%90%E6%B4%B2%20eSIM"] },
     ]},
-    { type:"總量型",
-      sum:"20GB 分 9 天約每日 2.2GB，導航、通訊與一般照片上傳夠用，但**短影片與雲端自動同步會很快吃光**。歐Fun卡與歐鑽卡同一組網路資源，只便宜 NT$370／人——省下的錢換來每天盯額度，值不值得自己判斷。另外兩張的合作網路都不是本次的優先網路。",
+    { type:"總量",
       rows:[
-      { score:4.0, name:"DJB 歐Fun卡", data:"總量 20GB", price:"$1,350", pick:true,
+      { score:4.0, name:"DJB 歐Fun卡", tk:"O", a1:"O", data:"總量 20GB，用完斷網", price:"$1,350", pick:true,
         net:["德國：O2、Telekom、Vodafone","奧地利：A1、T-Mobile、H3G"], hotspot:"O",
         call:"X", verdict:"適合導航、通訊與一般社群使用",
         buy:["DJB 官網","https://djbcard.com/product/europe-card-series/"] },
-      { score:2.0, name:"Klook 歐洲 35 國（20GB 選項）", data:"總量 20GB", price:"—",
-        net:["僅標示「各國主要電信商」","未明確承諾 Telekom 或 A1"], hotspot:"X",
+      { score:2.0, name:"Klook 歐洲 35 國（20GB 選項）", tk:"X", a1:"X", data:"總量 20GB", price:"—",
+        net:["僅標示「各國主要電信商」","未明確承諾 Telekom 或 A1"], hotspot:"O",
         call:"X", verdict:"資訊不足，購買前須逐項確認",
         buy:["Klook 商品頁","https://www.klook.com/zh-TW/activity/127552-europe-esim/"] },
-      { score:2.5, name:"蝦皮 環亞 Orange", data:"總量 20GB／30 天", price:"$240 起",
-        net:["Orange 路由","非本次優先網路"], hotspot:"X",
-        call:"O", verdict:"流量足夠，但不是本次優先網路",
-        buy:["蝦皮搜尋","https://shopee.tw/search?keyword=%E7%92%B0%E4%BA%9E%20Orange%20%E6%AD%90%E6%B4%B2"] },
     ]},
-    { type:"每日定量",
-      sum:"單價最低，但「每天重置」意味著**楚格峰、國王湖這種整天拍照上傳的日子最容易撞上限**，超量後降到約 384kbps：導航還能用，上傳幾乎停擺。KKday 的合作網路不含明確的 Telekom 與 A1，選它就要把離線地圖下載當成必辦事項，不是可選項。",
+    { type:"每日固定流量",
       rows:[
-      { score:3.5, name:"KKday 歐洲 42 國", data:"每日 3GB，超量降速約 384kbps", price:"$476", pick:true,
+      { score:3.5, name:"KKday 歐洲 42 國", tk:"X", a1:"X", data:"每日 3GB，超量降速約 384 kbps", price:"$474", pick:true,
         net:["Vodafone、Orange、Telefonica O2、EE","僅 4G，不含 Telekom 與 A1"], hotspot:"X",
         call:"X", verdict:"價格低，但沒有明確包含 Telekom 或 A1",
         buy:["KKday 商品頁","https://www.kkday.com/zh-tw/product/120977-europe-unlimited-data-esim"] },
-      { score:2.0, name:"Klook 歐洲 35 國（每日 2GB 選項）", data:"每日 2GB", price:"$95 起",
-        net:["僅標示「各國主要電信商」","未明確承諾 Telekom 或 A1"], hotspot:"X",
+      { score:2.0, name:"Klook 歐洲 35 國（每日 2GB 選項）", tk:"X", a1:"X", data:"每日 2GB", price:"$95 起",
+        net:["僅標示「各國主要電信商」","未明確承諾 Telekom 或 A1"], hotspot:"O",
         call:"X", verdict:"起價低，但 9 天實際價要選完選項才看得到",
         buy:["Klook 商品頁","https://www.klook.com/zh-TW/activity/127552-europe-esim/"] },
     ]},
-  ],
-
-  /* 評分依據。必須講清楚這是為本次行程加權的判斷，不是平台星等，
-     否則 4.5 分會被誤讀成「這張卡客觀上最好」。 */
-  scorehow:"評分是**針對本次行程加權的判斷，不是平台評價或買家星等**。權重由重到輕：山區覆蓋（是否含德國 Telekom 與奧地利 A1）＞ 流量自由度（會不會降速）＞ 資訊透明度（合作網路與熱點有沒有寫清楚）＞ 價格。所以**最便宜的不會自動得高分，資訊不明的一律扣分**——這條路線上「省 NT$500 但山區連不上」不是好交易。滿分 5 分。",
-
-  /* 熱點與通話欄的符號圖例。X 把「明確沒有」與「查不到」併在一起，
-     這是刻意的取捨（表格只留斷言），但必須在圖例講明白，否則會被讀成全部查證過。 */
-  legend:"**O** ＝ 平台明確標示支援　**X** ＝ 平台明確標示沒有，**或平台未公開規格**。DJB 三張卡的「語音：無、熱點：可」取自官方商品頁規格；KKday、Klook 與蝦皮的商品頁擋自動擷取（蝦皮更是純前端渲染，原始碼裡沒有商品文字），規格無法核實，一律以 X 呈現——想確認請自行到結帳頁看。",
-
-  /* 通話欄位的補充說明 */
-  callnote:"**DJB 三張卡經官方確認是純數據**：商品頁規格逐字寫「語音：無、熱點：可」，FAQ 也說明「多數方案僅提供上網服務，不包含通話與簡訊功能，安裝後手機顯示『無號碼』屬正常」。**蝦皮環亞 Orange** 的商品標題本身寫著「附贈門號」。其餘平台的規格無法核實，依上方圖例一律標 X。若真的需要當地門號撥打電話（訂餐廳、聯絡住宿、打給 SIXT），DJB 另有「歐密卡」系列含門號，KKday 也有標明「Internet + Call」的 Orange 商品，改選那些品項並在結帳頁確認。不過同行者都有手機，且 SIXT 與住宿都可用 LINE 或網路電話聯絡，純數據方案通常已足夠。",
-
-  /* [方案, 單人價, 適合情境] */
-  cost:[
-    ["DJB 歐鑽卡 9 天吃到飽","NT$1,720","最重視覆蓋、多網路與使用自由度"],
-    ["DJB 歐樂卡 9 天吃到飽","NT$1,030","想要吃到飽，但可接受德國不含 Telekom"],
-    ["DJB 歐Fun卡 10 天 20GB","NT$1,350","想要較完整網路但控制預算"],
-    ["KKday 每日 3GB 9 天","NT$476","主要導航、通訊與一般查詢"],
-    ["KKday 吃到飽 9 天","NT$767","需要較多流量但接受降速"],
-    ["蝦皮方案","約 NT$220 起","價格優先，能接受自行確認風險"],
-  ],
-
-  /* 各平台細節 */
-  detail:[
-    { name:"DJB 歐鑽卡", tag:"最符合訊號需求", points:[
-      "9 天吃到飽不降速：NT$1,720／人。",
-      "德國同時列出 O2、Telekom、Vodafone；奧地利同時列出 A1、T-Mobile 與 H3G／Drei。",
-      "官方商品頁規格逐字：**語音：無、熱點：可**。適合需要大量上傳照片、使用導航、臨時查資料及分享熱點的人。",
-      "主要缺點是價格明顯高於平台型低價方案，而且**「不降速」仍不能保證山區一定有訊號**；實際速度取決於所在地與基地台負載。",
-      "參考：[DJB 歐洲 eSIM／歐鑽卡](https://djbcard.com/product/europe-esim/)、[DJB 歐洲上網卡方案頁](https://djbcard.com/product/europe-card-series/)",
-    ]},
-    { name:"DJB 歐樂卡", tag:"同樣吃到飽，但合作網路較少", points:[
-      "9 天吃到飽不降速：NT$1,030／人。",
-      "德國 O2／Vodafone；奧地利 A1／3。支援 5G／4G 與熱點分享，**語音功能：無**。",
-      "官方方案表同時列出每日 500MB／1GB／2GB 高速後降速，以及吃到飽不降速選項，**購買時要選對流量規格**。",
-      "與歐鑽卡每人差 NT$690；代價是德國少了 Telekom、奧地利少了 T-Mobile／Magenta，這是兩張卡最重要的差異。",
-      "慕尼黑、薩爾斯堡周邊與一般城市使用可能已足夠；但米滕瓦爾德、楚格峰、國王湖、比紹夫斯維森與公路移動時，歐鑽卡的多網路清單較有備援價值。",
-    ]},
-    { name:"DJB 歐Fun卡", tag:"20GB 的平衡方案", points:[
-      "10 天 20GB：NT$1,350／人。",
-      "平均每日約 2.22GB，適合導航、LINE、查詢交通與一般照片上傳。官方規格同樣是**語音：無、熱點：可**。",
-      "若有大量短影片、雲端同步或多人熱點分享，20GB 可能不足。",
-      "價格只比吃到飽低 NT$370／人，**若不想承擔用量焦慮，歐鑽卡的便利性較高**。",
-    ]},
-    { name:"KKday 每日 3GB", tag:"價格最低的可用方案", points:[
-      "9 天 NT$476／人。",
-      "每日 3GB 高速，超過後仍可連線但速度大幅下降（頁面註明約 384kbps）。",
-      "電信商列為 Vodafone、Orange、O2 與 EE，**不包含德國 Telekom 或奧地利 A1 的明確承諾**。",
-      "頁面資料對熱點分享的說明存在差異，購買前需以結帳頁與最新商品規格為準。",
-      "參考：[KKday 歐洲 42 國 eSIM](https://www.kkday.com/zh-tw/product/120977-europe-unlimited-data-esim)",
-    ]},
-    { name:"Klook 歐洲 35 國", tag:"資訊不足，不列為首選", points:[
-      "可確認有每日流量、總量 20GB 及吃到飽選項，也涵蓋德國與奧地利。",
-      "但公開頁面未清楚列出每個方案在兩國的實際合作網路，且 9 天方案價格需進一步選取後才顯示。",
-      "購買前須先確認：德國是否能連 Telekom 或至少 Vodafone、奧地利是否能連 A1 或 Magenta、每日高速額度多少、是否支援熱點。",
-      "參考：[Klook 歐洲 35 國 eSIM](https://www.klook.com/zh-TW/activity/127552-europe-esim/)",
-    ]},
-    { name:"蝦皮各賣家", tag:"價格便宜，但要逐項問清楚", points:[
-      "常見的 Vodafone、Orange 或「歐洲吃到飽」商品起價約 NT$220–240，但**起價通常不是 9 天或 10 天的實際價格**。",
-      "上表的蝦皮連結是關鍵字搜尋，不是特定賣場；蝦皮商品上下架頻繁，請自行比對評價與出貨時間。",
-      "購買前向賣家確認：德國是否可手動選 Telekom，不能的話至少可用 Vodafone。",
-      "奧地利是否可手動選 A1 或 Magenta。",
-      "「吃到飽」每日高速上限多少、超過後降速到多少。",
-      "是否支援熱點，熱點是否另有限制；是否含門號與通話。",
-      "哈修塔特、國王湖、米滕瓦爾德等山區是否有實際使用回報。",
-    ]},
-  ],
-
-  /* 購買前最後核對 */
-  check:[
-    ["手機","是否支援 eSIM，且沒有電信商鎖卡。"],
-    ["涵蓋國家","方案是否同時涵蓋德國與奧地利，而不是只涵蓋其中一國。"],
-    ["計費型態","確認買到的是吃到飽、總量型還是每日定量——三者用起來差很多。"],
-    ["天數計算","啟用天數是按當地時間或 24 小時計算。"],
-    ["通話","若需要當地門號撥打電話，結帳頁要明確標示含通話，純數據方案打不了。"],
-    ["數據漫遊","eSIM 是否需要開啟數據漫遊。"],
-    ["原門號","台灣門號的數據漫遊是否已關閉，避免產生額外費用。"],
-    ["QR Code","是否只能掃描一次；**不要在台灣過早啟用流量**。"],
-    ["熱點","是否支援熱點，以及熱點是否消耗不同額度。"],
-    ["離線地圖","出發前下載德國、奧地利離線地圖與住宿地址。"],
   ],
 };
 
