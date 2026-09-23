@@ -189,10 +189,9 @@ function dayWeather(n){
 
 /* ── 逐日行程 ───────────────────────────────────────── */
 
-/* 地圖導航。座標來自 GEO（已逐筆查證），每個有座標的地點都給兩顆按鈕：
-   左 Google Maps、右 Apple Maps，兩者都是「從我現在的位置帶我去這裡」。
-   兩邊都不寫死起點，路上臨時偏離也還是對的。
-   交通方式由類別推定，使用者在 App 裡仍可一鍵改。 */
+/* 地圖地點連結。MAP_QUERY 以地點正式名稱＋地址逐筆核對，開啟後先顯示該地點的
+   資訊卡，再由使用者按地圖 App 內的「路線」。不能只傳裸座標：Google／Apple 可能
+   把座標吸附到附近店家，造成按鈕名稱與實際開啟的地點不一致。 */
 function travelMode(cat, noDrive){
   if (/公車|機場線|電車|S-Bahn/.test(cat)) return "transit";
   if (noDrive || /步行|散步|步道/.test(cat)) return "walking";
@@ -227,18 +226,18 @@ function navUrls(cat, key, noDrive){
   const g = GEO[key];
   if (!g) return null;
   const [name, ll] = g;
-  const mode = travelMode(cat, noDrive);
+  const query = (typeof MAP_QUERY !== "undefined" && MAP_QUERY[key]) || name;
   return { name,
-    gmap:`https://www.google.com/maps/dir/?api=1&destination=${ll}&travelmode=${mode}`,
-    amap:`https://maps.apple.com/?daddr=${ll}&dirflg=${APPLE_FLG[mode]}` };
+    gmap:`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
+    amap:`https://maps.apple.com/search?query=${encodeURIComponent(query)}` };
 }
 /* 兩顆圖示：左 Google、右 Apple。時間軸列、今日導航表、票券、購物、自駕頁共用 */
 function geoLink(cat, key, noDrive){
   const u = navUrls(cat, key, noDrive);
   if (!u) return "";
   return `<span class="geo">`
-    + `<a class="geo-g" href="${u.gmap}" target="_blank" rel="noopener" aria-label="用 Google 地圖導航至 ${esc(u.name)}">${ICON_G}</a>`
-    + `<a class="geo-a" href="${u.amap}" target="_blank" rel="noopener" aria-label="用 Apple 地圖導航至 ${esc(u.name)}">${ICON_A}</a>`
+    + `<a class="geo-g" href="${u.gmap}" target="_blank" rel="noopener" aria-label="在 Google 地圖開啟 ${esc(u.name)}">${ICON_G}</a>`
+    + `<a class="geo-a" href="${u.amap}" target="_blank" rel="noopener" aria-label="在 Apple 地圖開啟 ${esc(u.name)}">${ICON_A}</a>`
     + `</span>`;
 }
 
@@ -247,12 +246,14 @@ function routeLink(day, variant){
   if (typeof MAP === "undefined") return "";
   const r = MAP.routes.find(x => x.day === day && (x.variant || "") === (variant || ""));
   if (!r || !r.gmap || r.gmap.length < 2) return "";
-  const pts = r.gmap, way = pts.slice(1, -1);
+  /* Day 8 正式行程已取消普里恩；舊地圖資料仍有該航點，建立連結時明確剔除。 */
+  const pts = day === 8 ? [r.gmap[0], r.gmap[r.gmap.length - 1]] : r.gmap;
+  const way = pts.slice(1, -1);
   const u = `https://www.google.com/maps/dir/?api=1&travelmode=driving`
     + `&origin=${pts[0]}&destination=${pts[pts.length-1]}`
     + (way.length ? `&waypoints=${way.join("|")}` : "");
   return `<a class="daylink" href="${u}" target="_blank" rel="noopener">`
-    + `在 Google Maps 開啟今日路線　${r.km} km</a>`;
+    + `在 Google Maps 開啟今日路線　${day === 8 ? "直達" : `${r.km} km`}</a>`;
 }
 
 /* 一列寫了好幾個地點（用「、」隔開，或「／」並列而不是「→」路線）時只有一個座標，
@@ -266,10 +267,9 @@ function timePeriod(t){
   return { total, period:hour >= 5 && hour < 12 ? "morning" : hour >= 12 && hour < 18 ? "afternoon" : "night" };
 }
 
+const ICON_PIN = '<svg class="sh-pin" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>';
 const ICON_LOCK = '<svg class="tt-lock" viewBox="0 0 24 24" aria-label="固定時間" role="img"><path fill="currentColor"'
   + ' d="M7 10V7a5 5 0 0 1 10 0v3h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Zm2 0h6V7a3 3 0 0 0-6 0Z"/></svg>';
-const ICON_PIN = '<svg class="tt-pin" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd"'
-  + ' d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Zm0 4.2a2.8 2.8 0 1 1 0 5.6 2.8 2.8 0 0 1 0-5.6Z"/></svg>';
 
 /* 時辰表一列：[時間, 類別, 地點, 說明, 固定?, GEO key, 版面]。
    第 7 格版面 { title, tags, aside, stops:[[key, 名稱, 副標]] } 選填：
@@ -288,8 +288,8 @@ function timeline(rows, noDrive){
         <div class="p"><span class="tt-title">${esc(x.title || place)}</span>${(x.tags || []).map(g =>
           `<span class="tt-tag">${esc(g)}</span>`).join("")}${x.aside ? `<span class="tt-aside">${esc(x.aside)}</span>` : ""}</div>
         ${stops.length === 1 ? `<div class="tt-one">${stops[0][2] ? `<span class="tt-sub">${esc(stops[0][2])}</span>` : ""}${geoLink(cat, stops[0][0], noDrive)}</div>`
-          : stops.length ? `<div class="tt-stops">${stops.map(([k, name, sub], i) => `
-          <div class="tt-stop">${ICON_PIN}<span class="tt-no">${i + 1}</span>
+          : stops.length ? `<div class="tt-stops">${stops.map(([k, name, sub]) => `
+          <div class="tt-stop">
             <span class="tt-nm"><b>${esc(name || (GEO[k] ? GEO[k][0] : k))}</b>${sub ? `<small>${esc(sub)}</small>` : ""}</span>
             ${geoLink(cat, k, noDrive)}</div>`).join("")}</div>` : ""}
         ${detail ? `<details class="tt-more"><summary>行程細節</summary><div class="n">${md(note)}</div></details>` : ""}
@@ -446,10 +446,10 @@ function dayArticle(d){
 
   ${todo}
 
-  ${wx ? `<section class="day glass rv wxcard">
-    <div class="daybox-t">天氣預報<a class="daylink" href="weather.html">九天完整預報</a></div>
-    ${wx}
-  </section>` : ""}
+  ${wx ? `<details class="day glass rv wxcard wxfold">
+    <summary><span class="s-t">天氣預報</span><a class="daylink" href="weather.html">九天完整預報</a></summary>
+    <div class="wxfold-b">${wx}</div>
+  </details>` : ""}
 
   <section class="day glass rv timetable">
     <div class="daybox-t">時辰表${d.blocks.some(b => b.tabs) ? "" : routeLink(d.n, "")}</div>
@@ -901,7 +901,6 @@ if (PAGE === "food") {
         ${f.text ? `<p style="font-size:13px;color:var(--ink2);margin:${f.items.length?"16px":"0"} 0 0">${esc(f.text)}</p>` : ""}
       </div>
     </details>`).join("");
-  el("foodnote").innerHTML = `<p><b>共通提醒</b></p>` + FOODNOTE.map(t => `<p>${esc(t)}</p>`).join("");
 }
 
 if (PAGE === "weather") {
@@ -1034,13 +1033,14 @@ if (PAGE === "shop") {
   /* 有圖的品項放 64px 縮圖（可點開放大），沒有的放品名首字母佔位；圖片 title 帶作者與授權 */
   const CR = Object.fromEntries((SHOP.credits || []).map(([k, f, au, li]) => [k, `${f}　©${au}　${li}`]));
   const pic = (k, name) => k
-    ? `<img class="sh-img" src="assets/img/shop/${k}.jpg" width="64" height="64" loading="lazy" alt="${esc(name)}" title="${esc(CR[k] || "Wikimedia Commons")}">`
+    ? `<img class="sh-img" src="assets/img/shop/${k}.jpg" loading="lazy" alt="${esc(name)}" title="${esc(CR[k] || "Wikimedia Commons")}">`
     : `<span class="sh-img sh-noimg" aria-hidden="true">${esc(name.trim().charAt(0))}</span>`;
-  const tbl = rows => `<table class="sh-tbl"><tbody>${rows.map(([a,b,c,k]) =>
-    `<tr><td class="sh-pic">${pic(k, a)}</td>`
-    + `<td class="sh-main"><strong>${esc(a)}</strong></td>`
-    + `<td class="sh-note"><span class="sh-label">推薦理由</span><div>${md(b)}</div></td>`
-    + `<td class="sh-where"><span class="sh-label">這趟在哪買</span><div>${esc(c)}</div></td></tr>`).join("")}</tbody></table>`;
+  /* 每項一張卡：左圖、右品名＋推薦理由；底列「建議購買」點了捲到下方「路過可買的點」 */
+  const cards = rows => `<div class="sh-list">${rows.map(([a,b,c,k]) =>
+    `<article class="glass sh-item"><div class="sh-top">${pic(k, a)}<div class="sh-main">`
+    + `<strong>${esc(a)}</strong>`
+    + `<span class="sh-label">推薦理由</span><div class="sh-note">${md(b)}</div></div></div>`
+    + `<a class="sh-buy" href="#shstops-card">${ICON_PIN}<span class="sh-blbl">建議購買</span><span class="sh-where">${esc(c)}</span><span class="sh-chev" aria-hidden="true"></span></a></article>`).join("")}</div>`;
   /* 雙層 tab：第一層國家、第二層食品／藥妝，一次只顯示一張表 */
   const CC = [["DE","德國"],["AT","奧地利"]], KIND = [["food","食品"],["med","藥妝"]];
   let cc = 0, kd = 0;
@@ -1049,7 +1049,7 @@ if (PAGE === "shop") {
   const show = () => {
     el("shtabs").innerHTML = tabs(CC, cc, "cc");
     el("shtabs2").innerHTML = tabs(KIND, kd, "kd");
-    el("shroot").innerHTML = `<div class="glass sh-card"><div class="scroll">${tbl(SHOP[CC[cc][0]][KIND[kd][0]])}</div></div>`;
+    el("shroot").innerHTML = cards(SHOP[CC[cc][0]][KIND[kd][0]]);
   };
   show();
   const onTab = e => {
@@ -1105,7 +1105,8 @@ if (PAGE === "esim") {
   const E = ESIM;
 
   /* O／X 一律顯示成 ✓／— */
-  const ox = v => v === "O" ? `<span class="es-ok">✓</span>` : `<span class="es-no">—</span>`;
+  /* O／X 畫 ✓／—；其他字串（如「當地 100 分鐘」「未標示」）照字面顯示 */
+  const ox = v => v === "O" ? `<span class="es-ok">✓</span>` : v === "X" ? `<span class="es-no">—</span>` : `<span class="es-txt">${esc(v)}</span>`;
 
   /* Apple「比較機型」式的垂直比較（手機、桌機共用），最多三欄並排。
      每欄欄頭是下拉選單，可換成同組任一方案來比較。 */

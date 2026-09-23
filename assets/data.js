@@ -185,35 +185,112 @@ const GEO = {
   "prien":["普里恩 Prien am Chiemsee","47.85417,12.34555"],
 };
 
+/* Google Maps／Apple Maps 地點查詢字串。2026-09-23 逐筆以兩個地圖網站核對；
+   不再只把裸座標交給地圖服務，避免被自動吸附到附近的店家、門牌或設施。
+   查詢字串刻意保留當地正式名稱與地址；兩個平台都會直接開啟相符的地點資訊卡。 */
+const MAP_QUERY = {
+  // 住宿
+  "muc-stay1":"Munich Top Place Nähe Marienplatz Apartment Jennifer, Sonnenstraße 3, 80331 München",
+  "mit-stay":"mittenwald-ferien.de, Mühlenweg 36, 82481 Mittenwald",
+  "szg-stay":"Bürglsteinstraße 19, 5020 Salzburg",
+  "bis-stay":"House riding Pfaffenlehen, Pfaffenlehen 6, 83483 Bischofswiesen",
+  "hal-stay":"Pension Hallberg, Seestraße 113, 4830 Hallstatt",
+  "muc-stay2":"Hotel Motel One München-Hauptbahnhof, Schillerstraße 3-3a, 80336 München",
+  // 交通與停車
+  "muc-t1":"Terminal 1, Flughafen München, 85356 München-Flughafen",
+  "sixt-stachus":"SIXT Autovermietung München Stachus, Karlsplatz 3, 80335 München",
+  "muc-hbf":"München Hauptbahnhof",
+  "karlsplatz":"Karlsplatz Stachus, München",
+  "nsw-p4":"Parkplatz P4, Alpseestraße 27, 87645 Hohenschwangau",
+  "eibsee-park":"Parkplatz Eibsee-Seilbahn Zugspitze, Am Eibsee, 82491 Grainau",
+  "gap-olympia":"Parkplatz P21 Olympia-Skistadion, Karl-und-Martin-Neuner-Platz, Garmisch-Partenkirchen",
+  "inn-congress":"Congress Garage, Rennweg 3, 6020 Innsbruck",
+  "inn-hbf":"Innsbruck Hauptbahnhof",
+  "koe-park":"Parkplatz Königssee, Jennerbahnstraße, 83471 Schönau am Königssee",
+  "hal-p1":"Parkplatz P1 Hallstatt, Salinenplatz 4, 4830 Hallstatt",
+  // 慕尼黑
+  "asamkirche":"Asamkirche, Sendlinger Straße 32, 80331 München",
+  "marienplatz":"Marienplatz, 80331 München",
+  "viktualienmarkt":"Viktualienmarkt, 80331 München",
+  "frauenkirche":"Frauenkirche, Frauenplatz 1, 80331 München",
+  "augustiner-keller":"Augustiner-Keller, Arnulfstraße 52, 80335 München",
+  "neuhauser":"Neuhauser Straße, München",
+  "st-michael":"St. Michael, Neuhauser Straße 6, 80333 München",
+  "dm-stachus":"dm-drogerie markt, Karlsplatz 25, 80335 München",
+  "ludwigs-apotheke":"Internationale Ludwigs-Apotheke, Neuhauser Straße 11, 80331 München",
+  // 新天鵝堡周邊
+  "marienbruecke":"Marienbrücke, 87645 Schwangau",
+  "neuschwanstein":"Schloss Neuschwanstein, Neuschwansteinstraße 20, 87645 Schwangau",
+  "alpsee":"Alpsee, 87645 Schwangau",
+  "hohenschwangau":"Hohenschwangau, Alpseestraße, 87645 Schwangau",
+  "st-coloman":"St. Coloman, Colomanstraße 1, 87645 Schwangau",
+  // 米滕瓦爾德與加米施
+  "obermarkt":"Obermarkt, 82481 Mittenwald",
+  "mit-apotheke":"Bahnhof-Apotheke, Bahnhofplatz 10, 82481 Mittenwald",
+  "zugspitze":"Zugspitze",
+  "eibsee":"Eibsee, 82491 Grainau",
+  "partnachklamm":"Partnachklamm, 82467 Garmisch-Partenkirchen",
+  "ludwigstrasse":"Ludwigstraße, 82467 Garmisch-Partenkirchen",
+  // 因斯布魯克與拉滕貝格
+  "hungerburgbahn":"Hungerburgbahn Station Congress, Rennweg 3, 6020 Innsbruck",
+  "seegrube":"Seegrube, Innsbruck",
+  "hafelekar":"Hafelekar, Innsbruck",
+  "goldenes-dachl":"Goldenes Dachl, Herzog-Friedrich-Straße 15, 6020 Innsbruck",
+  "rattenberg":"Rattenberg Altstadt, 6240 Rattenberg, Tirol",
+  // 薩爾斯堡
+  "makartplatz":"Makartplatz, 5020 Salzburg",
+  "staatsbruecke":"Staatsbrücke, 5020 Salzburg",
+  "mozartsteg":"Mozartsteg, 5020 Salzburg",
+  "mirabell":"Mirabellgarten, Mirabellplatz 3, 5020 Salzburg",
+  "getreidegasse":"Getreidegasse, 5020 Salzburg",
+  "mozart-haus":"Mozarts Geburtshaus, Getreidegasse 9, 5020 Salzburg",
+  "residenzplatz":"Residenzplatz, 5020 Salzburg",
+  "festungsbahn":"FestungsBahn Talstation, Festungsgasse 4, 5020 Salzburg",
+  "hohensalzburg":"Festung Hohensalzburg, Mönchsberg 34, 5020 Salzburg",
+  "salzburger-dom":"Salzburger Dom, Domplatz 1a, 5020 Salzburg",
+  // 國王湖與貝希特斯加登
+  "koe-seelaende":"Seelände Königssee, Bayerische Seenschifffahrt, 83471 Schönau am Königssee",
+  "salet":"Salet, Königssee, 83471 Schönau am Königssee",
+  "obersee":"Obersee, 83471 Schönau am Königssee",
+  "malerwinkel":"Malerwinkel, Königssee, 83471 Schönau am Königssee",
+  "hintersee":"Hintersee, 83486 Ramsau bei Berchtesgaden",
+  // 哈修塔特與基姆湖
+  "hal-marktplatz":"Marktplatz, 4830 Hallstatt",
+  "salzwelten-tal":"Salzwelten Hallstatt, Salzbergstraße 21, 4830 Hallstatt",
+  "salzwelten":"Salzwelten Hallstatt Salzbergwerk, Salzberg 21, 4830 Hallstatt",
+  "skywalk":"Hallstatt Skywalk Welterbeblick, Salzberg, 4830 Hallstatt",
+  "prien":"Prien am Chiemsee",
+};
+
 const DAYS = [
 {
   n:1, date:"10/05（一）", title:"抵達慕尼黑、老城適應日",
   meta:["住宿 Munich Top Place","交通 機場線＋步行","無自駕"],
   blocks:[{ rows:[
     ["08:05–09:45","航班／入境","慕尼黑機場第一航廈","CX301 抵達，入境、領行李與網路設定。08:05 是落地時間，不是可離開機場的時間",1,"muc-t1",
-      { tags:["CX301","08:05 落地"], stops:[["muc-t1","慕尼黑機場第一航廈","Munich Airport・Terminal 1"]] }],
+      { tags:["CX301","08:05 落地"], stops:[["muc-t1","慕尼黑機場第一航廈","Nordallee 25"]] }],
     ["09:45–11:15","機場線／寄放行李","機場 → 卡爾廣場站 Karlsplatz Stachus → Munich Top Place（Sonnenstraße 3）","**S1 或 S8 先來先上**，約 45 分到卡爾廣場，出站步行 3 分。**11:00 起可寄放行李**，確認 16:00 入住方式。備案：中央車站 DB 置物櫃（小 €4／大 €6，**只收硬幣**）",0,"muc-stay1",
       { title:"前往市區並寄放行李", tags:["S1 或 S8・約 45 分鐘"], stops:[
-        ["karlsplatz","卡爾廣場站 Karlsplatz (Stachus)","S-Bahn 出站・步行 3 分鐘"],
-        ["muc-stay1","Munich Top Place","Sonnenstraße 3・11:00 起可寄放"]] }],
+        ["karlsplatz","卡爾廣場站 Karlsplatz (Stachus)","Karlsplatz"],
+        ["muc-stay1","Munich Top Place","Sonnenstraße 3"]] }],
     ["11:15–12:15","景點","阿桑教堂 Asamkirche、瑪利亞廣場 Marienplatz、新市政廳","阿桑教堂約 25 分，走到瑪利亞廣場看 **12:00 鐘琴報時**",0,"marienplatz",
       { title:"阿桑教堂 → 瑪利亞廣場", tags:["12:00 鐘琴報時"], stops:[
         ["asamkirche","阿桑教堂 Asamkirche","Sendlinger Straße 32"],
-        ["marienplatz","瑪利亞廣場 Marienplatz","新市政廳・慕尼黑舊城"]] }],
+        ["marienplatz","瑪利亞廣場 Marienplatz","Marienplatz 8（新市政廳）"]] }],
     ["12:15–13:15","午餐／市場","維克圖阿連市場 Viktualienmarkt","散步與午餐",0,"viktualienmarkt",
-      { aside:"散步與午餐", stops:[["viktualienmarkt","維克圖阿連市場 Viktualienmarkt","慕尼黑舊城"]] }],
+      { aside:"散步與午餐", stops:[["viktualienmarkt","維克圖阿連市場 Viktualienmarkt","Viktualienmarkt 3"]] }],
     ["13:15–16:00","景點／自由活動","聖母教堂 Frauenkirche、聖彌額爾教堂、老城街區、卡爾廣場咖啡與藥妝店","**dm** 在 Karlsplatz 25（Stachus Passagen 地下層），**Müller**、**Rossmann** 同一條步行街，週一**營業至 20:00**。依飛行疲勞縮短；**16:00 回住宿正式入住、休息**",0,"dm-stachus",
       { title:"慕尼黑舊城散步", tags:["16:00 回住宿辦理入住"], stops:[
         ["frauenkirche","聖母教堂 Frauenkirche","Frauenplatz 1"],
         ["st-michael","聖彌額爾教堂 St. Michael","Neuhauser Straße 6"],
-        ["neuhauser","老城步行街 Neuhauser Straße","Müller、Rossmann 同一條街"],
-        ["dm-stachus","dm・Karlsplatz 25","Stachus Passagen 地下層・藥妝店"]] }],
+        ["neuhauser","老城步行街","Neuhauser Straße"],
+        ["dm-stachus","dm 藥妝店","Karlsplatz 25"]] }],
     ["17:40–20:00","晚餐","奧古斯丁啤酒花園 Augustiner-Keller","**18:30 已預約**。住宿步行 1.5 km 約 20 分：Sonnenstraße 接 Bayerstraße 經中央車站，沿 Arnulfstraße 到 52 號；不想走可搭 S-Bahn 一站到 Hauptbahnhof 再步行 8 分",1,"augustiner-keller",
-      { tags:["18:30 已預約"], stops:[["augustiner-keller","奧古斯丁啤酒花園 Augustiner-Keller","Arnulfstraße 52・住宿步行約 20 分"]] }],
+      { tags:["18:30 已預約"], stops:[["augustiner-keller","奧古斯丁啤酒花園 Augustiner-Keller","Arnulfstraße 52"]] }],
     ["20:00–20:40","採買","慕尼黑中央車站 EDEKA Ernst","S-Bahn 轉乘層（Arnulfstraße 2），**營業至 23:00**。飲水、早餐與隔日車程補給",0,"muc-hbf",
-      { title:"中央車站 EDEKA 採買", tags:["營業至 23:00"], stops:[["muc-hbf","EDEKA Ernst","Arnulfstraße 2・S-Bahn 轉乘層"]] }],
+      { title:"中央車站 EDEKA 採買", tags:["營業至 23:00"], stops:[["muc-hbf","EDEKA Ernst","Arnulfstraße 2"]] }],
     ["20:40–21:15","散步","卡爾廣場 Karlsplatz、步行街","夜間散步後返回住宿。當晚確認 SIXT 電子確認單、4 人證件、10/06 城堡票 QR code",0,"karlsplatz",
-      { title:"卡爾廣場夜間散步", stops:[["karlsplatz","卡爾廣場 Karlsplatz","步行街・散步後返回住宿"]] }]
+      { title:"卡爾廣場夜間散步", stops:[["karlsplatz","卡爾廣場 Karlsplatz","Karlsplatz"]] }]
   ]}],
   notes:[["雨天","老城步行縮短，改以咖啡館、教堂與室內商店為主。"]]
 },
@@ -497,12 +574,6 @@ const FOOD = [
     ["Chiemsee Renke 基姆湖白鮭","當地湖魚"],
     ["Apfelstrudel、蛋糕與咖啡","本段只有 30 分鐘，原則只喝咖啡、吃甜點"]
   ]}
-];
-
-const FOODNOTE = [
-  "4 位成人的薩爾斯堡、哈修塔特與慕尼黑晚餐應預約；山區餐廳要服從船班、纜車與天候。",
-  "駕駛人全日不飲酒。餐廳的水通常需付費，可指定 Leitungswasser 詢問是否提供自來水。",
-  "進店先確認現金、餐桌費與廚房最後點餐時間。"
 ];
 
 /* 逐日預報。由 fetch_fc.js 產出——每次重跑 build.js 前先跑那支，否則資料會過期。
@@ -955,6 +1026,9 @@ const SHOP = {
       ["Kinder 系列、Milka","歐洲版口味與台灣不同，Kinder Bueno 白巧、Milka Oreo 等","任何德國超市","kinder"],
       ["啤酒杯、Hofbräuhaus 周邊","1 L 陶杯或玻璃杯；不買啤酒本身，重且入境限 1 公升","Day 1／8 皇家啤酒屋商店、Neuhauser Str. 紀念品店","masskrug"],
       ["Niederegger 杏仁糖 Marzipan","北德呂北克名產，慕尼黑百貨與機場也有","Galeria、MUC 機場","niederegger"],
+      ["Teekanne、Meßmer 花草茶","很輕、口味比台灣多，10 月已有冬季口味","任何德國超市"],
+      ["Staedtler、Faber-Castell、Lamy 文具","德國文具品牌，送學生或上班族","Day 1／8 Galeria 百貨、Neuhauser Str."],
+      ["WMF、Zwilling 雙人牌廚具","單價高，同店滿額可辦退稅；刀具只能托運","Day 1／8 Galeria 百貨"],
     ],
     med:[
       ["Bepanthen 修護軟膏","德國原廠版本便宜，藍色 Wund- und Heilsalbe 與嬰兒版 Baby 都常買","Day 3 米滕瓦爾德藥局、Day 8 路德維希藥局","bepanthen"],
@@ -968,6 +1042,12 @@ const SHOP = {
       ["Balea（dm 自有）、Weleda、Dr. Hauschka","Balea 保養極便宜；Weleda 金盞花、Dr. Hauschka 玫瑰系列德國價最低","Day 1／8 dm、Müller","balea"],
       ["Eucerin、Nivea 德國版","德國版配方與台灣不同，藥局與藥妝都有","dm、Apotheke","eucerin"],
       ["Hansaplast 防水 OK 繃、Compeed 水泡貼","步道多，自用也順手","dm、Apotheke","hansaplast"],
+      ["Balea 時空膠囊 Konzentrat","一板 7 顆獨立包裝，顏色分功效（黃 Q10、藍保濕），好分送","Day 1／8 dm"],
+      ["Kamill 護手霜","洋甘菊護手霜，便宜好用，秋冬送人實用","dm、Rossmann"],
+      ["Ajona 濃縮牙膏、Elmex 牙膏","Ajona 一小條用很久，德國人常推薦","dm、Rossmann"],
+      ["Alverde（dm 自有）、Lavera 有機保養","開架有機品牌，多數 €5 以下","Day 1／8 dm"],
+      ["Sebamed 敏感肌系列","弱酸性洗沐與乳液，德國價比台灣低","dm、Rossmann、Apotheke"],
+      ["Kamillosan 洋甘菊、Emser 喉糖","喉嚨保養；Emser 喉糖 dm 也有，Kamillosan 在藥局","藥局 Apotheke、dm"],
     ],
   },
   AT:{
@@ -975,6 +1055,7 @@ const SHOP = {
       ["Fürst 原創莫札特巧克力球 Original Salzburger Mozartkugel","銀藍紙、手工，只在薩爾斯堡 Fürst 四家店販售；保存期短約 8 週，最後幾天買","Day 5 Fürst 總店 Brodgasse 13、Alter Markt、Ritzerbogen、Mirabellplatz","fuerst"],
       ["Mirabell 莫札特巧克力球","紅金紙工業版，超市與機場都有，便宜好分送","Day 5 Spar／Billa、Day 9 MUC 也有","mirabell"],
       ["Manner 威化 Neapolitaner","維也納粉紅包裝榛果威化，奧地利國民零食，超市最便宜","Day 4／5 Spar、Billa、MPreis","manner"],
+      ["Julius Meinl 小紅帽咖啡","1862 年創立的維也納咖啡，豆／粉都有，和莫札特巧克力、Manner 並列不出錯三寶","Day 4／5 Spar、Billa"],
       ["Original Sacher-Torte 木盒","薩爾斯堡 Café Sacher 有售，可保存約 2 週，木盒好托運","Day 5 Café Sacher Schwarzstraße 5–7","sacher"],
       ["哈修塔特鹽 Hallstatt Salz、SalzZart 鹽花","Salinen Austria 出品，罐裝或木盒，輕好帶","Day 8 Salzwelten 山下站商店、市集廣場鹽店","hallstattsalz"],
       ["Zotter 巧克力","施泰爾馬克手工巧克力，口味怪奇，Spar 高級線與紀念品店有","Day 4／5 Spar Gourmet、Getreidegasse","zotter"],
@@ -1090,8 +1171,11 @@ const DRIVE = {
    數字都標了查詢日，不要把它當成即時報價。 */
 const ESIM = {
   /* 方案比較，依計費型態分三組。price 一律是「一人」的價格。
-     call：2026-09-23 查證，全部方案都是純數據——DJB 規格「語音：無」、KKday 規格
+     call：2026-09-23 查證，除歐密卡外全部是純數據——DJB 規格「語音：無」、KKday 規格
      「不包含語音通話、簡訊功能」、Klook 商品頁「僅提供數據服務，不提供通話、簡訊」。
+     DJB 歐密卡（僅 30 天）是 DJB 唯一含通話的歐洲方案：20GB NT$770「涵蓋地通話 100 分鐘、
+     涵蓋地免費收簡訊」；12／50／100GB 另有當地無限通話，國際通話「港澳台除外」，打不回台灣。
+     規格只列國家、未列德奧電信商，也未寫熱點，這三格標「未標示」。
      hotspot：Klook 商品頁標示支援熱點；KKday 規格表寫「可以」但 FAQ 寫「不支援」，
      互相矛盾，維持 X。
      tk／a1：合作網路是否明確列出德國 Telekom、奧地利 A1。
@@ -1125,6 +1209,10 @@ const ESIM = {
         net:["德國：O2、Telekom、Vodafone","奧地利：A1、T-Mobile、H3G"], hotspot:"O",
         call:"X", verdict:"適合導航、通訊與一般社群使用",
         buy:["DJB 官網","https://djbcard.com/product/europe-card-series/"] },
+      { score:3.0, name:"DJB 歐密卡（20GB）", tk:"未標示", a1:"未標示", data:"總量 20GB，用完斷網", price:"$770",
+        net:["規格只列適用國家","未標示德國、奧地利用哪家電信"], hotspot:"未標示",
+        call:"當地 100 分鐘", verdict:"唯一含當地通話，但網路商不明、方案固定 30 天",
+        buy:["DJB 歐洲 eSIM","https://djbcard.com/product/europe-esim/"] },
       { score:2.0, name:"Klook 歐洲 35 國（20GB 選項）", tk:"X", a1:"X", data:"總量 20GB", price:"—",
         net:["僅標示「各國主要電信商」","未明確承諾 Telekom 或 A1"], hotspot:"O",
         call:"X", verdict:"資訊不足，購買前須逐項確認",

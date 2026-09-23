@@ -265,7 +265,7 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
 .tl>li{display:grid;grid-template-columns:34px minmax(0,1fr);position:relative;border-bottom:1px solid var(--hair)}
 .tl>li:last-child{border-bottom:0}
 .tl .t{grid-column:2;grid-row:1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:18px 0 0 8px}
-.tl .tt-time{display:inline-flex;align-items:center;gap:8px;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.02em;line-height:1.3}
+.tl .tt-time{display:inline-flex;align-items:center;gap:8px;font-size:16px;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.02em;line-height:1.3}
 .tl .m{position:relative;grid-column:1;grid-row:1/3}
 .tl .m::before{
   content:"";position:absolute;left:12px;top:23px;width:10px;height:10px;border-radius:50%;
@@ -273,7 +273,7 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
 }
 .tl .m::after{content:"";position:absolute;left:16.5px;top:0;bottom:0;width:1px;background:var(--hair2)}
 .tl .c{grid-column:2;grid-row:2;padding:8px 0 12px 8px;min-width:0}
-.tl .p{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;font-size:19px;font-weight:600;line-height:1.4}
+.tl .p{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;font-size:18px;font-weight:600;line-height:1.4}
 .tt-title{display:inline-flex;align-items:center;gap:8px}
 .tt-lock{width:20px;height:20px;color:var(--amber);flex:0 0 auto}
 .tt-tag{font-size:13px;font-weight:500;color:var(--amber);border:1px solid rgba(255,184,114,.55);
@@ -283,16 +283,14 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
   display:inline-block;font-size:13px;letter-spacing:.04em;color:var(--ink2);
   background:rgba(255,255,255,.05);border:1px solid var(--hair2);padding:2px 14px;border-radius:8px;
 }
-.tt-stops{display:grid;gap:6px;margin-top:9px}
-.tt-stop{display:grid;grid-template-columns:22px 28px minmax(0,1fr) auto;align-items:center;gap:12px;
-  padding:6px 8px 6px 12px;border:1px solid var(--hair);border-radius:10px;background:rgba(255,255,255,.025)}
+/* 多個地點：條列，不另外框，列間細線 */
+.tt-stops{display:grid;margin-top:6px}
+.tt-stop{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:12px;padding:8px 0}
+.tt-stop+.tt-stop{border-top:1px solid var(--hair)}
 .tt-one{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px}   /* 只有一個地點：不框、不重複名稱 */
 .tt-sub{font-size:13px;color:var(--ink3);min-width:0}
 .tt-one .geo{margin-left:auto}
 .tt-one .geo a{width:40px;height:40px}
-.tt-pin{width:22px;height:22px;color:#f3c9a0}
-.tt-no{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;
-  color:var(--ink2);background:rgba(255,255,255,.06);border:1px solid var(--hair2);font-variant-numeric:tabular-nums}
 .tt-nm{display:flex;flex-direction:column;min-width:0;line-height:1.35}
 .tt-nm b{font-size:14.5px;font-weight:600;color:var(--ink)}
 .tt-nm small{font-size:12.5px;color:var(--ink3);margin-top:1px}
@@ -452,17 +450,19 @@ footer{
   .tl .m::before{left:10px;top:21px}
   .tl .m::after{left:14.5px;top:0;bottom:-13px}
   .tl .t{padding:14px 0 0;gap:6px 10px}
-  .tl .tt-time{font-size:18px}
+  .tl .tt-time{font-size:15.5px}
+  .tt-lock{width:17px;height:17px}
+  .tl .cat{font-size:12px;padding:1px 10px}
   .tl .cat{color:#ffc9b8;background:rgba(255,120,90,.1);border-color:rgba(255,140,110,.35)}
   .tl .c{padding:6px 0 0}
-  .tl .p{font-size:19px;gap:8px}
-  .tt-tag{font-size:14px;padding:3px 14px}
-  .tt-stop{grid-template-columns:22px 28px minmax(0,1fr);grid-template-rows:auto auto;align-items:start;
-    padding:10px 10px 10px 12px;row-gap:4px}
-  .tt-pin,.tt-no{margin-top:2px}
-  .tt-stop .geo{grid-column:1/-1;justify-self:end}
-  .tt-stop .geo a{width:44px;height:44px}
-  .tt-one .geo a{width:44px;height:44px}
+  .tl .p{font-size:16.5px;gap:6px 8px}
+  .tt-nm b{font-size:14px}
+  .tt-nm small,.tt-sub{font-size:12px}
+  .tt-tag{font-size:12.5px;padding:2px 11px}
+  .tt-stop{gap:10px}
+  .tt-stop .geo{gap:6px}
+  .tt-stop .geo a{width:36px;height:36px}
+  .tt-one .geo a{width:40px;height:40px}
   .cards{grid-template-columns:1fr}
   .leg{grid-template-columns:1fr;padding:22px}
   .leg .side{text-align:left}
@@ -875,23 +875,22 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .ac-down b{display:block;color:var(--ink);font-weight:600}
 .ac-src{margin:18px 0 0;font-size:11.5px;color:var(--ink3);line-height:1.8}
 .sh-h{margin-bottom:16px}
-.sh-tbl{table-layout:fixed}
-.sh-tbl tr{border-bottom:1px solid var(--hair2)}
-.sh-tbl tr:last-child{border-bottom:0}
-.sh-tbl td{padding:20px 0;border:0}
-.sh-pic{width:64px}
-.sh-img{display:block;width:64px;height:64px;object-fit:cover;border-radius:12px;border:1px solid var(--hair2);background:rgba(255,255,255,.04)}
-.sh-noimg{display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:var(--ink3);background:rgba(255,184,114,.08)}
-.sh-main strong{display:block;font-size:15.5px;line-height:1.45;letter-spacing:-.015em}
-.sh-note,.sh-where{font-size:13.5px;line-height:1.7;color:var(--ink2)}
-.sh-label{display:block;margin:0 0 4px;font-size:10.5px;font-weight:600;letter-spacing:.1em;color:var(--ink3)}
-@media (min-width:601px){
-  .sh-tbl tr{display:grid;grid-template-columns:64px minmax(150px,.72fr) minmax(260px,1.42fr) minmax(220px,1fr);gap:0 22px;align-items:center}
-  .sh-tbl .sh-pic{grid-column:1}
-  .sh-tbl .sh-main{grid-column:2}
-  .sh-tbl .sh-note{grid-column:3}
-  .sh-tbl .sh-where{grid-column:4;width:auto}
-}
+/* 伴手禮：每項一張卡。上半左圖右文，下半「建議購買」整列可點 */
+.sh-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:14px}
+.sh-item{display:flex;flex-direction:column;padding:16px 16px 0;border-radius:20px}
+.sh-top{display:grid;grid-template-columns:120px minmax(0,1fr);gap:16px;align-items:start;flex:1}
+.sh-img{display:block;width:120px;height:110px;object-fit:cover;border-radius:12px;border:1px solid var(--hair2);background:#fff}
+.sh-noimg{display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:600;color:var(--ink3);background:rgba(255,184,114,.08)}
+.sh-main strong{display:block;font-size:16.5px;line-height:1.4;letter-spacing:-.015em}
+.sh-label{display:block;margin:10px 0 2px;font-size:12.5px;color:var(--ink3)}
+.sh-note{font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.sh-buy{display:flex;align-items:center;gap:8px;margin-top:14px;padding:12px 0 14px;border-top:1px solid var(--hair2);
+  color:var(--ink2);text-decoration:none;font-size:13px;line-height:1.5}
+.sh-buy:hover .sh-where{color:var(--ink)}
+.sh-pin{flex:none;width:20px;height:20px;color:var(--amber)}
+.sh-blbl{flex:none;color:var(--ink3)}
+.sh-buy .sh-where{flex:1;min-width:0;margin-left:8px;color:var(--ink2)}
+.sh-chev{flex:none;width:8px;height:8px;margin-right:4px;border-right:1.8px solid var(--ink2);border-top:1.8px solid var(--ink2);transform:rotate(45deg)}
 .dr-card{padding:10px 26px 26px}
 .dr-kv{grid-template-columns:96px 1fr}
 .dr-kv + .notes{margin-top:22px}
@@ -899,7 +898,7 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .dr-rules td,.dr-rules th{padding-right:16px}
 .dr-tw{color:var(--ink2)}
 .dr-rules td.strong{white-space:nowrap}
-.sh-where{color:var(--ink3);font-size:12px;width:30%}
+.sh-stops .sh-where{color:var(--ink3);font-size:12px;width:30%}
 .sh-stops{padding:6px 24px 10px;margin-top:18px}
 .sh-stops .geo{margin-left:8px}
 
@@ -907,14 +906,16 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .es-sc{min-width:0;font-size:16px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums}
 .es-ok{color:var(--amber);font-weight:700}
 .es-no{color:var(--ink3)}
+.es-txt{font-size:12.5px;color:var(--ink2);line-height:1.5}
 /* 垂直比較（手機、桌機共用）：外框與欄、列分隔線都要看得出來 */
 .es-tabs{margin:0 0 16px}
-.sh-tabs{margin:0 0 10px}
-/* 第二層 tab 較輕：透明底、小一號，選中只換框色，和第一層區分主從 */
-.sh-tabs2{margin:0 0 16px}
-.sh-tabs2 .wxtab{padding:5px 12px;font-size:12px;background:transparent}
-.sh-tabs2 .wxtab.on{color:var(--amber);background:rgba(255,160,90,.12);border-color:rgba(255,190,140,.45);box-shadow:none}
-.sh-card{padding:4px 22px}
+/* 篩選框：國家、分類兩列，左標籤右 tab，中間細線 */
+.sh-filter{margin:0 0 16px;padding:0 18px;border-radius:18px}
+.sh-frow{display:flex;align-items:center;gap:22px;padding:12px 0}
+.sh-frow+.sh-frow{border-top:1px solid var(--hair2)}
+.sh-flbl{flex:none;font-size:13.5px;color:var(--ink2)}
+.sh-tabs{margin:0;flex-wrap:nowrap;gap:10px}
+.sh-tabs .wxtab{min-width:96px;padding:8px 18px;font-size:14px}
 .sh-img[src]{cursor:zoom-in}
 .sh-dlg{max-width:min(420px,calc(100vw - 32px))}
 .sh-big{display:block;max-width:100%;max-height:70dvh;margin:10px auto 0;border-radius:14px;object-fit:contain}
@@ -959,18 +960,14 @@ body[data-page="esim"] footer,body[data-page="offices"] footer,body[data-page="s
   .sh-stops{padding:4px 16px 8px}
 
 
-  .sh-tbl,.sh-tbl tbody{display:block}
-  .sh-tbl tr{display:grid;grid-template-columns:48px minmax(0,1fr);gap:0 12px;padding:16px 0}
-  .sh-tbl td{padding:0}
-  .sh-tbl .sh-pic{grid-row:1 / span 2;width:48px}
-  .sh-tbl .sh-main{grid-column:2;align-self:center}
-  .sh-tbl .sh-note{grid-column:1 / -1;margin-top:12px}
-  .sh-tbl .sh-where{grid-column:1 / -1;width:auto;margin-top:12px;padding-top:11px;border-top:1px solid var(--hair2);font-size:12px}
-  .sh-main strong{font-size:15px}
-  .sh-label{margin-bottom:3px;font-size:10px}
-  .sh-pic{width:48px;padding-right:0}
-  .sh-img{width:48px;height:48px;border-radius:10px}
-  .sh-noimg{font-size:16px}
+  .sh-list{grid-template-columns:1fr;gap:12px}
+  .sh-item{padding:14px 14px 0}
+  .sh-top{grid-template-columns:118px minmax(0,1fr);gap:14px}
+  .sh-img{width:118px;height:108px}
+  .sh-main strong{font-size:16px}
+  .sh-filter{padding:0 14px}
+  .sh-frow{gap:18px;padding:10px 0}
+  .sh-tabs .wxtab{min-width:92px;padding:8px 14px;font-size:14px}
   .tkkv dt{margin-top:8px}
   .tkdlg{max-width:calc(100vw - 16px);max-height:calc(100dvh - 16px)}
   .tkdlg-in{padding:22px 18px 26px;max-height:calc(100dvh - 16px)}
@@ -1118,6 +1115,14 @@ tr.dim td .v{color:inherit}
 
 /* 日頁：整節就是一張 .wxcard（邊距與出血跟預報頁一致），多地點時上方多一列頁籤 */
 .daywx-tabs{margin:0 0 14px}
+/* 日頁預報卡預設收起：摘要列就是卡片本身的標題列 */
+body[data-page="day"] .wxfold{padding:0}
+.wxfold>summary{padding:18px 22px}
+.wxfold>summary .s-t{font-size:13px;font-weight:600;letter-spacing:.02em;color:var(--ink2)}
+.wxfold[open]>summary .s-t{color:var(--amber)}
+.wxfold>summary .daylink{font-size:11.5px}
+.wxfold-b{padding:16px 22px 12px}
+@media (max-width:600px){.wxfold>summary{padding:16px 18px}.wxfold-b{padding:14px 18px 10px}}
 
 /* 日期已經在頁首的標題卡上，預報卡不必再報一次；地點跟著回到左側。
    預報頁不套用——那裡十張卡並列，日期正是分辨它們的依據。 */
