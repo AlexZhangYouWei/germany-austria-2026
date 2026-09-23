@@ -260,19 +260,19 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
 }
 
 /* ───────── timeline ───────── */
-/* 桌機三欄：時間＋類別／圓點與直線／標題、標籤、地點列與「行程細節」 */
+/* 左欄圓點與直線；右欄第一行 鎖頭＋時間＋類別，下面是標題、標籤、地點與「行程細節」 */
 .tl{margin:10px 0 0;padding:0;list-style:none}
-.tl>li{display:grid;grid-template-columns:170px 34px minmax(0,1fr);position:relative;border-bottom:1px solid var(--hair)}
+.tl>li{display:grid;grid-template-columns:34px minmax(0,1fr);position:relative;border-bottom:1px solid var(--hair)}
 .tl>li:last-child{border-bottom:0}
-.tl .t{display:flex;flex-direction:column;align-items:flex-start;gap:9px;padding:18px 0}
+.tl .t{grid-column:2;grid-row:1;display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;padding:18px 0 0 8px}
 .tl .tt-time{display:inline-flex;align-items:center;gap:8px;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums;letter-spacing:.02em;line-height:1.3}
-.tl .m{position:relative}
+.tl .m{position:relative;grid-column:1;grid-row:1/3}
 .tl .m::before{
   content:"";position:absolute;left:12px;top:23px;width:10px;height:10px;border-radius:50%;
   background:#e8b48a;box-shadow:0 0 0 4px rgba(232,180,138,.18);z-index:2;
 }
 .tl .m::after{content:"";position:absolute;left:16.5px;top:0;bottom:0;width:1px;background:var(--hair2)}
-.tl .c{padding:14px 0 12px 8px;min-width:0}
+.tl .c{grid-column:2;grid-row:2;padding:8px 0 12px 8px;min-width:0}
 .tl .p{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;font-size:19px;font-weight:600;line-height:1.4}
 .tt-title{display:inline-flex;align-items:center;gap:8px}
 .tt-lock{width:20px;height:20px;color:var(--amber);flex:0 0 auto}
@@ -449,13 +449,12 @@ footer{
   .tl>li{grid-template-columns:30px minmax(0,1fr);border:1px solid var(--hair);border-radius:16px;
     background:rgba(255,255,255,.02);margin-bottom:12px;padding:0 12px 10px 0}
   .tl>li:last-child{border-bottom:1px solid var(--hair)}
-  .tl .m{grid-column:1;grid-row:1/3}
   .tl .m::before{left:10px;top:21px}
   .tl .m::after{left:14.5px;top:0;bottom:-13px}
-  .tl .t{grid-column:2;grid-row:1;padding:14px 0 0;gap:6px}
+  .tl .t{padding:14px 0 0;gap:6px 10px}
   .tl .tt-time{font-size:18px}
   .tl .cat{color:#ffc9b8;background:rgba(255,120,90,.1);border-color:rgba(255,140,110,.35)}
-  .tl .c{grid-column:2;grid-row:2;padding:6px 0 0}
+  .tl .c{padding:6px 0 0}
   .tl .p{font-size:19px;gap:8px}
   .tt-tag{font-size:14px;padding:3px 14px}
   .tt-stop{grid-template-columns:22px 28px minmax(0,1fr);grid-template-rows:auto auto;align-items:start;
@@ -481,8 +480,6 @@ footer{
   .cards{grid-template-columns:1fr}
   .leg{grid-template-columns:1fr}
   .leg .side{text-align:left}
-  .tl>li{grid-template-columns:120px 30px minmax(0,1fr)}
-  .tl .tt-time{font-size:15px}
 }
 
 /* ───────── print ───────── */

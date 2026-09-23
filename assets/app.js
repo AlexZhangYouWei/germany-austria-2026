@@ -283,7 +283,7 @@ function timeline(rows, noDrive){
     const detail = note && note !== "—" && note !== x.aside;
     return `
     <li class="${fx?"fx":""}"${tm ? ` data-time-period="${tm.period}" data-time-minutes="${tm.total}"` : ""}>
-      <div class="t"><span class="tt-time">${esc(t)}${fx ? ICON_LOCK : ""}</span><span class="cat">${esc(cat)}</span></div><div class="m"></div>
+      <div class="t"><span class="tt-time">${fx ? ICON_LOCK : ""}${esc(t)}</span><span class="cat">${esc(cat)}</span></div><div class="m"></div>
       <div class="c">
         <div class="p"><span class="tt-title">${esc(x.title || place)}</span>${(x.tags || []).map(g =>
           `<span class="tt-tag">${esc(g)}</span>`).join("")}${x.aside ? `<span class="tt-aside">${esc(x.aside)}</span>` : ""}</div>
