@@ -46,7 +46,8 @@ const rail = el("rail");
 if (rail && PAGE === "day") {
   rail.innerHTML = DAYS.map((d,i) =>
     `<a href="day${d.n}.html"${d.n === DAYN ? ' class="on" aria-current="page"' : ""}>` +
-    `<b>Day ${d.n}<i>${esc(d.date.slice(0,5))}</i></b><span>${esc(DAY_SHORT[i])}</span></a>`).join("");
+    `<span class="rail-date">${esc(d.date.slice(0,5))}</span>` +
+    `<span class="rail-copy"><b>DAY ${d.n}</b><i aria-hidden="true">·</i><span>${esc(DAY_SHORT[i])}</span></span></a>`).join("");
   rail.classList.add("show");
   // 目前這天捲進側邊選單可視範圍（窄螢幕的底部橫列）
   const on = rail.querySelector("a.on");
@@ -600,11 +601,11 @@ if (PAGE === "day") {
   timeJump.setAttribute("aria-label", "時辰表時段快速跳轉");
   timeJump.hidden = true;
   timeJump.innerHTML = [
-    ["morning", "上", "上午"],
-    ["afternoon", "下", "下午"],
-    ["night", "晚", "晚上"]
-  ].map(([key, short, label]) =>
-    `<button type="button" data-period="${key}" aria-label="跳到${label}" title="${label}" aria-pressed="false">${short}</button>`
+    ["morning", "上午"],
+    ["afternoon", "下午"],
+    ["night", "晚上"]
+  ].map(([key, label]) =>
+    `<button type="button" data-period="${key}" aria-label="跳到${label}" title="${label}" aria-pressed="false">${label}</button>`
   ).join("");
   document.body.appendChild(timeJump);
 
@@ -669,17 +670,24 @@ if (PAGE === "day") {
 
     const timeButtons = timeJump.querySelectorAll("button[data-period]");
     let timeFrame = 0;
+    let activeTimeTable = null;
     const timePanel = () => pager() ? panels[nearest()] : panels.find(p => p.classList.contains("cur"));
     const visibleTimeRows = panel => panel ? [].filter.call(panel.querySelectorAll(".timetable .tl li[data-time-period]"), row =>
       !row.closest(".panel[hidden]") && !row.closest("[hidden]")) : [];
     const updateTimeJump = () => {
       const panel = timePanel();
       const table = panel && panel.querySelector(".timetable");
-      if (!table) { timeJump.hidden = true; timeJump.classList.remove("show"); return; }
+      const hide = () => {
+        if (activeTimeTable) activeTimeTable.classList.remove("timejump-active");
+        activeTimeTable = null;
+        timeJump.hidden = true;
+        timeJump.classList.remove("show");
+      };
+      if (!table) { hide(); return; }
       const r = table.getBoundingClientRect();
       const inView = r.bottom > 72 && r.top < window.innerHeight - 24;
       const rows = visibleTimeRows(panel);
-      if (!inView || !rows.length) { timeJump.hidden = true; timeJump.classList.remove("show"); return; }
+      if (!inView || !rows.length) { hide(); return; }
 
       const available = new Set(rows.map(row => row.dataset.timePeriod));
       const anchor = Math.min(Math.max(window.innerHeight * .3, 140), 260);
@@ -691,6 +699,11 @@ if (PAGE === "day") {
         button.disabled = !available.has(button.dataset.period);
         button.setAttribute("aria-pressed", String(selected));
       });
+      if (activeTimeTable !== table) {
+        if (activeTimeTable) activeTimeTable.classList.remove("timejump-active");
+        activeTimeTable = table;
+      }
+      table.classList.toggle("timejump-active", window.innerWidth <= 1039);
       timeJump.hidden = false;
       timeJump.classList.add("show");
     };
