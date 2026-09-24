@@ -129,6 +129,10 @@ nav{position:sticky;top:0;z-index:60;padding:12px 16px 6px}
   .rail::-webkit-scrollbar{display:none}
   .rail a{flex:0 0 auto;padding:5px 14px 6px;border-radius:999px}
 }
+/* ≥1040px 九格都顯示地名，14px 內距要約 1065px，超過 1040px 上限、最後一格被切；10px 才排得下 */
+@media (min-width:1040px){
+  .rail a{padding-inline:10px}
+}
 /* 中等寬度排不下地名，只留編號，當前那天才顯示地名 */
 @media (width > 600px) and (max-width:1039px){
   .rail-copy span,.rail-copy i{display:none}
@@ -137,41 +141,34 @@ nav{position:sticky;top:0;z-index:60;padding:12px 16px 6px}
 /* 手機（≤600px）：中央焦點式日期輪播。只讓當天承載完整資訊，
    兩側日期直接落在玻璃底座上，減少九張小卡切割畫面的感覺。 */
 @media (max-width:600px){
+  /* 依設計稿：整條膠囊、單列；其他日期只顯示日期，當天膠囊內兩行「日期／DAY n · 地名」 */
   .rail{
-    left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));height:68px;
-    display:flex;align-items:flex-start;gap:10px;padding:7px 14px 9px;border-radius:24px;
+    left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));height:58px;
+    display:flex;align-items:center;gap:4px;padding:0 6px;border-radius:999px;
     overflow-x:auto;overflow-y:hidden;scrollbar-width:none;transform:translateY(8px);
     background:rgba(25,14,9,.76);border-color:rgba(255,184,118,.34);
     -webkit-backdrop-filter:blur(28px) saturate(165%);backdrop-filter:blur(28px) saturate(165%);
     box-shadow:inset 0 1px 0 rgba(255,229,203,.13),0 14px 36px -15px rgba(7,2,0,.9);
-    scroll-padding-inline:calc(50% - 72px);
+    scroll-padding-inline:calc(50% - 54px);
   }
   .rail::-webkit-scrollbar{display:none}
   .rail.show{transform:translateY(0)}
   .rail a{
-    position:relative;flex:0 0 72px;height:50px;padding:4px 2px;align-items:center;
-    border-radius:18px;color:rgba(255,235,217,.55);text-align:center;-webkit-tap-highlight-color:transparent;
+    position:relative;flex:0 0 56px;height:44px;padding:0 2px;align-items:center;
+    border-radius:999px;color:rgba(255,235,217,.55);text-align:center;-webkit-tap-highlight-color:transparent;
   }
-  .rail-date{font-size:12.5px;font-weight:540;letter-spacing:.01em}
-  .rail-copy{justify-content:center;width:100%;gap:0;margin-top:3px}
-  .rail-copy b,.rail-copy i{display:none}
-  .rail-copy span{max-width:68px;font-size:9.5px;font-weight:430;color:rgba(255,235,217,.48)}
+  .rail-date{font-size:13px;font-weight:500;letter-spacing:.01em}
+  .rail-copy{display:none}
   .rail a.on{
-    flex-basis:136px;color:#291306;
+    flex-basis:108px;color:#291306;
     background:linear-gradient(155deg,#ffe0b9 0%,#ffc17f 58%,#ffad67 100%);
     box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 7px 20px -7px rgba(255,155,78,.68);
   }
-  .rail a.on .rail-date{font-size:17px;font-weight:620;line-height:1.05;letter-spacing:-.01em}
-  .rail a.on .rail-copy{gap:4px;margin-top:4px}
-  .rail a.on .rail-copy b,.rail a.on .rail-copy i{display:inline}
-  .rail a.on .rail-copy b{font-size:8.5px;letter-spacing:.07em;opacity:.75}
-  .rail a.on .rail-copy i{font-size:9px;opacity:.55}
-  .rail a.on .rail-copy span{max-width:86px;font-size:10.5px;font-weight:580;color:#291306}
-  .rail a.on::after{
-    content:"";position:absolute;left:50%;bottom:-7px;width:3.5px;height:3.5px;border-radius:50%;
-    background:#f5a45f;transform:translateX(-50%);
-    box-shadow:-9px 0 0 rgba(255,235,216,.34),9px 0 0 rgba(255,235,216,.34);
-  }
+  .rail a.on .rail-date{font-size:14px;font-weight:700;line-height:1.15}
+  .rail a.on .rail-copy{display:flex;justify-content:center;width:100%;gap:3px;margin-top:1px}
+  .rail a.on .rail-copy b{font-size:10px;font-weight:600;letter-spacing:.02em;opacity:1}
+  .rail a.on .rail-copy i{font-size:10px;opacity:.7}
+  .rail a.on .rail-copy span{max-width:64px;font-size:10px;font-weight:600;color:#291306}
 }
 
 /* ───────── hero ───────── */
@@ -468,11 +465,6 @@ footer{
   .leg .side{text-align:left}
   summary{padding:16px 20px}
   .stay-cfm summary{padding:12px 16px}
-  /* 住宿的入住狀態長短差異很大；桌機可維持同列，手機則改為獨立一行，
-     避免長狀態被 summary 的單行設定裁切而向右跑版。 */
-  .stay-cfm summary{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:4px 10px}
-  .stay-cfm summary .s-t{margin-right:0}
-  .stay-cfm summary .s-d{grid-column:1/-1;white-space:normal;line-height:1.55}
   .dbody{padding:16px 20px 20px}
   .callout{padding:22px 20px}
   .facts{grid-template-columns:1fr;gap:4px 0}
@@ -550,6 +542,11 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .timejump button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 @media (min-width:1040px){
   .timejump{right:max(12px,calc((100vw - 900px)/2 - 52px))}
+}
+/* >800px 右側還有「下一天」箭頭（中心在 50% + 56px，見 .edge）。跳轉鈕高 152px，
+   上移 56px 後底緣在 50% + 20px，與箭頭頂緣（50% + 34px）隔開 14px，不再疊在一起。 */
+@media (width > 800px){
+  .timejump{top:calc(50% - 56px)}
 }
 @media (max-width:600px){
   .timejump{right:max(4px,env(safe-area-inset-right));gap:4px;padding:0;border:0;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
@@ -637,9 +634,13 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 @media (min-width:1040px){
   .edge{width:calc((100vw - 900px) / 2)}
 }
-/* 留白不足：縮成邊緣窄帶，只佔中段高度 */
+/* 留白不足：縮成邊緣窄帶，只佔中段高度。
+   窄帶整段下移 56px，箭頭中心與寬螢幕一樣落在 50% + 56px，讓出上方給時段跳轉鈕；
+   箭頭改貼視窗邊 8px（與跳轉鈕同邊距），原本的 16px 內縮是寬螢幕用的，窄帶裡會凸出畫面。 */
 @media (max-width:1039px){
-  .edge{width:44px;top:34%;bottom:34%}
+  .edge{width:44px;top:calc(34% + 56px);bottom:calc(34% - 56px)}
+  .edge.prev .chev{right:auto;left:8px}
+  .edge.next .chev{left:auto;right:8px}
   .edge-label{display:none}
   .chev{opacity:.42}
 }
@@ -1261,9 +1262,10 @@ tr.dim td .v{color:inherit}
 .wxpc-t{margin-top:9px;font-variant-numeric:tabular-nums;white-space:nowrap}
 .wxpc-t b{font-size:22px;font-weight:700;letter-spacing:-.03em}
 .wxpc-t i{font-style:normal;font-size:13px;color:var(--ink3);margin-left:1px}
-.wxpc-r{display:flex;align-items:baseline;justify-content:space-between;gap:8px;
+.wxpc-r{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 8px;
   margin-top:11px;padding-top:10px;border-top:1px solid var(--hair2);
   font-size:11px;color:var(--ink3);font-variant-numeric:tabular-nums}
+.wxpc-r span{white-space:nowrap}   /* 340px 以下排不下一列時，整組「0.0 mm」換到下一列，不把數字和單位拆開 */
 .wxpc-r b{font-weight:700;font-size:11.5px}
 /* 夜間與清晨：只壓暗時段標籤與底色，數值色階保留——
    晚上會不會下雨跟白天一樣要緊，不該整張洗掉。 */
@@ -1331,9 +1333,10 @@ body[data-page="day"] .wxc-place{margin-left:0;font-size:15px;color:var(--ink2)}
 /* 入住／退房並排一條，等寬數字讓六張卡的時間垂直對齊 */
 .stay-io{display:grid;grid-template-columns:1fr 1fr;gap:1px;margin-top:16px;
   border:1px solid var(--hair2);border-radius:13px;overflow:hidden;background:var(--hair2)}
-.stay-io>div{display:flex;align-items:baseline;gap:9px;padding:11px 14px;background:rgba(255,255,255,.035)}
-.stay-io span{font-size:11.5px;color:var(--ink3)}
-.stay-io b{font-size:13.5px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+/* 半格放不下「入住 16:00 – 00:00」時（390px 以下、801–850px 兩欄），整段標籤換到時間上方，而不是逐字直排 */
+.stay-io>div{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 9px;padding:11px 14px;background:rgba(255,255,255,.035)}
+.stay-io span{font-size:11.5px;color:var(--ink3);white-space:nowrap}
+.stay-io b{font-size:13.5px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
 .stay-notes{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:7px;
   font-size:12.5px;color:var(--ink2);line-height:1.7}
 .stay-notes li{position:relative;padding-left:14px}
@@ -1363,8 +1366,9 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
 
 /* 入住確認是出發前真的要做的事，改用琥珀色系從卡片其他區塊跳出來 */
 .stay-cfm{border-color:rgba(255,175,110,.32);background:rgba(255,160,90,.07)}
-.stay-cfm summary .s-t{color:var(--amber);font-weight:600}
-.stay-cfm summary .s-d{color:#ffd9b0}
+.stay-cfm summary .s-t{color:var(--amber);font-weight:600;flex:none}
+/* 入住說明可能很長：允許換行，否則 nowrap 會把整張住宿卡撐出畫面、把「入住確認」擠成直排 */
+.stay-cfm summary .s-d{color:#ffd9b0;white-space:normal;text-align:right}
 .stay-cfm .dbody{background:rgba(255,160,90,.05);border-top:1px solid rgba(255,175,110,.2)}
 
 /* ───────── 日頁分頁軌道 ─────────
@@ -1478,7 +1482,7 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
   .geo a{width:34px;height:34px}
   .gmk{width:18px;height:18px}
 
-  .wxgrid{grid-template-columns:1fr;gap:12px}
+  .wxgrid{grid-template-columns:minmax(0,1fr);gap:12px}   /* 1fr 的下限是內容寬，320px 會把預報卡撐出畫面 */
   .wxtabs{gap:6px}
   .wxtab{padding:8px 12px;font-size:12px}
   .navitem{grid-template-columns:minmax(0,1fr) auto;gap:8px;min-height:62px}
@@ -1492,7 +1496,7 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
   .sosgrid{grid-template-columns:1fr}
   .mapwrap{padding:12px 10px 10px}
   .m-name{font-size:27px}
-  .m-sub{font-size:21px}
+  .m-sub{font-size:21px;transform:translateY(5px)}   /* 地名放大後與下方「晚數」只隔 17，下移免得兩行貼在一起 */
   .m-pt.see .m-name{font-size:24px}
   .m-chip{font-size:12px;padding:8px 13px}
   .of-calls{grid-template-columns:1fr}
@@ -1503,11 +1507,23 @@ a.stay-map:hover{color:var(--amber);border-color:rgba(255,190,140,.34);backgroun
   .ck-top{padding:20px}
   .pagehead{padding:36px 0 28px}
 }
+/* 360px 以下全日概況一列排不下「多雲，短暫雨」＋溫度（需約 245px，320px 時只有 218px），
+   天氣名稱會被省略成「多雲，短…」；小一級字才完整顯示 */
+@media (max-width:359px){
+  .wxcond.lg{font-size:16px}
+  .wxsum-t b{font-size:22px}
+  /* 住宿卡入住／退房：半格約 116px，放不下「16:00 – 00:00」（約 96px＋內距 28px），改上下兩列 */
+  .stay-io{grid-template-columns:1fr}
+}
 
 /* 601–800px 保留桌機操作，資訊卡改用適合窄視窗的欄數。 */
 @media (width > 600px) and (max-width:800px){
   .edge{display:none}
   .dgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  /* 長方案名稱（Day 3 三個方案）一列排不下會被裁切：比照手機改兩欄、第三個占滿一列 */
+  .tabs:has(.tab-long){display:grid;width:100%;grid-template-columns:repeat(2,minmax(0,1fr));overflow:visible;border-radius:18px}
+  .tabs:has(.tab-long) button{min-width:0;white-space:normal}
+  .tabs:has(.tab-long) button:last-child:nth-child(odd){grid-column:1/-1}
   .wxgrid,.sosgrid,.of-calls{grid-template-columns:1fr}
   .ckgrid{columns:1}
   .ac-cols{grid-template-columns:1fr}

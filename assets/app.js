@@ -742,6 +742,12 @@ if (PAGE === "day") {
       }
       table.classList.toggle("timejump-active", window.innerWidth <= 1039);
       timeJump.hidden = false;
+      /* ≤1039px 跳轉鈕壓在卡片右緣：只有時辰表預留了右側留白，所以要等時辰表整段蓋過跳轉鈕的高度才顯示，
+         免得壓到今日待辦等其他卡片。留白照舊跟著「進入畫面」切換，避免捲動途中內文寬度跳動。 */
+      if (window.innerWidth <= 1039) {
+        const j = timeJump.getBoundingClientRect(), t = table.getBoundingClientRect();
+        if (t.top > j.top || t.bottom < j.bottom) { timeJump.classList.remove("show"); return; }
+      }
       timeJump.classList.add("show");
     };
     const scheduleTimeJump = () => {
