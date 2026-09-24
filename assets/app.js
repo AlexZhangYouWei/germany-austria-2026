@@ -1089,8 +1089,11 @@ if (PAGE === "shop") {
   if (dlg) dlg.addEventListener("click", e => {
     if (dlg.open && (e.target.closest("[data-close]") || e.target === dlg)) dlg.close();
   });
-  el("shstops").innerHTML = `<table>${SHOP.stops.map(([t,pl,w,g]) =>
-    `<tr><td style="width:22%"><strong>${esc(t)}</strong></td><td>${esc(pl)}${geoLink("步行", g)}</td><td class="sh-where">${md(w)}</td></tr>`).join("")}</table>`;
+  /* 商店清單：經過日｜地點＋店家＋導航｜營業時間（依設計稿不顯示停留時段） */
+  el("shstops").innerHTML = `<table class="st-tbl"><tr><th>經過日</th><th>地點</th><th class="st-h">營業時間</th></tr>${SHOP.stops.map(([d,,pl,w,h,g]) =>
+    `<tr><td class="st-d"><b>${esc(d)}</b></td>`
+    + `<td class="st-p"><strong>${esc(pl)}</strong><span>${esc(w)}</span>${geoLink("步行", g)}</td>`
+    + `<td class="st-h">${esc(h)}</td></tr>`).join("")}</table>`;
 }
 
 /* 開車須知：租車、停車、加油站、與台灣不同的交通法規。
@@ -1151,11 +1154,25 @@ if (PAGE === "drive") {
     try { localStorage.setItem(DR_KEY, JSON.stringify(drck)); } catch (e2) {}
   });
 
-  el("drpark").innerHTML = `<table>${D.parking.map(([d,pl,fee,how,g]) =>
-    `<tr><td style="width:16%"><strong>${esc(d)}</strong></td><td style="width:26%">${esc(pl)}${g ? geoLink("開車", g) : ""}</td><td class="dr-fee">${md(fee)}</td><td>${md(how)}</td></tr>`).join("")}</table>`;
+  /* 經過日欄：「Day 3 A 艾布湖」→ Day 3A＋小字地名。停車場、加油站共用 */
+  const splitDay = d => { const [, day = d, sub = ""] = d.match(/^(Day [\d–]+(?: [A-Z](?= |$))?)\s*(.*)$/) || []; return [day.replace(/ ([A-Z])$/, "$1"), sub]; };
+  const dayCell = (d, withSub = true) => { const [day, sub] = splitDay(d);
+    return `<td class="st-d"><b>${esc(day)}</b>${withSub && sub ? `<small>${esc(sub)}</small>` : ""}</td>`; };
+  /* 停車場清單：套伴手禮頁商店清單的樣式。「Day 3 A 艾布湖」拆成 Day 3A 與地名，地名放在 Day 下方小字。
+     費用手機版改放在停車場名稱下（st-fee-m），右欄只在桌機顯示 */
+  el("drpark").innerHTML = `<table class="st-tbl"><tr><th>經過日</th><th>停車場</th><th class="st-h st-fee">費用</th></tr>${D.parking.map(([d,pl,fee,how,g]) => {
+    return `<tr>${dayCell(d)}`
+      + `<td class="st-p"><strong>${esc(pl)}</strong><em class="st-fee-m">${md(fee)}</em><span>${md(how)}</span>${g ? geoLink("開車", g) : ""}</td>`
+      + `<td class="st-h st-fee">${md(fee)}</td></tr>`; }).join("")}</table>`;
 
-  el("drfuel").innerHTML = `<table>${D.fuel.map(([leg,st,addr,note]) =>
-    `<tr><td style="width:24%"><strong>${esc(leg)}</strong></td><td style="width:30%"><a class="fd-a" href="${q(st + " " + addr)}" target="_blank" rel="noopener">${esc(st)}</a><span class="fd-m">${esc(addr)}</span></td><td>${md(note)}</td></tr>`).join("")}</table>`;
+  /* 沿線加油站：同商店清單樣式，路段放在站名上方；手機版營業時間移到站名下。沒有 GEO 座標，地圖按鈕用站名＋地址搜尋 */
+  const qGeo = (name, query) => `<span class="geo">`
+    + `<a class="geo-g" href="${q(query)}" target="_blank" rel="noopener" aria-label="在 Google 地圖開啟 ${esc(name)}">${ICON_G}</a>`
+    + `<a class="geo-a" href="https://maps.apple.com/search?query=${encodeURIComponent(query)}" target="_blank" rel="noopener" aria-label="在 Apple 地圖開啟 ${esc(name)}">${ICON_A}</a></span>`;
+  el("drfuel").innerHTML = `<table class="st-tbl"><tr><th>經過日</th><th>加油站</th><th class="st-h st-fee">營業時間</th></tr>${D.fuel.map(([leg,st,addr,hrs,note]) =>
+    `<tr>${dayCell(leg, false)}`
+    + `<td class="st-p"><small class="st-leg">${esc(splitDay(leg)[1])}</small><strong>${esc(st)}</strong><em class="st-fee-m">${md(hrs)}</em><span>${esc(addr)}</span><span>${md(note)}</span>${qGeo(st, st + " " + addr)}</td>`
+    + `<td class="st-h st-hw st-fee">${md(hrs)}</td></tr>`).join("")}</table>`;
 
   el("drrules").innerHTML = `<table class="dr-rules"><tr><th>項目</th><th>德國</th><th>奧地利</th><th>與台灣不同、要注意</th></tr>${D.rules.map(([k,de,at,tw]) =>
     `<tr><td class="strong">${esc(k)}</td><td>${md(de)}</td><td>${md(at)}</td><td class="dr-tw">${md(tw)}</td></tr>`).join("")}</table>`;

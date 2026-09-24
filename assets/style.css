@@ -468,6 +468,11 @@ footer{
   .leg .side{text-align:left}
   summary{padding:16px 20px}
   .stay-cfm summary{padding:12px 16px}
+  /* 住宿的入住狀態長短差異很大；桌機可維持同列，手機則改為獨立一行，
+     避免長狀態被 summary 的單行設定裁切而向右跑版。 */
+  .stay-cfm summary{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:4px 10px}
+  .stay-cfm summary .s-t{margin-right:0}
+  .stay-cfm summary .s-d{grid-column:1/-1;white-space:normal;line-height:1.55}
   .dbody{padding:16px 20px 20px}
   .callout{padding:22px 20px}
   .facts{grid-template-columns:1fr;gap:4px 0}
@@ -891,7 +896,6 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .sh-blbl{flex:none;color:var(--ink3)}
 .sh-buy .sh-where{flex:1;min-width:0;margin-left:8px;color:var(--ink2)}
 .sh-chev{flex:none;width:8px;height:8px;margin-right:4px;border-right:1.8px solid var(--ink2);border-top:1.8px solid var(--ink2);transform:rotate(45deg)}
-.dr-fee{color:var(--gold);white-space:nowrap;font-variant-numeric:tabular-nums}
 .dr-rules td,.dr-rules th{padding-right:16px}
 .dr-tw{color:var(--ink2)}
 .dr-rules td.strong{white-space:nowrap}
@@ -1028,6 +1032,37 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
   .fd-day{width:54px;height:52px;font-size:18px}
   .fd-t strong{font-size:16px}
   .fd-body{margin:0 14px 0 41px}
+}
+/* 伴手禮頁商店清單 */
+.st-tbl th{padding-top:14px}
+.st-tbl td{padding-top:16px;padding-bottom:16px}
+.st-d{width:84px;white-space:nowrap}
+.st-d b{display:block;font-size:16px;font-weight:700;color:var(--gold);line-height:1.3}
+.st-p strong{display:block;font-size:15.5px;line-height:1.4}
+.st-p span{display:block;margin-top:2px;font-size:12px;color:var(--ink3);line-height:1.5}
+.st-p .geo{display:flex;margin:10px 0 0}
+.st-p .geo a{width:38px;height:38px}
+.st-h{width:96px;text-align:right;padding-right:0 !important;color:var(--ink2);font-size:12.5px;white-space:nowrap}
+th.st-h{font-size:10.5px;color:var(--ink3)}
+.st-d small{display:block;margin-top:3px;font-size:12px;color:var(--ink3);white-space:normal;line-height:1.4}   /* 停車場清單的地名 */
+.st-fee{width:28%;white-space:normal;line-height:1.6;color:var(--gold)}
+th.st-fee{color:var(--ink3)}
+.st-fee-m{display:none}
+.st-hw{white-space:normal;width:120px;line-height:1.6}   /* 加油站營業時間可能兩行 */
+.st-hw.st-fee{color:var(--ink2)}
+.st-leg{display:block;margin-bottom:2px;font-size:12px;color:var(--amber);line-height:1.5}
+.st-tbl tr:last-child td{border-bottom:0}
+@media (max-width:600px){
+  .st-d{width:58px;padding-right:8px !important}
+  .st-d b{font-size:15px}
+  .st-p{padding-right:8px !important}
+  .st-h{width:auto;font-size:12px}
+  .st-fee{display:none}
+  #drpark .st-tbl,#drfuel .st-tbl{width:100%}
+  #drpark .st-p,#drfuel .st-p{width:100%;padding-right:0 !important}
+  #drfuel .st-fee-m{color:var(--ink2)}
+  .st-p .st-fee-m{display:block;margin-top:3px;font-size:12.5px;font-weight:500;color:var(--gold);line-height:1.5}
+  .st-p .st-fee-m em{color:inherit}
 }
 /* ───────── 網路分析（eSIM） ───────── */
 .es-sc{min-width:0;font-size:16px;font-weight:700;color:var(--amber);font-variant-numeric:tabular-nums}

@@ -1004,17 +1004,18 @@ const ACCESS = [
 /* 伴手禮與藥品。品項為德奧常見必買，購買點只列本行程會路過、且行程表已有時間的停留。
    價格與營業時間以現場為準；台灣入境限制見 notes。 */
 const SHOP = {
+  /* 商店清單：[經過日, 停留時段, 地點, 店家, 營業時間, GEO key]。營業時間只寫已查證的，其餘依店家公告 */
   stops:[
-    ["Day 1 14:20–15:50","慕尼黑卡爾廣場 Karlsplatz／Neuhauser Str.","dm、Rossmann、Müller 藥妝店，Galeria 百貨；Dallmayr 總店在 Dienerstraße 14–15，步行 8 分","karlsplatz"],
-    ["Day 1 20:00–20:40","慕尼黑中央車站 EDEKA","超市食品、零食；車站內有藥局","muc-hbf"],
-    ["Day 3 17:15–17:45","米滕瓦爾德車站藥局 Bahnhof-Apotheke","德國藥品主要採買點，週三到 18:00；指定品項先官網預訂","mit-apotheke"],
-    ["Day 3 自由活動","米滕瓦爾德 REWE（Innsbrucker Str. 4）","德國超市零食、Ritter Sport、Haribo、芥末","obermarkt"],
-    ["Day 4 A 方案 12:00–13:00","因斯布魯克老城 Herzog-Friedrich-Straße","Handl Tyrol Speck Stube（12 號，週四營業）、MPreis 超市、dm、Apotheke","inn-congress"],
-    ["Day 5 全日","薩爾斯堡老城 Getreidegasse、Alter Markt","Fürst 總店 Brodgasse 13、Café Sacher Schwarzstraße 5–7、Spar／Billa、dm、Bipa、Apotheke","hohensalzburg"],
-    ["Day 6 16:05–16:30","比紹夫斯維森 Edeka Winkl／Aldi Süd","德國超市；時間只有 25 分鐘，補買零食與芥末","bis-stay"],
-    ["Day 8 11:50–12:00","哈修塔特 Salzwelten 山下站遊客中心商店","哈修塔特鹽、SalzZart 鹽花、鹽味巧克力；市集廣場另有 Salzkontor","salzwelten-tal"],
-    ["Day 8 18:10–20:00","慕尼黑 Neuhauser Str.、考芬格街、國際路德維希藥局","**先買藥再逛商店**；藥局週一到 20:00，dm／Rossmann／Müller 約到 20:00","neuhauser"],
-    ["Day 9 出境後","慕尼黑機場 MUC T2 免稅與 Dallmayr、Ritter Sport 專櫃","最後補買巧克力、咖啡；價格較市區高","muc-t1"],
+    ["Day 1","14:20–15:50","慕尼黑卡爾廣場","Neuhauser Str.・dm・Rossmann・Müller・Galeria・Dallmayr","約至 20:00","karlsplatz"],
+    ["Day 1","20:00–20:40","慕尼黑中央車站","EDEKA 超市・車站藥局","依店家公告","muc-hbf"],
+    ["Day 3","17:15–17:45","米滕瓦爾德車站藥局","Bahnhof-Apotheke・德國藥品主要採買點","週三至 18:00","mit-apotheke"],
+    ["Day 3","自由活動","米滕瓦爾德 REWE","Innsbrucker Str. 4・零食、Ritter Sport、芥末","依店家公告","obermarkt"],
+    ["Day 4","A 方案 12:00–13:00","因斯布魯克老城","Herzog-Friedrich-Straße・Handl Tyrol・MPreis・dm","各店不同","inn-congress"],
+    ["Day 5","全日","薩爾斯堡老城","Getreidegasse・Alter Markt","各店不同","hohensalzburg"],
+    ["Day 6","16:05–16:30","比紹夫斯維森","EDEKA Winkl・ALDI Süd","依店家公告","bis-stay"],
+    ["Day 8","11:50–12:00","哈修塔特鹽礦","Salzwelten 遊客中心商店","依店家公告","salzwelten-tal"],
+    ["Day 8","18:10–20:00","慕尼黑藥妝","Neuhauser Str.・考芬格街・國際路德維希藥局（先買藥）","約至 20:00","neuhauser"],
+    ["Day 9","出境後","慕尼黑機場 MUC T2","免稅店・Dallmayr・Ritter Sport","依航廈公告","muc-t1"],
   ],
   DE:{
     food:[
@@ -1155,21 +1156,22 @@ const DRIVE = {
     ["Day 7–8 哈修塔特","P1 停車場（Hotel-Ticket）","住客 Hotel-Ticket 第 1 天 €20、第 2 天 €18；一般日票 €20","**不可開進舊城**（柵欄，10:00–18:00 中心禁行）。P1 入口的 Hotel-Shuttle Info-Point 登記，首次出場前在售票機把入場券換成 Hotel-Ticket；免費接駁 09:00–19:00。","hal-p1"],
     ["Day 8–9 慕尼黑","Motel One München-Hauptbahnhof","依住宿確認結果","中央車站周邊停車場多為每小時計費的公共車庫，備援 Contipark Tiefgarage Stachus（Herzog-Wilhelm-Str. 11，24 小時，一般費率未確認）；到達後先卸行李，再依住宿指示停車。隔日 05:50 取車。","muc-stay2"],
   ],
-  /* [路段, 站名, 地址, 備註] */
+  /* [路段, 站名, 地址, 營業時間, 備註] */
   fuel:[
-    ["Day 2 慕尼黑 → 新天鵝堡","Aral Schwangau","König-Ludwig-Str. 2, 87645 Schwangau","B17 上、離 P4 約 5 分；每日 06:30–22:00。取車時油若不滿可在這裡補"],
-    ["Day 2 新天鵝堡 → 米滕瓦爾德","Shell Mittenwald","Am Brunnstein 2, 82481 Mittenwald","24 小時；鎮北入口，Day 3 出發前補油也在這裡"],
-    ["Day 2 備援","Aral Garmisch-Partenkirchen","Hauptstraße 20, 82467 Garmisch-Partenkirchen","一～四、日 06:00–22:00，五六到 23:00；Day 3 B 方案順路"],
-    ["Day 4 米滕瓦爾德 → 因斯布魯克（B177）","Avanti 自助站 Zirl","Meilstraße 49, 6170 Zirl","24 小時自助，現金或信用卡；**進奧地利第一站，油價比德國低約 €0.3／L**，在這裡加滿"],
-    ["Day 4 因斯布魯克 → 薩爾斯堡（A12 → A93 → A8）","Esso Rastanlage Hochfelln Süd","A8, 83346 Bergen","24 小時高速公路休息站，德國境內備援；奧地利段先加滿就不必停"],
-    ["Day 6 薩爾斯堡 → 國王湖","Aral Schönau am Königssee","Seestraße 1, 83471 Schönau am Königssee","06:30–21:00，停車場前最後一站"],
-    ["Day 6 比紹夫斯維森","Eni Bischofswiesen-Strub","Silbergstraße 91, 83483 Bischofswiesen","06:00–22:00，住宿附近；Day 7 出發前補油"],
-    ["Day 7 比紹夫斯維森 → 哈修塔特（Golling／B159）","Hettegger Eni Kuchl","Kellau 157, 5431 Kuchl","24 小時自助；B159 上、Golling 之後。回到奧地利第一個加油點"],
-    ["Day 7–8 哈修塔特周邊","Socar Bad Goisern","Bundesstraße 95, 4822 Bad Goisern","**哈修塔特鎮內沒有加油站**，最近的在 Bad Goisern。一～六 06:00–21:00、日 07:00–21:00。Day 8 離開前在此加滿，奧地利油價較低"],
-    ["Day 8 哈修塔特 → 慕尼黑（A8）","Esso Rastanlage Hochfelln Nord","A8, 83346 Bergen","24 小時；Bad Goisern 加滿後通常不需停，塞車或臨時需要才停"],
-    ["Day 9 還車前（05:50–07:00）","AVIA Hochstraße","Hochstraße 5, 81669 München","**24 小時**、有店面，Rosenheimer Platz 旁，距 Stachus 約 2.5 km、車程 10 分；加滿留發票再回 Karlsplatz 地下還車區"],
-    ["Day 9 備援","JET Landsberger Straße","Landsberger Str. 184, 80687 München","24 小時，距 Stachus 約 4.5 km；AVIA 若排隊或關閉才用"],
+    ["Day 2 慕尼黑 → 新天鵝堡","Aral Schwangau","König-Ludwig-Str. 2, 87645 Schwangau","06:30–22:00","B17 上、離 P4 約 5 分；取車時油若不滿可在這裡補"],
+    ["Day 2 新天鵝堡 → 米滕瓦爾德","Shell Mittenwald","Am Brunnstein 2, 82481 Mittenwald","24 小時","鎮北入口，Day 3 出發前補油也在這裡"],
+    ["Day 2 備援","Aral Garmisch-Partenkirchen","Hauptstraße 20, 82467 Garmisch-Partenkirchen","一～四、日 06:00–22:00\n五六至 23:00","Day 3 B 方案順路"],
+    ["Day 4 米滕瓦爾德 → 因斯布魯克（B177）","Avanti 自助站 Zirl","Meilstraße 49, 6170 Zirl","24 小時自助","現金或信用卡；**進奧地利第一站，油價比德國低約 €0.3／L**，在這裡加滿"],
+    ["Day 4 因斯布魯克 → 薩爾斯堡（A12 → A93 → A8）","Esso Rastanlage Hochfelln Süd","A8, 83346 Bergen","24 小時","高速公路休息站，德國境內備援；奧地利段先加滿就不必停"],
+    ["Day 6 薩爾斯堡 → 國王湖","Aral Schönau am Königssee","Seestraße 1, 83471 Schönau am Königssee","06:30–21:00","停車場前最後一站"],
+    ["Day 6 比紹夫斯維森","Eni Bischofswiesen-Strub","Silbergstraße 91, 83483 Bischofswiesen","06:00–22:00","住宿附近；Day 7 出發前補油"],
+    ["Day 7 比紹夫斯維森 → 哈修塔特（Golling／B159）","Hettegger Eni Kuchl","Kellau 157, 5431 Kuchl","24 小時自助","B159 上、Golling 之後。回到奧地利第一個加油點"],
+    ["Day 7–8 哈修塔特周邊","Socar Bad Goisern","Bundesstraße 95, 4822 Bad Goisern","一～六 06:00–21:00\n日 07:00–21:00","**哈修塔特鎮內沒有加油站**，最近的在 Bad Goisern。Day 8 離開前在此加滿，奧地利油價較低"],
+    ["Day 8 哈修塔特 → 慕尼黑（A8）","Esso Rastanlage Hochfelln Nord","A8, 83346 Bergen","24 小時","Bad Goisern 加滿後通常不需停，塞車或臨時需要才停"],
+    ["Day 9 還車前（05:50–07:00）","AVIA Hochstraße","Hochstraße 5, 81669 München","**24 小時**","有店面，Rosenheimer Platz 旁，距 Stachus 約 2.5 km、車程 10 分；加滿留發票再回 Karlsplatz 地下還車區"],
+    ["Day 9 備援","JET Landsberger Straße","Landsberger Str. 184, 80687 München","24 小時","距 Stachus 約 4.5 km；AVIA 若排隊或關閉才用"],
   ],
+
   /* [項目, 德國, 奧地利, 與台灣不同] */
   rules:[
     ["速限（市區／郊區／高速）","50／100／無一般速限，建議 130","50／100／130","數字看起來與台灣相近，但**取締嚴、罰單寄到租車公司再轉嫁**。德國高速公路無速限路段仍有電子可變限速與施工段，看牌不看導航。"],
