@@ -132,7 +132,7 @@ function wxCell(x, P){
   return `<div class="wxpc${P.day ? "" : " dim"}">${head}
       <span class="wxcond sm ${kind}">${icon(kind)}<span>${esc(label)}</span></span>
       <div class="wxpc-t">${wxT(x)}</div>
-      <div class="wxpc-r"><span>降雨 <b class="${pCls(x.p)}">${x.p}%</b></span>`
+      <div class="wxpc-r"><span>降雨 ${x.p == null ? "—" : `<b class="${pCls(x.p)}">${x.p}%</b>`}</span>`   /* 射程末端可能只缺雨機率 */
     + `<span><b class="${mCls(x.mm)}">${mm1(x.mm)}</b> mm</span></div>
     </div>`;
 }
