@@ -1058,14 +1058,22 @@ if (PAGE === "shop") {
   const pic = (k, name) => k
     ? `<img class="sh-img" src="assets/img/shop/${k}.jpg" loading="lazy" alt="${esc(name)}" title="${esc(CR[k] || "Wikimedia Commons")}">`
     : `<span class="sh-img sh-noimg" aria-hidden="true">${esc(name.trim().charAt(0))}</span>`;
+  const shopMapLink = (g, query, name) => {
+    if (!query) return geoLink("步行", g);
+    const q = encodeURIComponent(query);
+    return `<span class="geo">`
+      + `<a class="geo-g" href="https://www.google.com/maps/search/?api=1&query=${q}" target="_blank" rel="noopener" aria-label="在 Google 地圖搜尋 ${esc(name)}">${ICON_G}</a>`
+      + `<a class="geo-a" href="https://maps.apple.com/search?query=${q}" target="_blank" rel="noopener" aria-label="在 Apple 地圖搜尋 ${esc(name)}">${ICON_A}</a>`
+      + `</span>`;
+  };
   /* 每項一張卡：左圖、右品名＋推薦理由；底列「建議購買」點了捲到下方「路過可買的點」 */
   const cards = rows => `<div class="sh-list">${rows.map(([a,b,c,k]) =>
     `<article class="glass sh-item"><div class="sh-top">${pic(k, a)}<div class="sh-main">`
     + `<strong>${esc(a)}</strong>`
     + `<span class="sh-label">推薦理由</span><div class="sh-note">${md(b)}</div></div></div>`
     + `<a class="sh-buy" href="#shstops-card">${ICON_PIN}<span class="sh-blbl">建議購買</span><span class="sh-where">${esc(c)}</span><span class="sh-chev" aria-hidden="true"></span></a></article>`).join("")}</div>`;
-  /* 雙層 tab：第一層國家、第二層食品／藥妝，一次只顯示一張表 */
-  const CC = [["DE","德國"],["AT","奧地利"]], KIND = [["food","食品"],["med","藥妝"]];
+  /* 雙層 tab：第一層國家、第二層食品／地方特色／藥妝，一次只顯示一類 */
+  const CC = [["DE","德國"],["AT","奧地利"]], KIND = [["food","食品"],["gifts","地方特色"],["med","藥妝"]];
   let cc = 0, kd = 0;
   const tabs = (xs, cur, lv) => xs.map(([, l], i) =>
     `<button type="button" role="tab" class="wxtab${i === cur ? " on" : ""}" data-lv="${lv}" data-i="${i}" aria-selected="${i === cur}">${l}</button>`).join("");
@@ -1095,10 +1103,10 @@ if (PAGE === "shop") {
   if (dlg) dlg.addEventListener("click", e => {
     if (dlg.open && (e.target.closest("[data-close]") || e.target === dlg)) dlg.close();
   });
-  /* 商店清單：經過日｜地點＋店家＋導航｜營業時間（依設計稿不顯示停留時段） */
-  el("shstops").innerHTML = `<table class="st-tbl"><tr><th>經過日</th><th>地點</th><th class="st-h">營業時間</th></tr>${SHOP.stops.map(([d,,pl,w,h,g]) =>
+  /* 商店清單：經過日｜地點、行程採買窗口、店家＋精確地圖搜尋｜營業時間 */
+  el("shstops").innerHTML = `<table class="st-tbl"><tr><th>經過日</th><th>地點</th><th class="st-h">營業時間</th></tr>${SHOP.stops.map(([d,t,pl,w,h,g,q]) =>
     `<tr><td class="st-d"><b>${esc(d)}</b></td>`
-    + `<td class="st-p"><strong>${esc(pl)}</strong><span>${esc(w)}</span>${geoLink("步行", g)}</td>`
+    + `<td class="st-p"><small class="st-window">行程窗口：${esc(t)}</small><strong>${esc(pl)}</strong><span>${esc(w)}</span>${shopMapLink(g, q, pl)}</td>`
     + `<td class="st-h">${esc(h)}</td></tr>`).join("")}</table>`;
 }
 
@@ -1180,8 +1188,11 @@ if (PAGE === "drive") {
     + `<td class="st-p"><small class="st-leg">${esc(splitDay(leg)[1])}</small><strong>${esc(st)}</strong><em class="st-fee-m">${md(hrs)}</em><span>${esc(addr)}</span><span>${md(note)}</span>${qGeo(st, st + " " + addr)}</td>`
     + `<td class="st-h st-hw st-fee">${md(hrs)}</td></tr>`).join("")}</table>`;
 
-  el("drrules").innerHTML = `<table class="dr-rules"><tr><th>項目</th><th>德國</th><th>奧地利</th><th>與台灣不同、要注意</th></tr>${D.rules.map(([k,de,at,tw]) =>
-    `<tr><td class="strong">${esc(k)}</td><td>${md(de)}</td><td>${md(at)}</td><td class="dr-tw">${md(tw)}</td></tr>`).join("")}</table>`;
+  /* 交通規則（依設計稿）：每項 標題＋德國／奧地利兩列＋台灣提醒；桌機兩欄、手機一欄 */
+  el("drrules").innerHTML = `<div class="dr-rules">${D.rules.map(([k, de, at, tip]) =>
+    `<div class="dr-rule"><h3>${esc(k)}</h3>`
+    + `<dl><dt>德國</dt><dd>${md(de)}</dd><dt>奧地利</dt><dd>${md(at)}</dd></dl>`
+    + `<p class="dr-tip"><b>台灣提醒</b>${md(tip)}</p></div>`).join("")}</div>`;
 
   el("drnotes").innerHTML = `<ul class="notes">${li(D.notes)}</ul>`;
 }

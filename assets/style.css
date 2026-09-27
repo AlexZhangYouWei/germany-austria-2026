@@ -113,62 +113,48 @@ nav{position:sticky;top:0;z-index:60;padding:12px 16px 6px}
 }
 .rail a.on b{opacity:.85}
 
-/* 桌機（>600px）：與手機一樣懸浮在視窗底部，置中。
+/* 日期列依設計稿，手機與桌機同一套：整條膠囊、單列；其他日期只顯示日期，
+   當天膠囊內兩行「日期／DAY n · 地名」。兩側日期直接落在玻璃底座上，減少九張小卡切割畫面的感覺。 */
+.rail{
+  height:58px;display:flex;align-items:center;gap:4px;padding:0 6px;border-radius:999px;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;transform:translateY(8px);
+  background:rgba(25,14,9,.76);border-color:rgba(255,184,118,.34);
+  -webkit-backdrop-filter:blur(28px) saturate(165%);backdrop-filter:blur(28px) saturate(165%);
+  box-shadow:inset 0 1px 0 rgba(255,229,203,.13),0 14px 36px -15px rgba(7,2,0,.9);
+  scroll-padding-inline:calc(50% - 54px);
+}
+.rail::-webkit-scrollbar{display:none}
+.rail.show{transform:translateY(0)}
+.rail a{
+  position:relative;flex:0 0 56px;height:44px;padding:0 2px;align-items:center;
+  border-radius:999px;color:rgba(255,235,217,.55);text-align:center;-webkit-tap-highlight-color:transparent;
+}
+.rail-date{font-size:13px;font-weight:500;letter-spacing:.01em}
+.rail-copy{display:none}
+.rail a.on{
+  flex-basis:108px;color:#291306;
+  background:linear-gradient(155deg,#ffe0b9 0%,#ffc17f 58%,#ffad67 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 7px 20px -7px rgba(255,155,78,.68);
+}
+.rail a.on .rail-date{font-size:14px;font-weight:700;line-height:1.15}
+.rail a.on .rail-copy{display:flex;justify-content:center;width:100%;gap:3px;margin-top:1px}
+.rail a.on .rail-copy b{font-size:10px;font-weight:600;letter-spacing:.02em;opacity:1}
+.rail a.on .rail-copy i{font-size:10px;opacity:.7}
+.rail a.on .rail-copy span{max-width:64px;font-size:10px;font-weight:600;color:#291306}
+
+/* 桌機（>600px）：懸浮在視窗底部置中，寬度貼齊九格（約 600px）。
    fixed 元素只設 left 會縮成半個視窗寬，所以 left/right 都設 0、寬度 fit-content、margin auto 置中。
-   fixed 不佔版面流，body 底部補留白，頁尾才不會被蓋住。
-   容器比 900px 的內容欄寬，九個籌碼才排得開。 */
+   fixed 不佔版面流，body 底部補留白，頁尾才不會被蓋住。 */
 @media (width > 600px){
   .rail{
     left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));z-index:59;
-    width:fit-content;max-width:min(1040px, calc(100% - 32px));margin:0 auto;
-    display:flex;gap:3px;padding:5px;border-radius:999px;
-    overflow-x:auto;scrollbar-width:none;transform:translateY(8px);
+    width:fit-content;max-width:calc(100% - 32px);margin:0 auto;
   }
-  .rail.show{transform:translateY(0)}
   body[data-page="day"]{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
-  .rail::-webkit-scrollbar{display:none}
-  .rail a{flex:0 0 auto;padding:5px 14px 6px;border-radius:999px}
 }
-/* ≥1040px 九格都顯示地名，14px 內距要約 1065px，超過 1040px 上限、最後一格被切；10px 才排得下 */
-@media (min-width:1040px){
-  .rail a{padding-inline:10px}
-}
-/* 中等寬度排不下地名，只留編號，當前那天才顯示地名 */
-@media (width > 600px) and (max-width:1039px){
-  .rail-copy span,.rail-copy i{display:none}
-  .rail a.on .rail-copy span,.rail a.on .rail-copy i{display:inline}
-}
-/* 手機（≤600px）：中央焦點式日期輪播。只讓當天承載完整資訊，
-   兩側日期直接落在玻璃底座上，減少九張小卡切割畫面的感覺。 */
+/* 手機（≤600px）：左右各留 12px 撐滿，當天置中輪播 */
 @media (max-width:600px){
-  /* 依設計稿：整條膠囊、單列；其他日期只顯示日期，當天膠囊內兩行「日期／DAY n · 地名」 */
-  .rail{
-    left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));height:58px;
-    display:flex;align-items:center;gap:4px;padding:0 6px;border-radius:999px;
-    overflow-x:auto;overflow-y:hidden;scrollbar-width:none;transform:translateY(8px);
-    background:rgba(25,14,9,.76);border-color:rgba(255,184,118,.34);
-    -webkit-backdrop-filter:blur(28px) saturate(165%);backdrop-filter:blur(28px) saturate(165%);
-    box-shadow:inset 0 1px 0 rgba(255,229,203,.13),0 14px 36px -15px rgba(7,2,0,.9);
-    scroll-padding-inline:calc(50% - 54px);
-  }
-  .rail::-webkit-scrollbar{display:none}
-  .rail.show{transform:translateY(0)}
-  .rail a{
-    position:relative;flex:0 0 56px;height:44px;padding:0 2px;align-items:center;
-    border-radius:999px;color:rgba(255,235,217,.55);text-align:center;-webkit-tap-highlight-color:transparent;
-  }
-  .rail-date{font-size:13px;font-weight:500;letter-spacing:.01em}
-  .rail-copy{display:none}
-  .rail a.on{
-    flex-basis:108px;color:#291306;
-    background:linear-gradient(155deg,#ffe0b9 0%,#ffc17f 58%,#ffad67 100%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 7px 20px -7px rgba(255,155,78,.68);
-  }
-  .rail a.on .rail-date{font-size:14px;font-weight:700;line-height:1.15}
-  .rail a.on .rail-copy{display:flex;justify-content:center;width:100%;gap:3px;margin-top:1px}
-  .rail a.on .rail-copy b{font-size:10px;font-weight:600;letter-spacing:.02em;opacity:1}
-  .rail a.on .rail-copy i{font-size:10px;opacity:.7}
-  .rail a.on .rail-copy span{max-width:64px;font-size:10px;font-weight:600;color:#291306}
+  .rail{left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom))}
 }
 
 /* ───────── hero ───────── */
@@ -906,6 +892,8 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .sh-main strong{display:block;font-size:16.5px;line-height:1.4;letter-spacing:-.015em}
 .sh-label{display:block;margin:10px 0 2px;font-size:12.5px;color:var(--ink3)}
 .sh-note{font-size:13.5px;line-height:1.65;color:var(--ink2)}
+.sh-note .daylink{display:inline-block;margin-top:2px;font-size:12.5px}
+.st-window{display:block;margin:0 0 5px;color:var(--amber);font-size:11px;font-weight:600;line-height:1.45}
 .sh-buy{display:flex;align-items:center;gap:8px;margin-top:14px;padding:12px 0 14px;border-top:1px solid var(--hair2);
   color:var(--ink2);text-decoration:none;font-size:13px;line-height:1.5}
 .sh-buy:hover .sh-where{color:var(--ink)}
@@ -913,12 +901,36 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .sh-blbl{flex:none;color:var(--ink3)}
 .sh-buy .sh-where{flex:1;min-width:0;margin-left:8px;color:var(--ink2)}
 .sh-chev{flex:none;width:8px;height:8px;margin-right:4px;border-right:1.8px solid var(--ink2);border-top:1.8px solid var(--ink2);transform:rotate(45deg)}
-.dr-rules td,.dr-rules th{padding-right:16px}
-.dr-tw{color:var(--ink2)}
-.dr-rules td.strong{white-space:nowrap}
+/* 交通規則（依設計稿）：一張卡片，桌機兩欄、同列對齊，列與列之間細線；
+   每項 標題＋德國／奧地利兩列＋琥珀色「台灣提醒」。手機一欄。 */
+.dr-rulecard{padding:6px 32px;margin-top:0}
+.dr-rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:44px}
+.dr-rule{padding:26px 0 24px;border-top:1px solid var(--hair)}
+.dr-rule:nth-child(-n+2){border-top:0}
+.dr-rule h3{margin:0 0 12px;font-size:20px;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.dr-rule dl{display:grid;grid-template-columns:max-content minmax(0,1fr);gap:8px 18px;margin:0;font-size:15px;line-height:1.65}
+.dr-rule dt{color:var(--ink3)}
+.dr-rule dd{margin:0;color:var(--ink2)}
+.dr-tip{margin:14px 0 0;font-size:15px;line-height:1.65;color:var(--ink2)}
+.dr-tip b{display:block;margin-bottom:2px;font-size:14px;font-weight:700;color:var(--gold)}
+@media (max-width:600px){
+  .dr-rulecard{padding:4px 20px}
+  .dr-rules{grid-template-columns:minmax(0,1fr)}
+  .dr-rule{padding:18px 0 16px}
+  .dr-rule:nth-child(2){border-top:1px solid var(--hair)}
+  .dr-rule h3{margin-bottom:8px;font-size:17px}
+  .dr-rule dl{gap:5px 14px;font-size:13.5px}
+  .dr-tip{margin-top:10px;font-size:13.5px}
+  .dr-tip b{font-size:13px}
+}
 .sh-stops .sh-where{color:var(--ink3);font-size:12px;width:30%}
 .sh-stops{padding:6px 24px 10px;margin-top:18px}
 .sh-stops .geo{margin-left:8px}
+.sh-import{margin-top:26px;padding:16px 20px;border-radius:16px}
+.sh-import h2{margin:0 0 6px;font-size:16px;font-weight:700;color:var(--amber)}
+.sh-import p{margin:0;font-size:13px;line-height:1.7;color:var(--ink2)}
+.sh-import .daylink{margin-left:4px;white-space:nowrap}
+.sh-home-note{margin:10px 0 0;font-size:12px;line-height:1.7;color:var(--ink3)}
 
 /* ───────── 租車資訊（設計稿：桌機兩欄、手機單欄，純文字卡） ───────── */
 .dr-grid{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr));
