@@ -300,7 +300,7 @@ const DAYS = [
   blocks:[{ rows:[
     ["06:30–07:50","住宿／租車","慕尼黑住宿 → SIXT 慕尼黑卡爾廣場店（Karlsplatz 3）","早餐、退房，步行 4 分到 SIXT，**07:00 取車**。櫃台確認：租約已登記奧地利跨境與第二駕駛（兩位駕駛都到場）、燃油政策、冬胎、Vignette；押金凍結 €500。地下停車場拍車四面、輪圈、玻璃、里程、油量。回住宿裝行李，**07:50 出發**",0,"sixt-stachus"],
     ["07:50–09:43","移動","慕尼黑住宿 → 新天鵝堡 P4 停車場","**07:50** 出發 → 車程 1 小時 53 分（塞車最多約 2 小時 20 分）→ **09:43** 到 Parkplatz P4。走 A96 → B17，**看到 Hohenschwangau 路標左轉 Colomanstraße** 直到 P4。B17 穿過 Schwangau 村的路段 **9/15–12/18 封閉**，別直進村子、別鑽村內小路。P4 滿依序改 P1、P2、P3，都在同一村內",0,"nsw-p4"],
-    ["09:43–11:00","接駁／景點","P4 → 瑪麗安橋 Marienbrücke","停車、洗手間、備票，車內不留外露行李。10:00 在 P4 搭接駁巴士上山，下車步行 5 分到橋。巴士停駛或久候改步行；橋關閉直接去城堡",0,"marienbruecke"],
+    ["09:43–11:00","接駁／景點","P4 → 瑪麗安橋 Marienbrücke","停車、洗手間、備票，車內不留外露行李。10:00 在 P4 搭接駁巴士上山，下車步行 5 分到橋。巴士停駛或久候改步行；橋關閉直接去城堡。怎麼上山、在哪看城堡：[新天鵝堡上山圖解](https://alexzhangyouwei.github.io/germany-austria-2026/neuschwanstein/)",0,"marienbruecke"],
     ["11:00–11:45","步行／集合","瑪麗安橋 → 新天鵝堡入口","陡下坡 15 分。**11:30 前必須抵達入口**，集合等候",0,"neuschwanstein"],
     ["11:45–12:20","城堡導覽","新天鵝堡 Neuschwanstein，Tour 445","**11:45 固定入場**，4 張成人票已購買",1,"neuschwanstein"],
     ["12:20–14:00","下山／午餐","霍恩施萬高 Hohenschwangau 山腳","步行下山約 30–40 分。午餐優先；阿爾卑斯湖 Alpsee 就在 P4 旁，不必移車，看一眼即走。13:45 回 P4 整理，**14:00 開車**",0,"hohenschwangau"],
@@ -364,7 +364,7 @@ const DAYS = [
   meta:["住宿 In the heart of the city of Salzburg","跨境日","依 Day 3 執行情況選擇版本"],
   blocks:[
     { tabs:[
-      { label:"A｜Nordkette 北鏈纜車", cond:"適用：Day 3 沒有搭到高山纜車，且 10/08 Nordkette 正常營運、山頂能見度良好。", rows:[
+      { label:"A｜Nordkette 北鏈纜車", cond:"適用：Day 3 沒有搭到高山纜車，且 10/08 Nordkette 正常營運、山頂能見度良好。怎麼搭、看什麼、票與停車：[北鏈纜車圖解](https://alexzhangyouwei.github.io/germany-austria-2026/nordkette/)", rows:[
         ["07:30–08:30","早餐／退房","Mittenwald-Ferien","退房期限 09:00；**08:30 正式出發**",0,"mit-stay"],
         ["08:30–09:30","移動／票券","米滕瓦爾德 → 因斯布魯克 Congress 纜車站","**08:30** 出發 → 車程 40 分 → **09:10** 到 Congress／Altstadtgarage 停車，步行到 Congress 纜車站。購買 Top of Innsbruck 成人來回票，**09:30 上山**；不購買 Innsbruck Card",0,"inn-congress"],
         ["09:30–13:40","纜車／午餐","飢餓堡 Hungerburg → 澤格魯貝 Seegrube → 哈菲勒卡峰 Hafelekar","三段系統連貫，依當日營運與安全範圍觀景。12:00 澤格魯貝餐廳午餐，以當日營業為準。**13:40 前回到市區**",0,"hafelekar"],
@@ -395,7 +395,7 @@ const DAYS = [
     ["11:00–12:00","景點／開卡","莫札特出生地 Mozarts Geburtshaus","**11:00 第一次掃描薩爾斯堡卡，效期至 10/10 10:59**",1,"mozart-haus"],
     ["12:00–13:55","古城／午餐","糧食胡同 Getreidegasse、大學廣場 Universitätsplatz、大學教堂，老城午餐","12:40 左右進餐廳",0,"getreidegasse"],
     ["13:55–14:40","景點","莫札特廣場、主教宮廣場 Residenzplatz、卡比第廣場","三個廣場相連，走到城堡纜車山下站 FestungsBahn",0,"residenzplatz"],
-    ["14:40–16:50","城堡／纜車","薩爾斯堡要塞 Hohensalzburg Fortress","纜車上下山與要塞參觀；纜車與門票含於薩爾斯堡卡",0,"hohensalzburg"],
+    ["14:40–16:50","城堡／纜車","薩爾斯堡要塞 Hohensalzburg Fortress","纜車上下山與要塞參觀；纜車與門票含於薩爾斯堡卡。怎麼搭、兩小時怎麼排：[城堡纜車圖解](https://alexzhangyouwei.github.io/germany-austria-2026/festungsbahn/)",0,"hohensalzburg"],
     ["16:50–18:30","景點／自由活動","主教座堂 Salzburger Dom（外觀）、聖彼得墓園，老城自由活動","主教座堂僅有持卡優惠，非免費入場。之後老城咖啡館、河岸、補逛糧食胡同",0,"salzburger-dom"],
     ["18:30–20:00","晚餐","老城或薩爾察赫河岸","晚餐後搭公車（使用住宿交通票）或步行返回住宿",0,"residenzplatz"]
   ]}],
