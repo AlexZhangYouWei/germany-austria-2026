@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>楚格峰纜車圖解</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap">
+<style>
+/* 單一夜色設計：黎明前的高山剖面，暖色高山霞光當強調色、冰藍標冰川。
+   本檔由 工作檔案/楚格峰圖解/build_zug.js 產生，請改 template.html 再重跑。 */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  color-scheme:dark;
+  --night:#0c121a; --panel:#121a25; --panel2:#172130;
+  --ink:#eef2f6; --ink2:#b7c3cf; --ink3:#7f8d9b;
+  --glow:#ff9a66; --glow2:#ffc48c; --gold:#f2c96b; --ice:#9fd3e4; --steel:#a3b3c4;
+  --hair:rgba(230,237,243,.12); --hair2:rgba(230,237,243,.07);
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Heiti TC","Microsoft JhengHei",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+html{background:var(--night);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--night);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.75;
+  padding-inline:max(16px,env(safe-area-inset-left),min(4vw,40px));
+  padding-block:calc(28px + env(safe-area-inset-top,0px)) calc(64px + env(safe-area-inset-bottom,0px))}
+img{max-width:100%}
+[hidden]{display:none!important}
+.wrap{max-width:1080px;margin:0 auto;display:grid;gap:64px}
+h1,h2,h3{font-family:var(--serif);text-wrap:balance;margin:0;letter-spacing:.01em}
+p{margin:0}
+a{color:var(--glow2);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--glow2);outline-offset:3px;border-radius:6px}
+.eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;color:var(--glow);text-transform:uppercase}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ── 開場 ── */
+.hero{display:grid;gap:14px;max-width:720px}
+.hero h1{font-size:clamp(34px,6vw,58px);font-weight:900;line-height:1.12}
+.hero h1 em{font-style:normal;color:var(--glow2)}
+.lede{font-size:16.5px;color:var(--ink2);max-width:62ch}
+.facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:6px;font-size:13px;color:var(--ink3)}
+.facts b{font-family:var(--mono);font-weight:600;color:var(--ink);font-size:15px;margin-right:6px}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.jump a{font-size:13px;color:var(--ink2);text-decoration:none;border:1px solid var(--hair);border-radius:999px;padding:4px 12px}
+.jump a:hover{border-color:var(--glow2);color:var(--ink)}
+
+/* ── 剖面圖＋步驟 ── */
+.scene{display:grid;gap:18px;margin-top:-28px}
+.frame{border-radius:20px;overflow:hidden;border:1px solid var(--hair);background:#0a1120}
+.frame-scroll{overflow-x:auto;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.frame svg{display:block;width:100%;min-width:640px;height:auto}
+.hint{display:none;font-size:12px;color:var(--ink3);padding:8px 14px 10px;border-top:1px solid var(--hair2)}
+@media (max-width:660px){.hint{display:block}}
+
+svg .lbl{font-family:var(--sans);font-size:17px;font-weight:500;fill:var(--ink)}
+svg .lbl.sub{font-size:14px;font-weight:400;fill:var(--ink2)}
+svg .lbl.dim{fill:var(--ink3);font-size:14px}
+svg .alt{font-family:var(--mono);font-size:13px;fill:var(--ink3)}
+svg .guide{stroke:rgba(230,237,243,.08);stroke-dasharray:2 6}
+svg .rope{fill:none;stroke:var(--steel);stroke-width:1.6;opacity:.75;transition:stroke .4s,opacity .4s,stroke-width .4s}
+svg .tunnel{fill:none;stroke:var(--gold);stroke-width:2;stroke-dasharray:6 7;opacity:.45}
+svg .stn{fill:#dfe6ee}
+svg .cab rect{fill:#dfe6ee}
+svg .cab line{stroke:#dfe6ee;stroke-width:1.4}
+svg .train{fill:var(--gold)}
+svg .spot{opacity:.35;transition:opacity .4s}
+/* 目前步驟：對應的纜繩、站點變亮 */
+svg[data-step="1"] .s1, svg[data-step="2"] .s2, svg[data-step="3"] .s3,
+svg[data-step="4"] .s4, svg[data-step="5"] .s5, svg[data-step="6"] .s6{opacity:1}
+svg[data-step="2"] #pSeil, svg[data-step="6"] #pSeil,
+svg[data-step="4"] #pGlet, svg[data-step="6"] #pGlet{stroke:var(--glow2);stroke-width:2.6;opacity:1}
+svg .you circle.core{fill:var(--glow2)}
+svg .you circle.ring{fill:none;stroke:var(--glow2);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:ping 1.8s ease-out infinite}
+@keyframes ping{from{transform:scale(.6);opacity:.9}to{transform:scale(2.4);opacity:0}}
+svg .alpen{animation:alpen 9s ease-in-out infinite alternate}
+@keyframes alpen{from{opacity:.35}to{opacity:.9}}
+svg .star{fill:#fff;animation:tw 3.6s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:.8}}
+svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
+@keyframes drift{from{transform:translateX(-120px)}to{transform:translateX(160px)}}
+
+.steps{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.step{appearance:none;cursor:pointer;text-align:left;font:inherit;color:var(--ink2);
+  background:var(--panel);border:1px solid var(--hair2);border-radius:14px;padding:10px 12px 11px;
+  display:grid;gap:2px;transition:background .25s,border-color .25s,color .25s}
+.step:hover{border-color:var(--hair);color:var(--ink)}
+.step .n{font-family:var(--mono);font-size:11.5px;color:var(--ink3);letter-spacing:.08em}
+.step b{font-weight:700;font-size:14.5px;line-height:1.35;color:inherit}
+.step small{font-family:var(--mono);font-size:12px;color:var(--ink3)}
+.step[aria-selected="true"]{background:linear-gradient(160deg,#2a2230,#3a2a2a);border-color:rgba(255,178,122,.55);color:var(--ink)}
+.step[aria-selected="true"] .n,.step[aria-selected="true"] small{color:var(--glow2)}
+@media (max-width:760px){.steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.playbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.playbtn{appearance:none;cursor:pointer;font:inherit;font-size:13px;color:var(--ink);background:transparent;
+  border:1px solid var(--hair);border-radius:999px;padding:6px 14px}
+.playbtn:hover{border-color:var(--glow2)}
+.progress{flex:1;min-width:120px;max-width:260px;height:3px;border-radius:3px;background:var(--hair2);overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--glow2)}
+
+.panel{background:var(--panel);border:1px solid var(--hair2);border-radius:18px;padding:22px 24px 24px;
+  display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px 32px}
+.panel h3{font-size:22px;font-weight:700}
+.panel .where{font-size:13px;color:var(--ink3);margin-top:4px}
+.panel ul{margin:12px 0 0;padding-left:1.1em;display:grid;gap:6px;color:var(--ink2)}
+.panel li::marker{color:var(--glow)}
+.panel aside{display:grid;gap:14px;align-content:start}
+.panel dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13.5px}
+.panel dt{color:var(--ink3)}
+.panel dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+@media (max-width:760px){.panel{grid-template-columns:minmax(0,1fr);padding:18px 18px 20px}}
+
+/* ── 照片 ── */
+.ph{margin:0;display:grid;gap:8px;align-content:start}
+.zoom{appearance:none;display:block;padding:0;border:0;background:#0a1017;border-radius:14px;overflow:hidden;cursor:zoom-in}
+.ph img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;transition:transform .5s}
+.zoom:hover img{transform:scale(1.03)}
+.ph.pano img{aspect-ratio:3/1}
+.ph.wide img{aspect-ratio:2/1}
+.ph.tall img{aspect-ratio:3/4}
+.ph figcaption{display:grid;gap:3px}
+.ph .cap{font-size:13.5px;color:var(--ink2);line-height:1.65}
+.ph .cr{font-size:11.5px;color:var(--ink3);line-height:1.5}
+.ph .cr a{color:var(--ink3)}
+.panel .ph img{aspect-ratio:16/10}
+
+/* ── 共用段落 ── */
+.sec{display:grid;gap:24px}
+.sec-h{display:grid;gap:6px}
+.sec-h h2{font-size:clamp(24px,3.4vw,32px);font-weight:700}
+.sec-h p{color:var(--ink2);max-width:62ch}
+.verdict{font-family:var(--serif);font-size:clamp(18px,2.4vw,22px);font-weight:700;color:var(--glow2);max-width:40ch}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+@media (max-width:760px){.cols{grid-template-columns:minmax(0,1fr)}}
+.tbl-wrap{overflow-x:auto}
+.ctab{width:100%;border-collapse:collapse;font-size:14px}
+.ctab th,.ctab td{text-align:left;vertical-align:top;padding:11px 14px 11px 0;border-bottom:1px solid var(--hair2)}
+.ctab thead th{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.06em}
+.ctab tbody th{font-weight:500;color:var(--ink3);white-space:nowrap;font-size:13px}
+.ctab td{color:var(--ink2)}
+.ctab td b{color:var(--ink)}
+.ctab .hl{color:var(--ink)}
+
+/* 山頂 vs 平台：兩欄並排比照片 */
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.vs-col{display:grid;gap:18px;align-content:start}
+.vs-col h3{font-size:22px;font-weight:700;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.vs-col h3 .num{font-size:15px;font-weight:500;color:var(--glow)}
+.vs-col.plat h3 .num{color:var(--ice)}
+.vs-col > p{color:var(--ink2);font-size:14.5px}
+@media (max-width:760px){.vs{grid-template-columns:minmax(0,1fr)}}
+
+/* 上山過程：依壯觀程度排，左文右照 */
+.rides{display:grid}
+.ride{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr);gap:18px 32px;padding:26px 0;border-top:1px solid var(--hair2)}
+.ride:first-child{border-top:0;padding-top:4px}
+.ride .rk{font-family:var(--mono);font-size:13px;color:var(--glow)}
+.ride h3{font-size:21px;font-weight:700;margin:2px 0 6px}
+.ride p{color:var(--ink2);font-size:14.5px}
+.ride .shots{display:grid;gap:14px}
+.ride .shots.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ride .shots .span2{grid-column:1/-1}
+@media (max-width:760px){.ride{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:480px){.ride .shots.two{grid-template-columns:minmax(0,1fr)}}
+.tip{border-left:3px solid var(--glow);padding:4px 0 4px 16px;color:var(--ink);font-size:14.5px}
+
+/* 當天時間：時間在左，層別用色條 */
+.plan{list-style:none;margin:0;padding:0;display:grid}
+.plan li{display:grid;grid-template-columns:62px 12px minmax(0,1fr);gap:0 14px;align-items:start}
+.plan time{font-family:var(--mono);font-size:14px;color:var(--ink);padding-top:10px}
+.plan .bar{align-self:stretch;width:4px;justify-self:center;background:var(--hair)}
+.plan li[data-lv="top"] .bar{background:var(--glow)}
+.plan li[data-lv="plat"] .bar{background:var(--ice)}
+.plan li[data-lv="ride"] .bar{background:repeating-linear-gradient(var(--steel) 0 4px,transparent 4px 8px)}
+.plan li[data-lv="train"] .bar{background:repeating-linear-gradient(var(--gold) 0 4px,transparent 4px 8px)}
+.plan .t{padding:8px 0 12px;border-bottom:1px solid var(--hair2)}
+.plan .t b{font-weight:700}
+.plan .t span{display:block;font-size:13px;color:var(--ink3)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--ink3)}
+.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.plan-h{font-family:var(--sans);font-size:16px;font-weight:700;margin-bottom:8px}
+.plan-h small{font-weight:400;color:var(--ink3);margin-left:8px;font-size:13px}
+
+/* 散步：時間長度用刻度條表示（60 分為滿格） */
+.walks{display:grid;gap:12px}
+.walk{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:14px 0 16px;border-bottom:1px solid var(--hair2)}
+.walk h3{font-family:var(--sans);font-size:16px;font-weight:700}
+.walk .dur{font-family:var(--mono);font-size:14px;color:var(--ink);text-align:right}
+.walk p{grid-column:1/-1;font-size:13.5px;color:var(--ink2)}
+.walk .meter{grid-column:1/-1;height:6px;border-radius:3px;background:var(--hair2);overflow:hidden}
+.walk .meter i{display:block;height:100%;border-radius:3px}
+.walk[data-lv="top"] .meter i{background:var(--glow)}
+.walk[data-lv="plat"] .meter i{background:var(--ice)}
+.walk[data-lv="lake"] .meter i{background:#7fb3a3}
+.walk.warn h3{color:var(--glow2)}
+
+/* 票 */
+.tix{width:100%;border-collapse:collapse;font-size:14px}
+.tix th,.tix td{text-align:left;padding:10px 12px 10px 0;border-bottom:1px solid var(--hair2)}
+.tix th{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.08em}
+.tix td.num{text-align:right;padding-right:0;font-size:15px}
+.tix tr.sum td{color:var(--glow2);font-weight:700;border-bottom:0}
+.buy{display:grid;gap:14px}
+.buy div{background:var(--panel);border:1px solid var(--hair2);border-radius:16px;padding:16px 18px}
+.buy h3{font-family:var(--sans);font-size:15.5px;font-weight:700;margin-bottom:4px}
+.buy p{font-size:13.5px;color:var(--ink2)}
+
+.pack{display:flex;flex-wrap:wrap;gap:8px}
+.pack span{border:1px solid var(--hair);border-radius:999px;padding:5px 13px;font-size:13.5px;color:var(--ink2)}
+
+.src{font-size:13px;color:var(--ink3);display:grid;gap:12px}
+.src h2{font-family:var(--sans);font-size:14px;font-weight:700;color:var(--ink2)}
+.src ul{margin:0;padding-left:1.1em;display:grid;gap:4px}
+.src a{color:var(--ink2)}
+
+/* 放大看照片 */
+.lb{width:min(1200px,calc(100vw - 24px));max-height:calc(100vh - 24px);padding:0;border:1px solid var(--hair);border-radius:16px;
+  background:#0a1017;color:var(--ink);overflow:auto}
+.lb::backdrop{background:rgba(4,7,11,.85)}
+.lb img{display:block;width:100%;height:auto;max-height:78vh;object-fit:contain;background:#05080c}
+.lb-bar{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;padding:12px 16px 14px}
+.lb-cap{display:grid;gap:3px;font-size:13.5px;color:var(--ink2)}
+.lb-cap .cr{font-size:11.5px;color:var(--ink3)}
+.lb-cap .cr a{color:var(--ink3)}
+.lb-x{appearance:none;flex:none;cursor:pointer;font:inherit;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--hair);border-radius:999px;padding:5px 14px}
+
+@media (prefers-reduced-motion:reduce){
+  svg .alpen,svg .star,svg .cloud,svg .you circle.ring{animation:none}
+  .step,.rope,.ph img{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <p class="eyebrow">Day 3 · 10/7（三）· A 方案 · 4 位成人</p>
+  <h1>楚格峰<em>纜車</em>圖解</h1>
+  <p class="lede">從艾布湖（Eibsee）搭大纜車 10 分鐘到山頂 2,962 m，再搭冰川纜車 4 分鐘下到平台 2,600 m。山頂和平台兩層都能走；下山可以原路搭大纜車，或從平台搭齒軌火車。車停在艾布湖。</p>
+  <div class="facts">
+    <span><b>78 €</b>來回票／成人</span>
+    <span><b>08:30–16:45</b>大纜車營運</span>
+    <span><b>16:15</b>最後上山</span>
+    <span><b>-5～5°C</b>峰頂白天預報</span>
+  </div>
+  <nav class="jump" aria-label="頁內導覽">
+    <a href="https://alexzhangyouwei.github.io/germany-austria-2026/day3.html">← 行程網站 Day 3</a>
+    <a href="#views">山頂還是平台漂亮</a><a href="#rides">哪段上山最壯觀</a><a href="#modes">纜車和火車差在哪</a>
+    <a href="#plan">當天怎麼排</a><a href="#walk">散步</a><a href="#tix">買票</a>
+  </nav>
+</header>
+
+<section class="scene" aria-label="上山路線">
+  <div class="frame">
+    <div class="frame-scroll" id="frame">
+      <svg id="scene" viewBox="0 0 1000 540" data-step="1" role="img" aria-labelledby="scT">
+        <title id="scT">楚格峰剖面示意：左邊是艾布湖與大纜車山下站，大纜車沿一根鋼柱直上山頂 2,962 m；山頂右側由冰川纜車下到平台 2,600 m；齒軌火車從艾布湖穿過山體隧道到平台。</title>
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#0a1120"/><stop offset=".5" stop-color="#172641"/>
+            <stop offset=".82" stop-color="#352f4c"/><stop offset="1" stop-color="#553c47"/>
+          </linearGradient>
+          <linearGradient id="rockG" x1="0" y1="0" x2=".9" y2="1">
+            <stop offset="0" stop-color="#3b475a"/><stop offset=".55" stop-color="#253041"/><stop offset="1" stop-color="#151c26"/>
+          </linearGradient>
+          <linearGradient id="farG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#26334a"/><stop offset="1" stop-color="#1b2536"/>
+          </linearGradient>
+          <linearGradient id="glowG" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffb27c" stop-opacity=".8"/><stop offset="1" stop-color="#ff8a5c" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="lakeG" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#1f4a5c"/><stop offset=".5" stop-color="#3a7488"/><stop offset="1" stop-color="#1f4a5c"/>
+          </linearGradient>
+          <clipPath id="mtnClip"><path id="mtnShape" d="M0,540 L0,510 L250,510 L300,500 L360,470 L420,420 L470,380 L520,340 L575,300 L630,245 L680,188 L720,132 L748,98 L760,86 L772,93 L790,110 L815,134 L840,154 L862,166 L900,171 L935,169 L965,154 L1000,132 L1000,540 Z"/></clipPath>
+        </defs>
+
+        <rect width="1000" height="540" fill="url(#sky)"/>
+        <g aria-hidden="true">
+          <circle class="star" cx="90" cy="46" r="1.3"/><circle class="star" cx="170" cy="92" r="1" style="animation-delay:-1s"/>
+          <circle class="star" cx="260" cy="38" r="1.2" style="animation-delay:-2.2s"/><circle class="star" cx="345" cy="120" r="1" style="animation-delay:-.6s"/>
+          <circle class="star" cx="430" cy="58" r="1.4" style="animation-delay:-1.7s"/><circle class="star" cx="520" cy="30" r="1" style="animation-delay:-2.8s"/>
+          <circle class="star" cx="610" cy="84" r="1.2" style="animation-delay:-.3s"/><circle class="star" cx="905" cy="44" r="1.1" style="animation-delay:-1.3s"/>
+          <circle class="star" cx="960" cy="96" r="1" style="animation-delay:-2.4s"/><circle class="star" cx="60" cy="150" r="1" style="animation-delay:-3s"/>
+        </g>
+        <path d="M0,420 L80,360 L150,392 L230,318 L300,360 L380,300 L450,346 L520,290 L600,336 L660,300 L1000,330 L1000,540 L0,540 Z" fill="url(#farG)" opacity=".55"/>
+        <path d="M0,470 L60,440 L140,452 L210,410 L290,448 L340,430 L1000,470 L1000,540 L0,540 Z" fill="#1a2433" opacity=".8"/>
+        <ellipse class="cloud" cx="300" cy="200" rx="160" ry="16"/>
+        <ellipse class="cloud" cx="820" cy="250" rx="140" ry="12" style="animation-duration:80s;animation-delay:-30s"/>
+
+        <use href="#mtnShape" fill="url(#rockG)"/>
+        <g clip-path="url(#mtnClip)">
+          <rect class="alpen" x="600" y="70" width="400" height="190" fill="url(#glowG)"/>
+          <path d="M704,152 L720,132 L748,98 L760,86 L772,93 L790,110 L806,126 L792,122 L780,114 L768,120 L756,110 L744,124 L730,130 L716,148 Z" fill="#e6edf3" opacity=".85"/>
+          <path d="M840,154 L862,166 L900,171 L935,169 L965,154 L1000,132 L1000,146 L968,166 L936,180 L898,183 L858,176 Z" fill="#dfe8ef" opacity=".55"/>
+          <path d="M925,171 C940,165 962,160 984,150 L996,152 C980,166 956,178 930,180 Z" fill="#9fd3e4" opacity=".85"/>
+        </g>
+
+        <ellipse cx="128" cy="512" rx="112" ry="7" fill="url(#lakeG)"/>
+        <g fill="#16241f" aria-hidden="true">
+          <path d="M18,510 l8,-22 l8,22z"/><path d="M34,510 l6,-16 l6,16z"/><path d="M232,510 l7,-20 l7,20z"/>
+          <path d="M246,510 l5,-14 l5,14z"/><path d="M206,510 l6,-17 l6,17z"/>
+        </g>
+
+        <g aria-hidden="true">
+          <line class="guide" x1="24" y1="500" x2="1000" y2="500"/><text class="alt" x="28" y="494">1,000 m</text>
+          <line class="guide" x1="24" y1="395" x2="1000" y2="395"/><text class="alt" x="28" y="389">1,500</text>
+          <line class="guide" x1="24" y1="290" x2="1000" y2="290"/><text class="alt" x="28" y="284">2,000</text>
+          <line class="guide" x1="24" y1="185" x2="1000" y2="185"/><text class="alt" x="28" y="179">2,500</text>
+          <line class="guide" x1="24" y1="80" x2="1000" y2="80"/><text class="alt" x="28" y="74">3,000</text>
+        </g>
+
+        <path id="pRack" class="tunnel" d="M318,503 C520,470 760,330 902,172"/>
+        <path id="pSeil" class="rope" d="M268,500 L380,426.6 Q570,275 752,92"/>
+        <path id="pGlet" class="rope" d="M790,97 L903,161"/>
+        <path d="M374,453 L380,426.6 L386,453" fill="none" stroke="#c9d3de" stroke-width="2"/>
+        <line x1="376" y1="444" x2="384" y2="444" stroke="#c9d3de" stroke-width="1.4"/>
+
+        <g class="spot s1 s6">
+          <rect class="stn" x="256" y="498" width="22" height="12" rx="2"/>
+          <text class="lbl" x="246" y="470" text-anchor="end">大纜車山下站</text>
+          <text class="lbl sub" x="246" y="490" text-anchor="end">艾布湖</text>
+        </g>
+        <g class="spot s6">
+          <rect class="stn" x="312" y="500" width="14" height="8" rx="2" style="fill:var(--gold)"/>
+          <text class="lbl dim" x="330" y="530">齒軌火車艾布湖站</text>
+        </g>
+        <g class="spot s2">
+          <text class="lbl" x="506" y="276" text-anchor="end">大纜車 10 分</text>
+          <text class="lbl sub" x="364" y="416" text-anchor="end">單柱 127 m</text>
+        </g>
+        <g class="spot s3">
+          <rect class="stn" x="738" y="82" width="56" height="16" rx="3"/>
+          <path d="M769,82 L769,64 M763,70 L775,70" stroke="var(--gold)" stroke-width="2.2"/>
+          <text class="lbl" x="740" y="44" text-anchor="middle">山頂 <tspan class="num">2,962 m</tspan></text>
+        </g>
+        <g class="spot s4">
+          <text class="lbl" x="832" y="112">冰川纜車 4 分</text>
+        </g>
+        <g class="spot s5">
+          <rect class="stn" x="896" y="158" width="18" height="10" rx="2"/>
+          <path d="M870,166 L870,157 L875,152 L880,157 L880,166 Z" fill="#dfe6ee"/>
+          <text class="lbl" x="930" y="142" text-anchor="middle">平台 <tspan class="num">2,600 m</tspan></text>
+          <text class="lbl dim" x="962" y="202" text-anchor="middle">北雪原冰川</text>
+        </g>
+        <text class="lbl dim" x="560" y="452" text-anchor="middle">齒軌火車隧道 4.5 km（示意）</text>
+
+        <g class="cab" id="cabS1"><line x1="0" y1="0" x2="0" y2="8"/><rect x="-8" y="8" width="16" height="11" rx="2.5"/></g>
+        <g class="cab" id="cabS2"><line x1="0" y1="0" x2="0" y2="8"/><rect x="-8" y="8" width="16" height="11" rx="2.5"/></g>
+        <g class="cab" id="cabG1"><line x1="0" y1="0" x2="0" y2="6"/><rect x="-6" y="6" width="12" height="9" rx="2"/></g>
+        <g class="cab" id="cabG2"><line x1="0" y1="0" x2="0" y2="6"/><rect x="-6" y="6" width="12" height="9" rx="2"/></g>
+        <rect class="train" id="train" x="-9" y="-3.5" width="18" height="7" rx="3.5" opacity=".8"/>
+        <g class="you" id="you"><circle class="ring" r="7"/><circle class="core" r="5.5"/></g>
+      </svg>
+    </div>
+    <p class="hint">手機可左右滑動剖面圖。</p>
+  </div>
+
+  <div class="playbar">
+    <button type="button" class="playbtn" id="play" aria-pressed="true">暫停自動播放</button>
+    <div class="progress" aria-hidden="true"><i id="prog"></i></div>
+  </div>
+
+  <div class="steps" role="tablist" aria-label="路線步驟">
+    <button type="button" class="step" role="tab" id="t1" aria-controls="p1" aria-selected="true"><span class="n">1</span><b>山下站</b><small>艾布湖</small></button>
+    <button type="button" class="step" role="tab" id="t2" aria-controls="p2" aria-selected="false"><span class="n">2</span><b>大纜車</b><small>10 分</small></button>
+    <button type="button" class="step" role="tab" id="t3" aria-controls="p3" aria-selected="false"><span class="n">3</span><b>山頂</b><small>2,962 m</small></button>
+    <button type="button" class="step" role="tab" id="t4" aria-controls="p4" aria-selected="false"><span class="n">4</span><b>冰川纜車</b><small>4 分</small></button>
+    <button type="button" class="step" role="tab" id="t5" aria-controls="p5" aria-selected="false"><span class="n">5</span><b>平台</b><small>2,600 m</small></button>
+    <button type="button" class="step" role="tab" id="t6" aria-controls="p6" aria-selected="false"><span class="n">6</span><b>回程</b><small>纜車或火車</small></button>
+  </div>
+
+  <article class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
+    <div>
+      <h3>艾布湖・大纜車山下站</h3>
+      <p class="where">Seilbahn Zugspitze 山下站　Am Eibsee 6, 82491 Grainau</p>
+      <ul>
+        <li>從米滕瓦爾德開車到山下站停車場。停車要收費，官網停車頁有即時空位。</li>
+        <li>官方建議好天氣 10 點前到；我們 08:30 到，剛好搭首班。</li>
+        <li>07:30 看過山頂即時影像再決定上不上山，決定了就立刻用手機線上買票。</li>
+        <li>齒軌火車艾布湖站在隔壁（Seefeldweg 1），直線約 140 m。</li>
+      </ul>
+    </div>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/valley-station.jpg" aria-label="放大照片：艾布湖的大纜車山下站與停車場"><img src="img/valley-station.jpg" alt="艾布湖的大纜車山下站與停車場" width="1400" height="788" loading="lazy" decoding="async"></button><figcaption><span class="cap">大纜車山下站：開車到這裡停車、買票、上車。</span><span class="cr">2018/8/4 攝 · © FkMohr · <a href="https://creativecommons.org/licenses/by-sa/3.0/de/deed.en" target="_blank" rel="noopener">CC BY-SA 3.0 de</a> · <a href="https://commons.wikimedia.org/wiki/File:Eibsee-Talstation.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure><dl><dt>營運</dt><dd>08:30–16:45</dd><dt>最後上山</dt><dd>16:15</dd><dt>建議停留</dt><dd>至少 2–3 小時</dd></dl></aside>
+  </article>
+  <article class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
+    <div>
+      <h3>大纜車 Seilbahn Zugspitze</h3>
+      <p class="where">艾布湖 → 山頂，單程約 10 分鐘</p>
+      <ul>
+        <li>至少每 30 分鐘一班，人多時加開。</li>
+        <li>整條只有一根 127 m 高的鋼柱，最後一段 3.2 km 沒有支撐；山下到山頂高低差約 2,000 m。這是官方列的三項世界紀錄。</li>
+        <li>上山時站在背對山頂、朝山下的那一側，才看得到艾布湖越變越小。</li>
+      </ul>
+    </div>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/ride-cabin.jpg" aria-label="放大照片：大纜車車廂在森林上方爬升"><img src="img/ride-cabin.jpg" alt="大纜車車廂在森林上方爬升" width="1400" height="1050" loading="lazy" decoding="async"></button><figcaption><span class="cap">大纜車爬升中，底下看得到齒軌火車在 Riffelriss 進隧道的入口。</span><span class="cr">2018/9/10 攝 · © Whgler · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Seilbahn_Zugspitze_Gondel.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure><dl><dt>單程</dt><dd>10 分</dd><dt>班距</dt><dd>≤ 30 分</dd><dt>鋼柱</dt><dd>1 根 · 127 m</dd><dt>無支撐段</dt><dd>3.2 km</dd></dl></aside>
+  </article>
+  <article class="panel" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
+    <div>
+      <h3>山頂 2,962 m</h3>
+      <p class="where">德國最高點，觀景台看得到四個國家、約 400 座山峰</p>
+      <ul>
+        <li>觀景台：室內有一扇門通到奧地利那側的觀景台，人通常比較少（非官方資料）。</li>
+        <li>Panorama 2962 餐廳，熱食 11:00–15:00。</li>
+        <li>自拍拍照點在觀景台，照片可以在一樓山頂商店印出來。</li>
+        <li>山頂站裡有齒軌火車 90 週年展；免費纜車導覽 09:45、15:00，約 45 分鐘，在冰川纜車入口前（E0 層）集合。</li>
+        <li>金色十字架要爬短梯、抓鋼索，得腳步穩、不怕高，秋天可能結冰，建議在觀景台拍就好（非官方資料）。</li>
+        <li>Münchner Haus 山屋今年 9/30 是最後住宿日，不排進行程。</li>
+      </ul>
+    </div>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/summit-terrace.jpg" aria-label="放大照片：山頂觀景台與遊客"><img src="img/summit-terrace.jpg" alt="山頂觀景台與遊客" width="1400" height="671" loading="lazy" decoding="async"></button><figcaption><span class="cap">山頂觀景台：好天氣時人不少，四面八方都是群山。</span><span class="cr">2019/8/1 攝 · © Maksym Kozlenko · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:2019-08-01_Zugspitze_4.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure><dl><dt>Panorama 2962</dt><dd>09:00–16:00</dd><dt>纜車導覽</dt><dd>09:45 · 15:00</dd><dt>十字架</dt><dd>不建議爬</dd></dl></aside>
+  </article>
+  <article class="panel" id="p4" role="tabpanel" aria-labelledby="t4" hidden>
+    <div>
+      <h3>冰川纜車 Gletscherbahn</h3>
+      <p class="where">山頂 ↔ 平台，約 4 分鐘，長約 1,000 m</p>
+      <ul>
+        <li>每 10 分鐘一班。</li>
+        <li>來回票當天可以無限次搭，在山頂和平台之間多走幾趟都可以。</li>
+        <li>從上往下看整片平台和冰川，是拍平台全景的好位置。</li>
+      </ul>
+    </div>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/ride-glacier.jpg" aria-label="放大照片：冰川纜車在平台上的車站"><img src="img/ride-glacier.jpg" alt="冰川纜車在平台上的車站" width="1400" height="523" loading="lazy" decoding="async"></button><figcaption><span class="cap">冰川纜車：山頂和平台之間 4 分鐘，從上面看整片平台。</span><span class="cr">2014/7/17 攝 · © Sarahhoa · <a href="https://creativecommons.org/licenses/by-sa/2.0" target="_blank" rel="noopener">CC BY-SA 2.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Gletscherbahn_Zugspitze_(14767963313).jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure><dl><dt>營運</dt><dd>08:45–16:25</dd><dt>單程</dt><dd>4 分</dd><dt>班距</dt><dd>10 分</dd></dl></aside>
+  </article>
+  <article class="panel" id="p5" role="tabpanel" aria-labelledby="t5" hidden>
+    <div>
+      <h3>平台 Zugspitzplatt 2,600 m</h3>
+      <p class="where">冰川邊的高原，散步主要在這一層</p>
+      <ul>
+        <li>Sonnalpin 自助餐廳，熱食 11:00–15:00；Gletscher 2600 是全素餐廳。</li>
+        <li>小教堂 Mariä Heimsuchung：德國海拔最高的教堂，從平台走一小段就到。</li>
+        <li>冰川步道：從 Sonnalpin 走 15 分鐘到起點，一圈約 45 分鐘，沿路 6 塊說明牌。</li>
+        <li>免費冰川導覽 11:00、13:30，約 60 分鐘，在 Sonnalpin 正門的紀念品亭集合，要穿好走的鞋。</li>
+        <li>齒軌火車的平台站也在這一層，每小時 :30 下山。</li>
+      </ul>
+    </div>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/plateau-chapel.jpg" aria-label="放大照片：平台上的小教堂 Mariä Heimsuchung 與步道上的遊客"><img src="img/plateau-chapel.jpg" alt="平台上的小教堂 Mariä Heimsuchung 與步道上的遊客" width="1400" height="787" loading="lazy" decoding="async"></button><figcaption><span class="cap">小教堂 Mariä Heimsuchung：從平台走一小段就到，四周是碎石坡和雪。</span><span class="cr">2016/9/2 攝 · © Simon Scharfenberger · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Kapelle_am_Zugspitzplatt_(2016).jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure><dl><dt>Sonnalpin</dt><dd>08:30–16:00</dd><dt>Gletscher 2600</dt><dd>09:00–16:00</dd><dt>冰川導覽</dt><dd>11:00 · 13:30</dd><dt>冰川步道</dt><dd>15 + 45 分</dd></dl></aside>
+  </article>
+  <article class="panel" id="p6" role="tabpanel" aria-labelledby="t6" hidden>
+    <div>
+      <h3>回程：大纜車或齒軌火車</h3>
+      <p class="where">一張票含一次下山，兩種擇一</p>
+      <ul>
+        <li><b>大纜車</b>：從平台搭冰川纜車回山頂再下山，至少每 30 分一班，時間彈性，下山再看一次艾布湖。</li>
+        <li><b>齒軌火車</b>：直接從平台下山，每小時 :30 開、約 45 分到艾布湖站。11:30 那班 12:15 到，剛好接午餐；錯過就等下一小時。</li>
+        <li>火車艾布湖站和纜車山下站相距約 140 m，下車走回停車場。</li>
+      </ul>
+    </div>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/ride-eibsee.jpg" aria-label="放大照片：從纜車往下看艾布湖"><img src="img/ride-eibsee.jpg" alt="從纜車往下看艾布湖" width="1400" height="934" loading="lazy" decoding="async"></button><figcaption><span class="cap">從纜車往下看艾布湖。這張拍於 2012 年舊纜車時期，現在的纜車往下看景色類似。</span><span class="cr">2012/5/4 攝 · © Dguendel · <a href="https://creativecommons.org/licenses/by/4.0" target="_blank" rel="noopener">CC BY 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Zugspitze,_Blick_von_der_Seilbahn_auf_dem_Eibsee_.JPG" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure><dl><dt>大纜車</dt><dd>至 16:45</dd><dt>冰川纜車</dt><dd>至 16:25</dd><dt>火車（平台發）</dt><dd>每小時 :30</dd></dl></aside>
+  </article>
+</section>
+
+<section class="sec" id="views" aria-labelledby="h-views">
+  <div class="sec-h">
+    <h2 id="h-views">山頂還是平台比較漂亮</h2>
+    <p class="verdict">要看遠、看全景，山頂比較漂亮；要在冰川邊散步，就去平台。</p>
+    <p>兩層靠冰川纜車連接，當天可以不限次數來回，不必二選一。照片都可以點開放大；拍攝日期不同，季節和天氣請一起看。</p>
+  </div>
+  <div class="tbl-wrap">
+    <table class="ctab">
+      <thead><tr><th></th><th>山頂 2,962 m</th><th>平台 2,600 m（冰川區）</th></tr></thead>
+      <tbody>
+        <tr><th>看什麼</th><td><b>360 度全景</b>，官方說看得到德、奧、義、瑞四國，約 400 座山峰</td><td>冰川、岩石盆地和周圍山壁，近距離走在高山裡</td></tr>
+        <tr><th>感覺</th><td>站在最高點往外看，視野最遠</td><td>在山裡面，四周被山脊圍住，視野比山頂窄</td></tr>
+        <tr><th>適合</th><td>拍全景、四國群山、金色十字架</td><td>散步、看冰川、去小教堂</td></tr>
+        <tr><th>10 月初</th><td>雲一上來就什麼都看不到，所以早上先上來</td><td>冰川是一年裡最小的時候，可能只剩小片灰色冰面；剛下過雪會是一整片白</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="vs">
+    <div class="vs-col">
+      <h3>山頂 <span class="num">2,962 m</span></h3>
+      <p>全景在這一層。好天氣時人最多，首班纜車上來最從容。</p>
+      <figure class="ph pano"><button type="button" class="zoom" data-full="img/summit-panorama.jpg" aria-label="放大照片：從山頂觀景台看西南方群山全景（冬季）"><img src="img/summit-panorama.jpg" alt="從山頂觀景台看西南方群山全景（冬季）" width="1400" height="430" loading="lazy" decoding="async"></button><figcaption><span class="cap">從觀景台往西南看的群山全景。這張是 2 月冬景，10 月初的雪會少一些。</span><span class="cr">2020/2/7 攝 · © Bautsch · <a href="http://creativecommons.org/publicdomain/zero/1.0/deed.en" target="_blank" rel="noopener">CC0</a> · <a href="https://commons.wikimedia.org/wiki/File:Bergpanorama.Zugspitze.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure>
+      <figure class="ph wide"><button type="button" class="zoom" data-full="img/summit-terrace.jpg" aria-label="放大照片：山頂觀景台與遊客"><img src="img/summit-terrace.jpg" alt="山頂觀景台與遊客" width="1400" height="671" loading="lazy" decoding="async"></button><figcaption><span class="cap">山頂觀景台：好天氣時人不少，四面八方都是群山。</span><span class="cr">2019/8/1 攝 · © Maksym Kozlenko · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:2019-08-01_Zugspitze_4.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure>
+      <figure class="ph"><button type="button" class="zoom" data-full="img/summit-station.jpg" aria-label="放大照片：楚格峰山頂站的玻璃觀景建築"><img src="img/summit-station.jpg" alt="楚格峰山頂站的玻璃觀景建築" width="1400" height="1050" loading="lazy" decoding="async"></button><figcaption><span class="cap">山頂站：大纜車停在這棟玻璃建築，觀景台就在旁邊。</span><span class="cr">2019/8/1 攝 · © Maksym Kozlenko · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:2019-08-01_Zugspitze_cable_car_top_station.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure>
+      <figure class="ph"><button type="button" class="zoom" data-full="img/summit-cross.jpg" aria-label="放大照片：金色山頂十字架前排隊的遊客"><img src="img/summit-cross.jpg" alt="金色山頂十字架前排隊的遊客" width="1400" height="897" loading="lazy" decoding="async"></button><figcaption><span class="cap">金色十字架：好天氣時要排隊爬岩石、抓鋼索過去，在觀景台拍就好。</span><span class="cr">2023/9/7 攝 · © Otto Domes · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Zugspitze_Gipfelkreuz_(2023).jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure>
+    </div>
+    <div class="vs-col plat">
+      <h3>平台 <span class="num">2,600 m</span></h3>
+      <p>冰川和散步在這一層。官方說北雪原冰川快速縮小，預估約 2030 年就不再算是冰川。</p>
+      <figure class="ph"><button type="button" class="zoom" data-full="img/plateau-above.jpg" aria-label="放大照片：從山頂往下看平台、冰川纜車站與 Schneefernerkopf"><img src="img/plateau-above.jpg" alt="從山頂往下看平台、冰川纜車站與 Schneefernerkopf" width="1400" height="759" loading="lazy" decoding="async"></button><figcaption><span class="cap">從山頂往下看平台：左邊是冰川纜車站，中間是殘存的冰川和雪面。</span><span class="cr">2014/8/2 攝 · © Tiia Monto · <a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener">CC BY-SA 3.0</a> · <a href="https://commons.wikimedia.org/wiki/File:View_from_Zugspitze_5.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure>
+      <figure class="ph"><button type="button" class="zoom" data-full="img/plateau-glacier.jpg" aria-label="放大照片：九月底日出時的北雪原冰川與初雪"><img src="img/plateau-glacier.jpg" alt="九月底日出時的北雪原冰川與初雪" width="1400" height="1120" loading="lazy" decoding="async"></button><figcaption><span class="cap">北雪原冰川，9 月底已有初雪，和我們去的季節最接近。這是從研究站拍的日出，遊客 08:30 後才上得去，看不到這種光。</span><span class="cr">2023/9/28 攝 · © Stephan Sprinz · <a href="https://creativecommons.org/licenses/by/4.0" target="_blank" rel="noopener">CC BY 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Blick_vom_Schneefernerhaus_auf_den_n%C3%B6rdlichen_Schneeferner_09.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure>
+      <figure class="ph"><button type="button" class="zoom" data-full="img/plateau-chapel.jpg" aria-label="放大照片：平台上的小教堂 Mariä Heimsuchung 與步道上的遊客"><img src="img/plateau-chapel.jpg" alt="平台上的小教堂 Mariä Heimsuchung 與步道上的遊客" width="1400" height="787" loading="lazy" decoding="async"></button><figcaption><span class="cap">小教堂 Mariä Heimsuchung：從平台走一小段就到，四周是碎石坡和雪。</span><span class="cr">2016/9/2 攝 · © Simon Scharfenberger · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Kapelle_am_Zugspitzplatt_(2016).jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure>
+      <figure class="ph"><button type="button" class="zoom" data-full="img/plateau-fog.jpg" aria-label="放大照片：起霧時的小教堂，背景一片白"><img src="img/plateau-fog.jpg" alt="起霧時的小教堂，背景一片白" width="1400" height="997" loading="lazy" decoding="async"></button><figcaption><span class="cap">天氣差時的樣子：10 月初起霧，冰川和群山都看不到。當天早上先看即時影像，就是要避開這種情況。</span><span class="cr">2013/10/6 攝 · © Gerd-Uwe Dastig · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Kapelle_am_Schneefernergletscher_auf_der_Zugspitze.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="rides" aria-labelledby="h-rides">
+  <div class="sec-h">
+    <h2 id="h-rides">上山過程哪一段最壯觀</h2>
+    <p class="verdict">大纜車最壯觀，冰川纜車其次，齒軌火車大多在隧道裡。</p>
+  </div>
+  <div class="rides">
+    <div class="ride">
+      <div>
+        <p class="rk">第 1 名 · 10 分鐘</p>
+        <h3>大纜車 Seilbahn Zugspitze</h3>
+        <p>從艾布湖直直拉上北面山壁，高低差約 2,000 m。過了唯一那根 127 m 鋼柱之後，有 3.2 km 完全懸空，往下看得到艾布湖越變越小。</p>
+        <p class="tip" style="margin-top:14px">上山時站在背對山頂、朝山下的那一側，才看得到艾布湖。</p>
+      </div>
+      <div class="shots two">
+        <figure class="ph wide span2"><button type="button" class="zoom" data-full="img/ride-cabin.jpg" aria-label="放大照片：大纜車車廂在森林上方爬升"><img src="img/ride-cabin.jpg" alt="大纜車車廂在森林上方爬升" width="1400" height="1050" loading="lazy" decoding="async"></button><figcaption><span class="cap">大纜車爬升中，底下看得到齒軌火車在 Riffelriss 進隧道的入口。</span><span class="cr">2018/9/10 攝 · © Whgler · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Seilbahn_Zugspitze_Gondel.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure>
+        <figure class="ph tall"><button type="button" class="zoom" data-full="img/ride-tower.jpg" aria-label="放大照片：高 127 m 的大纜車鋼柱，背景是齒軌火車艾布湖站"><img src="img/ride-tower.jpg" alt="高 127 m 的大纜車鋼柱，背景是齒軌火車艾布湖站" width="1050" height="1400" loading="lazy" decoding="async"></button><figcaption><span class="cap">整條只有這一根 127 m 的鋼柱；背景是齒軌火車艾布湖站，兩站離得很近。</span><span class="cr">2018/9/10 攝 · © Whgler · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Seilbahnst%C3%BCtze_Eibseebahn.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure>
+        <figure class="ph tall"><button type="button" class="zoom" data-full="img/ride-eibsee.jpg" aria-label="放大照片：從纜車往下看艾布湖"><img src="img/ride-eibsee.jpg" alt="從纜車往下看艾布湖" width="1400" height="934" loading="lazy" decoding="async"></button><figcaption><span class="cap">從纜車往下看艾布湖。這張拍於 2012 年舊纜車時期，現在的纜車往下看景色類似。</span><span class="cr">2012/5/4 攝 · © Dguendel · <a href="https://creativecommons.org/licenses/by/4.0" target="_blank" rel="noopener">CC BY 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Zugspitze,_Blick_von_der_Seilbahn_auf_dem_Eibsee_.JPG" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure>
+      </div>
+    </div>
+    <div class="ride">
+      <div>
+        <p class="rk">第 2 名 · 4 分鐘</p>
+        <h3>冰川纜車 Gletscherbahn</h3>
+        <p>山頂和平台之間，從上往下看整片平台和冰川。時間短，但很適合拍平台全景。</p>
+      </div>
+      <div class="shots"><figure class="ph wide"><button type="button" class="zoom" data-full="img/ride-glacier.jpg" aria-label="放大照片：冰川纜車在平台上的車站"><img src="img/ride-glacier.jpg" alt="冰川纜車在平台上的車站" width="1400" height="523" loading="lazy" decoding="async"></button><figcaption><span class="cap">冰川纜車：山頂和平台之間 4 分鐘，從上面看整片平台。</span><span class="cr">2014/7/17 攝 · © Sarahhoa · <a href="https://creativecommons.org/licenses/by-sa/2.0" target="_blank" rel="noopener">CC BY-SA 2.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Gletscherbahn_Zugspitze_(14767963313).jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure></div>
+    </div>
+    <div class="ride">
+      <div>
+        <p class="rk">第 3 名 · 平台到艾布湖約 45 分鐘</p>
+        <h3>齒軌火車 Zahnradbahn</h3>
+        <p>進隧道前有山谷和艾布湖一帶的景色，過了 Riffelriss 就進入 4.5 km 的隧道，之後幾乎看不到外面。搭它是體驗將近百年的老鐵路，不是看風景。</p>
+      </div>
+      <div class="shots"><figure class="ph wide"><button type="button" class="zoom" data-full="img/ride-cogwheel.jpg" aria-label="放大照片：齒軌火車離開艾布湖站往山上開"><img src="img/ride-cogwheel.jpg" alt="齒軌火車離開艾布湖站往山上開" width="1400" height="1050" loading="lazy" decoding="async"></button><figcaption><span class="cap">齒軌火車離開艾布湖站往上開。過了 Riffelriss 就進隧道，之後幾乎看不到外面。</span><span class="cr">2018/9/10 攝 · © Whgler · <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Bayerische_Zugspitzbahn_Bahnhof_Eibsee.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></span></figcaption></figure></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="modes" aria-labelledby="h-modes">
+  <div class="sec-h">
+    <h2 id="h-modes">大纜車和齒軌火車差在哪</h2>
+    <p>兩種都從艾布湖出發，但到的層不一樣。一張楚格峰來回票含<b>一次上山、一次下山</b>（各自選纜車或火車），加上<b>冰川纜車當天不限次數</b>；不是每種都能無限搭。</p>
+  </div>
+  <div class="tbl-wrap">
+    <table class="ctab">
+      <thead><tr><th></th><th>大纜車</th><th>齒軌火車</th></tr></thead>
+      <tbody>
+        <tr><th>艾布湖的站</th><td>大纜車山下站（Am Eibsee 6）</td><td>齒軌火車艾布湖站（Seefeldweg 1），離纜車站約 140 m；火車本身從加米施發車</td></tr>
+        <tr><th>到哪一層</th><td><b>山頂 2,962 m</b></td><td><b>平台 2,600 m</b>，上山頂要再轉冰川纜車 4 分</td></tr>
+        <tr><th>時間</th><td>約 10 分鐘</td><td>艾布湖到平台約 43 分；從加米施全程約 75 分</td></tr>
+        <tr><th>班次</th><td>至少每 30 分鐘一班，營運到 16:45</td><td>每小時一班：艾布湖 :45 上山（08:45–14:45），平台 :30 下山（09:30–16:30）</td></tr>
+        <tr><th>景色</th><td>全程看得到艾布湖和山壁</td><td>隧道前有山谷景色，進隧道後一片黑</td></tr>
+        <tr><th>無障礙</th><td>可推輪椅、嬰兒車</td><td>空間小、上下車有高低差，不適合</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note" style="font-size:12.5px;color:var(--ink3)">火車班次取自官網目前連結的時刻表（2024 年版 PDF），加米施最後一班 14:15 與 2026 營運頁一致；出發前一晚再確認。</p>
+
+  <div class="cols">
+    <div>
+      <p class="plan-h">天氣好：纜車上山、火車下山<small>建議</small></p>
+      <ol class="plan">
+        <li data-lv="ride"><time>08:30</time><span class="bar"></span><div class="t"><b>大纜車上山</b><span>08:40 到山頂，趁人少先看全景</span></div></li>
+        <li data-lv="top"><time>08:40</time><span class="bar"></span><div class="t"><b>山頂觀景台，德奧兩側</b><span>到 10:10</span></div></li>
+        <li data-lv="ride"><time>10:15</time><span class="bar"></span><div class="t"><b>冰川纜車下平台</b><span>4 分鐘</span></div></li>
+        <li data-lv="plat"><time>10:20</time><span class="bar"></span><div class="t"><b>小教堂、冰川步道</b><span>到 11:25</span></div></li>
+        <li data-lv="train"><time>11:30</time><span class="bar"></span><div class="t"><b>平台搭齒軌火車下山</b><span>12:15 到艾布湖站，走回停車場吃午餐</span></div></li>
+      </ol>
+    </div>
+    <div class="buy">
+      <div><h3>為什麼先搭纜車</h3><p>先搭火車的話，艾布湖首班 08:45 開、09:28 才到平台，再轉冰川纜車，到山頂要 09:40 以後，而且最好的一小時都在隧道裡。山頂 → 平台 → 火車下山一路往下，不走回頭路。</p></div>
+      <div><h3>要注意</h3><p>火車一小時才一班，錯過 11:30 就等 12:30（13:15 才到山下）。想參加 11:00 冰川導覽也會趕不上 11:30。只想輕鬆，就上下都搭纜車。</p></div>
+      <div><h3>只有這種情況先搭火車</h3><p>08:30 纜車站排很長，就走到隔壁火車站搭 08:45 上平台，再從平台往山頂走。</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="plan" aria-labelledby="h-plan">
+  <div class="sec-h">
+    <h2 id="h-plan">當天怎麼排（上下都搭纜車）</h2>
+    <p>V5 行程給山上 08:30–12:15。這是上下都搭纜車的排法，依現場人潮調整；冰川導覽和冰川步道擇一。想試火車就用上一段的排法。</p>
+  </div>
+  <div class="legend"><span><i style="background:var(--glow)"></i>山頂</span><span><i style="background:var(--ice)"></i>平台</span><span><i style="background:repeating-linear-gradient(90deg,var(--steel) 0 4px,transparent 4px 8px)"></i>搭纜車</span><span><i style="background:repeating-linear-gradient(90deg,var(--gold) 0 4px,transparent 4px 8px)"></i>搭火車</span></div>
+  <ol class="plan">
+    <li data-lv="ride"><time>07:30</time><span class="bar"></span><div class="t"><b>看山頂即時影像，決定 A／B／C</b><span>上山就立刻線上買 4 張來回票</span></div></li>
+    <li data-lv="ride"><time>08:30</time><span class="bar"></span><div class="t"><b>大纜車上山</b><span>約 10 分鐘</span></div></li>
+    <li data-lv="top"><time>08:45</time><span class="bar"></span><div class="t"><b>山頂觀景台，德奧兩側拍照</b><span>約 1 小時；想聽纜車導覽就排 09:45 那場</span></div></li>
+    <li data-lv="ride"><time>10:30</time><span class="bar"></span><div class="t"><b>冰川纜車下平台</b><span>約 4 分鐘</span></div></li>
+    <li data-lv="plat"><time>10:40</time><span class="bar"></span><div class="t"><b>小教堂</b><span>從平台走一小段</span></div></li>
+    <li data-lv="plat"><time>10:50</time><span class="bar"></span><div class="t"><b>冰川步道一圈，或 11:00 免費冰川導覽</b><span>步道去程 15 分＋一圈 45 分；導覽約 60 分</span></div></li>
+    <li data-lv="ride"><time>11:55</time><span class="bar"></span><div class="t"><b>冰川纜車回山頂 → 大纜車下山</b><span>12:15 前回到艾布湖午餐，13:15 起湖畔散步</span></div></li>
+  </ol>
+</section>
+
+<section class="sec" id="walk" aria-labelledby="h-walk">
+  <div class="sec-h">
+    <h2 id="h-walk">哪裡可以散步</h2>
+    <p>色條長度是所需時間，滿格是 60 分鐘。</p>
+  </div>
+  <div class="walks">
+    <div class="walk" data-lv="plat"><h3>冰川步道 Glacier Trail</h3><span class="dur">15 + 45 分</span>
+      <p>平台。從 Sonnalpin 走 15 分鐘到起點，一圈約 45 分鐘，兩個方向都能走，沿路 6 塊說明牌。官方建議穿好走的鞋。</p>
+      <span class="meter"><i style="width:100%"></i></span></div>
+    <div class="walk" data-lv="plat"><h3>免費冰川導覽</h3><span class="dur">60 分</span>
+      <p>平台。每天 11:00、13:30，在 Sonnalpin 正門的紀念品亭集合，要穿好走的鞋；天候不好改成室內講解。</p>
+      <span class="meter"><i style="width:100%"></i></span></div>
+    <div class="walk" data-lv="top"><h3>免費纜車導覽</h3><span class="dur">45 分</span>
+      <p>山頂。每天 09:45、15:00，在冰川纜車入口前（E0 層）集合，講大纜車的技術和三項世界紀錄。</p>
+      <span class="meter"><i style="width:75%"></i></span></div>
+    <div class="walk" data-lv="plat"><h3>小教堂 Mariä Heimsuchung</h3><span class="dur">短程</span>
+      <p>平台。德國海拔最高的教堂，從平台走一小段就到。</p>
+      <span class="meter"><i style="width:14%"></i></span></div>
+    <div class="walk" data-lv="lake"><h3>艾布湖短環線</h3><span class="dur">行程 120 分</span>
+      <p>山下。下山吃完午餐後 13:15–15:15，選短環線慢走，不一定要走完一整圈。</p>
+      <span class="meter"><i style="width:100%"></i></span></div>
+    <div class="walk warn" data-lv="top"><h3>金色十字架：不建議</h3><span class="dur">—</span>
+      <p>山頂。要爬短梯、抓鋼索，常排隊，秋天可能結冰，在觀景台拍就好（非官方資料）。</p></div>
+  </div>
+</section>
+
+<section class="sec" id="tix" aria-labelledby="h-tix">
+  <div class="sec-h">
+    <h2 id="h-tix">票怎麼買</h2>
+    <p>楚格峰來回票（Ticket Zugspitze）含一次上山、一次下山，上下各自選大纜車或齒軌火車；冰川纜車當天不限次數。</p>
+  </div>
+  <div class="cols">
+    <div class="tbl-wrap">
+      <table class="tix">
+        <tr><th>票種（夏季票價，至 11/22）</th><th style="text-align:right">價格</th></tr>
+        <tr><td>成人</td><td class="num">78.00 €</td></tr>
+        <tr><td>青年 16–18 歲</td><td class="num">62.50 €</td></tr>
+        <tr><td>兒童 6–15 歲</td><td class="num">39.00 €</td></tr>
+        <tr class="sum"><td>我們 4 位成人</td><td class="num">312.00 €</td></tr>
+      </table>
+    </div>
+    <div class="buy">
+      <div><h3>線上買（建議）</h3><p>官方網路商店。票只限指定日期、不含指定時段；現場停售時，線上票仍保證能搭。</p></div>
+      <div><h3>現場買</h3><p>大纜車山下站售票處。通常買得到，但好天氣、週末、假日當天名額可能賣完。</p></div>
+    </div>
+  </div>
+  <p class="tip">天氣不好不退也不改期，只有生病附醫師證明可以申請退款。所以當天看過山頂即時影像再買。</p>
+</section>
+
+<section class="sec" aria-labelledby="h-pack">
+  <div class="sec-h">
+    <h2 id="h-pack">要帶什麼</h2>
+    <p>09/29 的網站預報：10/7 峰頂白天約 -5～5°C。當時距出發還有 8 天，僅供參考。10 月平台上常有雪或結冰。</p>
+  </div>
+  <div class="pack"><span>保暖外套</span><span>手套、帽子</span><span>鞋底防滑的鞋</span><span>太陽眼鏡</span><span>手機裡的線上票</span></div>
+</section>
+
+<footer class="src">
+  <p>這是我們的旅行筆記，不是官方頁面。內容依官方網站整理，2026-09-29 查詢；出發前一晚請再確認營運與天候。剖面圖是示意，距離與坡度不照比例，只有海拔刻度照實際高度畫。</p>
+  <h2>資料來源</h2>
+  <ul>
+    <li><a href="https://zugspitze.de/en/Service-information/Opening-hours-timetables" target="_blank" rel="noopener">Zugspitze 官方：營運時間</a>、<a href="https://zugspitze.de/Downloads/Fahrpl%C3%A4ne/Fahrplan-ZRB.pdf" target="_blank" rel="noopener">齒軌火車時刻表 PDF</a></li>
+    <li><a href="https://zugspitze.de/en/Service-information/Tickets-rates/Zugspitze" target="_blank" rel="noopener">楚格峰票價</a>、<a href="https://zugspitze.de/en/Service-information/Tickets-rates/FAQ-tickets" target="_blank" rel="noopener">票券 FAQ</a>、<a href="https://zugspitze.de/en/Shop" target="_blank" rel="noopener">網路商店</a></li>
+    <li><a href="https://zugspitze.de/en/Our-mountain-worlds/Highlights/Zugspitze-Round-Trip" target="_blank" rel="noopener">Round Trip</a>、<a href="https://zugspitze.de/en/Our-mountain-worlds/Highlights/Glacier/Glacier-trail" target="_blank" rel="noopener">冰川步道</a>、<a href="https://zugspitze.de/glacier" target="_blank" rel="noopener">冰川</a>、<a href="https://zugspitze.de/en/Our-mountain-worlds/Highlights/Guided-tours-Zugspitze" target="_blank" rel="noopener">免費導覽</a></li>
+    <li><a href="https://zugspitze.de/en/Our-mountain-worlds/Restaurants/Sonnalpin" target="_blank" rel="noopener">Sonnalpin</a>、<a href="https://zugspitze.de/en/Our-mountain-worlds/Restaurants/Panorama-2962" target="_blank" rel="noopener">Panorama 2962</a>、<a href="https://zugspitze.de/en/Our-mountain-worlds/Restaurants/Gletscher-2600" target="_blank" rel="noopener">Gletscher 2600</a>、<a href="https://zugspitze.de/parking" target="_blank" rel="noopener">交通與停車</a>、<a href="https://zugspitze.de/en/Service-information/Webcams" target="_blank" rel="noopener">即時影像</a></li>
+    <li><a href="https://www.alpenverein-muenchen-oberland.de/huetten/alpenvereinshuetten/muenchner-haus" target="_blank" rel="noopener">德國阿爾卑斯協會：Münchner Haus</a>；兩站距離依 <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener">OpenStreetMap</a> 座標估算</li>
+    <li>非官方：<a href="https://www.auf-den-berg.de/wandern/bayern/zugspitzplatt-und-zugspitzgipfel/" target="_blank" rel="noopener">auf-den-berg.de</a>、<a href="https://berginstinct.de/zugspitze-gipfel-gipfelkreuz/" target="_blank" rel="noopener">BERGINSTINCT</a>（奧地利側觀景台、十字架路況）</li>
+  </ul>
+  <h2>照片出處（Wikimedia Commons，依各自授權使用，已縮圖）</h2>
+  <ul>
+      <li>楚格峰山頂站的玻璃觀景建築：© Maksym Kozlenko，<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a>，<a href="https://commons.wikimedia.org/wiki/File:2019-08-01_Zugspitze_cable_car_top_station.jpg" target="_blank" rel="noopener">2019-08-01 Zugspitze cable car top station.jpg</a></li>
+      <li>山頂觀景台與遊客：© Maksym Kozlenko，<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a>，<a href="https://commons.wikimedia.org/wiki/File:2019-08-01_Zugspitze_4.jpg" target="_blank" rel="noopener">2019-08-01 Zugspitze 4.jpg</a></li>
+      <li>金色山頂十字架前排隊的遊客：© Otto Domes，<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a>，<a href="https://commons.wikimedia.org/wiki/File:Zugspitze_Gipfelkreuz_(2023).jpg" target="_blank" rel="noopener">Zugspitze Gipfelkreuz (2023).jpg</a></li>
+      <li>從山頂觀景台看西南方群山全景（冬季）：© Bautsch，<a href="http://creativecommons.org/publicdomain/zero/1.0/deed.en" target="_blank" rel="noopener">CC0</a>，<a href="https://commons.wikimedia.org/wiki/File:Bergpanorama.Zugspitze.jpg" target="_blank" rel="noopener">Bergpanorama.Zugspitze.jpg</a></li>
+      <li>從山頂往下看平台、冰川纜車站與 Schneefernerkopf：© Tiia Monto，<a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener">CC BY-SA 3.0</a>，<a href="https://commons.wikimedia.org/wiki/File:View_from_Zugspitze_5.jpg" target="_blank" rel="noopener">View from Zugspitze 5.jpg</a></li>
+      <li>九月底日出時的北雪原冰川與初雪：© Stephan Sprinz，<a href="https://creativecommons.org/licenses/by/4.0" target="_blank" rel="noopener">CC BY 4.0</a>，<a href="https://commons.wikimedia.org/wiki/File:Blick_vom_Schneefernerhaus_auf_den_n%C3%B6rdlichen_Schneeferner_09.jpg" target="_blank" rel="noopener">Blick vom Schneefernerhaus auf den nördlichen Schneeferner 09.jpg</a></li>
+      <li>平台上的小教堂 Mariä Heimsuchung 與步道上的遊客：© Simon Scharfenberger，<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a>，<a href="https://commons.wikimedia.org/wiki/File:Kapelle_am_Zugspitzplatt_(2016).jpg" target="_blank" rel="noopener">Kapelle am Zugspitzplatt (2016).jpg</a></li>
+      <li>起霧時的小教堂，背景一片白：© Gerd-Uwe Dastig，<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a>，<a href="https://commons.wikimedia.org/wiki/File:Kapelle_am_Schneefernergletscher_auf_der_Zugspitze.jpg" target="_blank" rel="noopener">Kapelle am Schneefernergletscher auf der Zugspitze.jpg</a></li>
+      <li>艾布湖的大纜車山下站與停車場：© FkMohr，<a href="https://creativecommons.org/licenses/by-sa/3.0/de/deed.en" target="_blank" rel="noopener">CC BY-SA 3.0 de</a>，<a href="https://commons.wikimedia.org/wiki/File:Eibsee-Talstation.jpg" target="_blank" rel="noopener">Eibsee-Talstation.jpg</a></li>
+      <li>高 127 m 的大纜車鋼柱，背景是齒軌火車艾布湖站：© Whgler，<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a>，<a href="https://commons.wikimedia.org/wiki/File:Seilbahnst%C3%BCtze_Eibseebahn.jpg" target="_blank" rel="noopener">Seilbahnstütze Eibseebahn.jpg</a></li>
+      <li>大纜車車廂在森林上方爬升：© Whgler，<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a>，<a href="https://commons.wikimedia.org/wiki/File:Seilbahn_Zugspitze_Gondel.jpg" target="_blank" rel="noopener">Seilbahn Zugspitze Gondel.jpg</a></li>
+      <li>從纜車往下看艾布湖：© Dguendel，<a href="https://creativecommons.org/licenses/by/4.0" target="_blank" rel="noopener">CC BY 4.0</a>，<a href="https://commons.wikimedia.org/wiki/File:Zugspitze,_Blick_von_der_Seilbahn_auf_dem_Eibsee_.JPG" target="_blank" rel="noopener">Zugspitze, Blick von der Seilbahn auf dem Eibsee .JPG</a></li>
+      <li>冰川纜車在平台上的車站：© Sarahhoa，<a href="https://creativecommons.org/licenses/by-sa/2.0" target="_blank" rel="noopener">CC BY-SA 2.0</a>，<a href="https://commons.wikimedia.org/wiki/File:Gletscherbahn_Zugspitze_(14767963313).jpg" target="_blank" rel="noopener">Gletscherbahn Zugspitze (14767963313).jpg</a></li>
+      <li>齒軌火車離開艾布湖站往山上開：© Whgler，<a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener">CC BY-SA 4.0</a>，<a href="https://commons.wikimedia.org/wiki/File:Bayerische_Zugspitzbahn_Bahnhof_Eibsee.jpg" target="_blank" rel="noopener">Bayerische Zugspitzbahn Bahnhof Eibsee.jpg</a></li>
+  </ul>
+</footer>
+
+</div>
+
+<dialog class="lb" id="lb" aria-label="放大照片">
+  <img id="lbImg" alt="">
+  <div class="lb-bar"><div class="lb-cap" id="lbCap"></div><button type="button" class="lb-x" id="lbX">關閉</button></div>
+</dialog>
+
+<script>
+(() => {
+  const svg = document.getElementById("scene");
+  const frame = document.getElementById("frame");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const P = { seil:svg.querySelector("#pSeil"), glet:svg.querySelector("#pGlet"), rack:svg.querySelector("#pRack") };
+  const LEN = {}; for (const k in P) LEN[k] = P[k].getTotalLength();
+  const at = (k, f) => P[k].getPointAtLength(LEN[k] * Math.min(1, Math.max(0, f)));
+  const put = (el, p) => el.setAttribute("transform", `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
+  const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+  /* 背景：兩座纜車各兩個車廂對開（到站停一下再折返），齒軌火車在隧道裡慢慢上行 */
+  const cabs = [
+    { el:svg.querySelector("#cabS1"), k:"seil", T:18, ph:0 },
+    { el:svg.querySelector("#cabS2"), k:"seil", T:18, ph:.5 },
+    { el:svg.querySelector("#cabG1"), k:"glet", T:9,  ph:0 },
+    { el:svg.querySelector("#cabG2"), k:"glet", T:9,  ph:.5 },
+  ];
+  const train = svg.querySelector("#train");
+  const shuttle = u => { const tri = 1 - Math.abs(1 - 2 * (u % 1)); return ease(Math.min(1, Math.max(0, (tri - .08) / .84))); };
+  function ambient(now){
+    const s = now / 1000;
+    for (const c of cabs) put(c.el, at(c.k, shuttle(s / c.T + c.ph)));
+    put(train, at("rack", (s / 26) % 1));
+    if (!reduce) requestAnimationFrame(ambient);
+  }
+  if (reduce){ cabs.forEach((c, i) => put(c.el, at(c.k, i % 2 ? .7 : .3))); put(train, at("rack", .55)); }
+  else requestAnimationFrame(ambient);
+
+  /* 你的位置：停在站點，或沿纜繩移動 */
+  const you = svg.querySelector("#you");
+  const STEPS = [
+    { stay:["seil", 0] },
+    { move:[["seil", 0, 1]] },
+    { stay:["seil", 1] },
+    { move:[["glet", 0, 1]] },
+    { stay:["glet", 1] },
+    { move:[["glet", 1, 0], ["seil", 1, 0]] },
+  ];
+  let tok = 0;
+  function follow(p){
+    if (frame.scrollWidth <= frame.clientWidth + 2) return;
+    const scale = svg.getBoundingClientRect().width / 1000;
+    frame.scrollTo({ left:Math.max(0, p.x * scale - frame.clientWidth / 2), behavior:reduce ? "auto" : "smooth" });
+  }
+  function travel(segs, dur){
+    const my = ++tok;
+    let i = 0, t0 = performance.now();
+    const per = dur / segs.length;
+    function fr(now){
+      if (my !== tok) return;
+      const [k, a, b] = segs[i];
+      const t = Math.min(1, (now - t0) / per);
+      put(you, at(k, a + (b - a) * ease(t)));
+      if (t < 1) return requestAnimationFrame(fr);
+      if (++i < segs.length){ t0 = now; follow(at(segs[i][0], segs[i][1])); requestAnimationFrame(fr); }
+    }
+    requestAnimationFrame(fr);
+  }
+
+  const tabs = [...document.querySelectorAll(".step")];
+  const panels = tabs.map(t => document.getElementById(t.getAttribute("aria-controls")));
+  let cur = 0;
+  function show(n){
+    cur = n;
+    svg.dataset.step = String(n + 1);
+    tabs.forEach((t, i) => t.setAttribute("aria-selected", String(i === n)));
+    panels.forEach((p, i) => { p.hidden = i !== n; });
+    const s = STEPS[n];
+    if (s.stay || reduce){
+      tok++;
+      const last = s.move && s.move[s.move.length - 1];
+      const [k, f] = s.stay || [last[0], last[2]];
+      const p = at(k, f); put(you, p); follow(p);
+    } else {
+      const [k0, a0] = s.move[0];
+      put(you, at(k0, a0)); follow(at(k0, a0));
+      travel(s.move, s.move.length * 2600);
+    }
+  }
+
+  /* 自動播放：每步停 6.5 秒；點步驟、看照片就暫停 */
+  const btn = document.getElementById("play"), prog = document.getElementById("prog");
+  const HOLD = 6500;
+  let playing = !reduce, since = performance.now();
+  function setPlay(on){
+    playing = on; since = performance.now();
+    btn.setAttribute("aria-pressed", String(on));
+    btn.textContent = on ? "暫停自動播放" : "自動播放路線";
+    if (!on) prog.style.width = "0";
+  }
+  function tick(now){
+    if (playing && !document.hidden){
+      const f = (now - since) / HOLD;
+      prog.style.width = Math.min(100, f * 100) + "%";
+      if (f >= 1){ since = now; show((cur + 1) % STEPS.length); }
+    } else since = now - (parseFloat(prog.style.width) || 0) / 100 * HOLD;
+    requestAnimationFrame(tick);
+  }
+  tabs.forEach((t, i) => t.addEventListener("click", () => { setPlay(false); show(i); }));
+  document.querySelector(".steps").addEventListener("keydown", e => {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    const n = (cur + (e.key === "ArrowRight" ? 1 : STEPS.length - 1)) % STEPS.length;
+    setPlay(false); show(n); tabs[n].focus();
+  });
+  btn.addEventListener("click", () => setPlay(!playing));
+  setPlay(playing);
+  show(0);
+  requestAnimationFrame(tick);
+
+  /* 放大看照片：用同一個 dialog，圖說與出處跟著帶過去 */
+  const lb = document.getElementById("lb"), lbImg = document.getElementById("lbImg"), lbCap = document.getElementById("lbCap");
+  document.querySelectorAll(".zoom").forEach(b => b.addEventListener("click", () => {
+    const img = b.querySelector("img"), fc = b.parentElement.querySelector("figcaption");
+    lbImg.src = b.dataset.full; lbImg.alt = img.alt;
+    lbCap.innerHTML = fc ? fc.innerHTML : "";
+    setPlay(false);
+    if (lb.showModal) lb.showModal(); else window.open(b.dataset.full, "_blank");
+  }));
+  document.getElementById("lbX").addEventListener("click", () => lb.close());
+  lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });
+})();
+</script>
+</body>
+</html>

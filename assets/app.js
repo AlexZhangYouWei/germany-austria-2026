@@ -377,7 +377,7 @@ function dayArticle(d){
       const panels = b.tabs.map((p,i) => {
         const rl = routeLink(d.n, (p.label.match(/^([ABC])/) || [])[1]);
         return `<div class="panel" data-g="${g}" data-i="${i}" ${i===0?"":"hidden"}>
-           ${p.cond ? `<p class="cond">${esc(p.cond)}</p>` : ""}
+           ${p.cond ? `<p class="cond">${md(p.cond)}</p>` : ""}
            ${rl ? `<p class="routeline">${rl}</p>` : ""}
            ${timeline(p.rows, noDrive)}
          </div>`; }).join("");
