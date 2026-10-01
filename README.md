@@ -8,5 +8,9 @@
 
 票券頁只列文字資訊。票面 QR、訂單編號與發票個資一律不進本 repo。
 
-純靜態，無框架、無外部資源。資料集中於 `assets/data.js`，
-版面於 `assets/style.css`，渲染於 `assets/app.js`。
+純靜態，無框架。此儲存庫保存網站成品，資料由本地旅行專案的五份主資料建置成 `assets/data.js`，勿直接手改；版面於 `assets/style.css`，渲染於 `assets/app.js`。
+
+2026/10/01 更新：以五份主資料重建，16 個內容區塊及 2 個地圖區塊比對一致；導航保存 Google Maps／Apple Maps 直接連結。
+
+GitHub Pages 從 `main` 分支根目錄發布：
+https://alexzhangyouwei.github.io/germany-austria-2026/

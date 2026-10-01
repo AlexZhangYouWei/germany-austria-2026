@@ -6,11 +6,12 @@ const PAGE = document.body.dataset.page;
 const DAYN = +document.body.dataset.day || 0;
 
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-/* 備註支援 **粗體** 與 [文字](https://…)。先 esc 再轉，所以連結文字與網址都已經跳脫過；
+/* 備註支援 **粗體**、!!警示!! 與 [文字](https://…)。先 esc 再轉，所以連結文字與網址都已經跳脫過；
    只收 http/https，不接受其他協定。 */
 const md  = s => esc(s)
   .replace(/\n/g, "<br>")
   .replace(/\*\*(.+?)\*\*/g, "<em>$1</em>")
+  .replace(/!!(.+?)!!/g, '<span class="w">$1</span>')
   .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
     '<a class="daylink" href="$2" target="_blank" rel="noopener">$1</a>');
 const el  = id => document.getElementById(id);
@@ -102,7 +103,8 @@ function daySum(f){
   const cs = xs.map(x => x.c).filter(c => c != null);
   return {
     l:Math.min(...xs.map(x => x.l)), h:Math.max(...xs.map(x => x.h)), a:rd1(avg(xs.map(x => x.a))),
-    c:cs.length ? Math.round(avg(cs)) : 0, p:Math.max(...xs.map(x => x.p)), mm:rd1(xs.reduce((s, x) => s + x.mm, 0)),
+    /* 雨機率有任一段缺（最佳層單一來源沒提供）就整天不給，Math.max 會把 null 當 0 */
+    c:cs.length ? Math.round(avg(cs)) : 0, p:xs.some(x => x.p == null) ? null : Math.max(...xs.map(x => x.p)), mm:rd1(xs.reduce((s, x) => s + x.mm, 0)),
   };
 }
 /* 全日概況：整張卡最先被看到的東西，獨立成一個面板，底色隨天氣狀況微調。
@@ -118,7 +120,7 @@ function wxSum(f){
         <span class="wxsum-t">${wxT(s)}</span>
       </div>
       <div class="wxsum-kv">
-        <div><span>降雨機率</span><b class="${pCls(s.p)}">${s.p}</b><i>%</i></div>
+        <div><span>降雨機率</span>${s.p == null ? "<b>—</b>" : `<b class="${pCls(s.p)}">${s.p}</b><i>%</i>`}</div>
         <div><span>預估雨量</span><b class="${mCls(s.mm)}">${mm1(s.mm)}</b><i>mm</i></div>
       </div>
     </div>`;
@@ -172,7 +174,7 @@ function wxBody(f, head){
       ${wxSrc(f)}
       ${wxPeriods(f)}
       ${f.kind === "none"
-        ? `<p class="wxc-nodata">提前 ${f.lead} 天，超出數值模式射程。${wxWhen(f)}</p>`
+        ? `<p class="wxc-nodata">提前 ${f.lead} 天，超出${f.far ? ` ${esc(f.far.src)} ` : "數值模式"}射程。${wxWhen(f)}</p>`
         : wxFoot(f)}`;
 }
 
@@ -189,9 +191,7 @@ function dayWeather(n){
 
 /* ── 逐日行程 ───────────────────────────────────────── */
 
-/* 地圖地點連結。MAP_QUERY 以地點正式名稱＋地址逐筆核對，開啟後先顯示該地點的
-   資訊卡，再由使用者按地圖 App 內的「路線」。不能只傳裸座標：Google／Apple 可能
-   把座標吸附到附近店家，造成按鈕名稱與實際開啟的地點不一致。 */
+/* 地圖地點連結直接取自 05_地點與導航.md；主資料不保存經緯度。 */
 function travelMode(cat, noDrive){
   if (/公車|機場線|電車|S-Bahn/.test(cat)) return "transit";
   if (noDrive || /步行|散步|步道/.test(cat)) return "walking";
@@ -223,13 +223,8 @@ const ICON_A = '<svg class="gmk" viewBox="0 0 24 24" aria-hidden="true">'
   + '-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701Z"/></svg>';
 
 function navUrls(cat, key, noDrive){
-  const g = GEO[key];
-  if (!g) return null;
-  const [name, ll] = g;
-  const query = (typeof MAP_QUERY !== "undefined" && MAP_QUERY[key]) || name;
-  return { name,
-    gmap:`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`,
-    amap:`https://maps.apple.com/search?query=${encodeURIComponent(query)}` };
+  const link = MAP_LINKS[key];
+  return link ? { name:link.name, gmap:link.google, amap:link.apple } : null;
 }
 /* 兩顆圖示：左 Google、右 Apple。時間軸列、今日導航表、票券、購物、自駕頁共用 */
 function geoLink(cat, key, noDrive){
@@ -241,19 +236,14 @@ function geoLink(cat, key, noDrive){
     + `</span>`;
 }
 
-/* 今日行車路線：航點與路線圖同一組，兩者永遠一致 */
+/* 今日行車路線直接取自 05_地點與導航.md，Google 與 Apple 都能開啟。 */
 function routeLink(day, variant){
-  if (typeof MAP === "undefined") return "";
-  const r = MAP.routes.find(x => x.day === day && (x.variant || "") === (variant || ""));
-  if (!r || !r.gmap || r.gmap.length < 2) return "";
-  /* Day 8 正式行程已取消普里恩；舊地圖資料仍有該航點，建立連結時明確剔除。 */
-  const pts = day === 8 ? [r.gmap[0], r.gmap[r.gmap.length - 1]] : r.gmap;
-  const way = pts.slice(1, -1);
-  const u = `https://www.google.com/maps/dir/?api=1&travelmode=driving`
-    + `&origin=${pts[0]}&destination=${pts[pts.length-1]}`
-    + (way.length ? `&waypoints=${way.join("|")}` : "");
-  return `<a class="daylink" href="${u}" target="_blank" rel="noopener">`
-    + `在 Google Maps 開啟今日路線　${day === 8 ? "直達" : `${r.km} km`}</a>`;
+  const r = MAP_ROUTES.find(x => x.day === day && (x.variant === "主線" ? "" : x.variant) === (variant || ""));
+  if (!r) return "";
+  const apples = (Array.isArray(r.apple) ? r.apple : [r.apple]).map((url, i, all) =>
+    `<a class="daylink" href="${url}" target="_blank" rel="noopener">Apple Maps${all.length > 1 ? ` ${i + 1}` : ""}</a>`).join("　");
+  return `<span><a class="daylink" href="${r.google}" target="_blank" rel="noopener">Google Maps 路線</a>`
+    + `　${apples}</span>`;
 }
 
 /* 一列寫了好幾個地點（用「、」隔開，或「／」並列而不是「→」路線）時只有一個座標，
@@ -271,10 +261,36 @@ const ICON_PIN = '<svg class="sh-pin" viewBox="0 0 24 24" aria-hidden="true"><pa
 const ICON_LOCK = '<svg class="tt-lock" viewBox="0 0 24 24" aria-label="固定時間" role="img"><path fill="currentColor"'
   + ' d="M7 10V7a5 5 0 0 1 10 0v3h1a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Zm2 0h6V7a3 3 0 0 0-6 0Z"/></svg>';
 
-/* 時辰表一列：[時間, 類別, 地點, 說明, 固定?, GEO key, 版面]。
+/* 時辰表一列：[時間, 類別, 地點, 說明, 固定?, 地點代號, 版面]。
    第 7 格版面 { title, tags, aside, stops:[[key, 名稱, 副標]] } 選填：
    沒給時標題用地點欄、地點只列第 6 格那一個，說明收進「行程細節」。
    只有一個地點時標題就是它，不再重複名稱，只留副標與導航鈕。 */
+/* 行程細節排版：依句號一句一行；含「→」且有時間的句子改成直式步驟；「標籤：」開頭轉小標；
+   （括號）補充轉淡色。資料格式不變，**重點**、!!警示!! 由 md 處理。 */
+const inl = s => md(s).replace(/（([^（）]*)）/g, '<span class="d">（$1）</span>');
+const GO = /^(車程|步行|纜車|搭|走|約\s*\d+\s*分)/;
+function flowStep(st){
+  const m = st.match(/^(.*?)(\*\*)?(約\s*)?(\d{1,2}:\d{2})(\*\*)?(.*)$/);
+  if (m){
+    const pre = m[1].replace(/[，、\s]+$/, ""), est = m[3] ? "約 " : "";
+    /* 粗體只包時間 → 其餘照常；粗體連文字一起包 → 文字維持強調色 */
+    const rest = m[2] && !m[5] ? "**" + m[6].trim() : m[6].trim();
+    const txt = [pre, rest].filter(Boolean).join("，");
+    return `<li class="fn"><span class="ft">${est}${m[4]}</span><span class="fd"></span><span class="fx">${inl(txt)}</span></li>`;
+  }
+  const cls = GO.test(st) ? "fg" : "fn";   /* fg：車程、步行等連接段，畫在線上 */
+  return `<li class="${cls}"><span class="ft"></span><span class="fd"></span><span class="fx">${inl(st)}</span></li>`;
+}
+function noteHTML(note){
+  return String(note).split(/。/).map(s => s.trim()).filter(Boolean).map(s => {
+    const steps = s.split(/\s*→\s*/);
+    if (steps.length >= 3 && /\d{1,2}:\d{2}/.test(s)) return `<ol class="nf">${steps.map(flowStep).join("")}</ol>`;
+    const lab = s.match(/^([^，、：:（）*\s]{2,8})：(.+)$/);
+    if (lab) return `<p class="nl"><span class="nk">${esc(lab[1])}</span>${inl(lab[2])}</p>`;
+    return `<p class="nl">${inl(s)}</p>`;
+  }).join("");
+}
+
 function timeline(rows, noDrive){
   return `<ul class="tl">` + rows.map(([t,cat,place,note,fx,geo,x]) => {
     const tm = timePeriod(t);
@@ -290,9 +306,9 @@ function timeline(rows, noDrive){
         ${stops.length === 1 ? `<div class="tt-one">${stops[0][2] ? `<span class="tt-sub">${esc(stops[0][2])}</span>` : ""}${geoLink(cat, stops[0][0], noDrive)}</div>`
           : stops.length ? `<div class="tt-stops">${stops.map(([k, name, sub]) => `
           <div class="tt-stop">
-            <span class="tt-nm"><b>${esc(name || (GEO[k] ? GEO[k][0] : k))}</b>${sub ? `<small>${esc(sub)}</small>` : ""}</span>
+            <span class="tt-nm"><b>${esc(name || (MAP_LINKS[k] ? MAP_LINKS[k].name : k))}</b>${sub ? `<small>${esc(sub)}</small>` : ""}</span>
             ${geoLink(cat, k, noDrive)}</div>`).join("")}</div>` : ""}
-        ${detail ? `<details class="tt-more"><summary>行程細節</summary><div class="n">${md(note)}</div></details>` : ""}
+        ${detail ? `<details class="tt-more"><summary>行程細節</summary><div class="n">${noteHTML(note)}</div></details>` : ""}
       </div>
     </li>`;
   }).join("") + `</ul>`;
@@ -312,9 +328,9 @@ function dayPlaces(d){
   const pick = (rows, skip) => {
     const seen = new Set(), out = [];
     rows.forEach(([t,cat,place,note,fx,key]) => {
-      if (!key || !GEO[key] || seen.has(key) || skip.has(key)) return;
+      if (!key || !MAP_LINKS[key] || seen.has(key) || skip.has(key)) return;
       seen.add(key);
-      out.push({ key, cat, time:t, name:GEO[key][0] });
+      out.push({ key, cat, time:t, name:MAP_LINKS[key].name });
     });
     return out;
   };
@@ -498,14 +514,14 @@ if (PAGE === "index") {
       </details>`;
   /* 城市當標題（六張卡一眼掃出路線），旅館名列在下方小字。入住／退房是最常查的兩個數字，
      拉出來獨立成一條，入住確認緊接在它下面。
-     設備只列「有」與「未確認」；沒有的不佔版面（薩爾斯堡與哈修塔特的廚房無來源可查）。 */
+     設備只列「有」；沒有與未確認（null）的都不佔版面（薩爾斯堡與哈修塔特的廚房無來源可查）。
+     值為字串時視為「有」，字串當短註（例：Motel One 停車需預約）。 */
   /* 優先開啟核對過的 Google Maps 商家頁；沒有可確認商家頁才用地址導航。 */
   const addressDirections = a => `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(a)}`;
-  const amRow = s => [["洗衣機", s.wash], ["廚房", s.kit]]
-    .filter(([, v]) => v !== false)
-    .map(([label, v]) => v === true
-      ? `<span class="am am-on"><i aria-hidden="true"></i>${label}</span>`
-      : `<span class="am am-unk"><i aria-hidden="true"></i>${label}<em>未確認</em></span>`).join("");
+  const amRow = s => [["洗衣機", s.wash], ["廚房", s.kit], ["停車", s.park]]
+    .filter(([, v]) => v === true || typeof v === "string")
+    .map(([label, v]) =>
+      `<span class="am am-on"><i aria-hidden="true"></i>${label}${typeof v === "string" ? `<em>${esc(v)}</em>` : ""}</span>`).join("");
   el("staylist").innerHTML = STAYS.map(s => {
     const am = amRow(s);
     return `
@@ -937,10 +953,10 @@ if (PAGE === "weather") {
     + `　·　每日四時段（Europe/Berlin）`
     + (age >= 1 ? `　·　<b class="stale">本頁已 ${age} 天未更新，請重跑建置</b>` : "");
 
-  /* 三層來源 tab。FC 每筆的 v 存三層各自的結果，筆身是最準那層；「最佳」就是筆身。
+  /* 三層來源 tab。FC 每筆的 v 存三層各自的結果；筆身是五年回測選出的來源，「最佳」就是筆身。
      卡片結構不因 tab 而變，只換餵進去的那筆資料。 */
   const TABS = [
-    ["best",  "最佳",           "每天自動採用射程內最準的一層。"],
+    ["best",  "最佳",           "依 2024–25 年旅行季回測，各地區只用提前 0–6 天最準的一家，不混用、不遞補；報不到的日子請看其他 Tab。"],
     ["model", "官方模式",       "德國 DWD、奧地利 GeoSphere 官方模式，約 2 天內最準。"],
     ["ecmwf", "ECMWF 系集",     "約 15 天內的中期展望，給區間不給單點。"],
     ["pool",  "GEFS＋GEM 系集", "35 天內的多模式系集，只看趨勢。"],
@@ -1053,10 +1069,11 @@ if (PAGE === "tickets") {
 }
 
 if (PAGE === "shop") {
-  /* 有圖的品項放 64px 縮圖（可點開放大），沒有的放品名首字母佔位；圖片 title 帶作者與授權 */
+  /* 商品照片與原創類別插畫都保留來源；插畫會標明為示意，避免誤認成實際包裝。 */
+  const FILE = Object.fromEntries((SHOP.credits || []).map(([k, f]) => [k, f]));
   const CR = Object.fromEntries((SHOP.credits || []).map(([k, f, au, li]) => [k, `${f}　©${au}　${li}`]));
   const pic = (k, name) => k
-    ? `<img class="sh-img" src="assets/img/shop/${k}.jpg" loading="lazy" alt="${esc(name)}" title="${esc(CR[k] || "Wikimedia Commons")}">`
+    ? `<img class="sh-img" src="assets/img/shop/${esc(FILE[k] && /\.svg$/i.test(FILE[k]) ? FILE[k] : `${k}.jpg`)}" loading="lazy" alt="${esc(name + (FILE[k] && /\.svg$/i.test(FILE[k]) ? "（示意插畫）" : ""))}" title="${esc(CR[k] || "Wikimedia Commons")}">`
     : `<span class="sh-img sh-noimg" aria-hidden="true">${esc(name.trim().charAt(0))}</span>`;
   const shopMapLink = (g, query, name) => {
     if (!query) return geoLink("步行", g);
@@ -1106,7 +1123,7 @@ if (PAGE === "shop") {
   /* 商店清單：經過日｜地點、行程採買窗口、店家＋精確地圖搜尋｜營業時間 */
   el("shstops").innerHTML = `<table class="st-tbl"><tr><th>經過日</th><th>地點</th><th class="st-h">營業時間</th></tr>${SHOP.stops.map(([d,t,pl,w,h,g,q]) =>
     `<tr><td class="st-d"><b>${esc(d)}</b></td>`
-    + `<td class="st-p"><small class="st-window">行程窗口：${esc(t)}</small><strong>${esc(pl)}</strong><span>${esc(w)}</span>${shopMapLink(g, q, pl)}</td>`
+    + `<td class="st-p"><small class="st-window">行程窗口：${esc(t)}</small><strong>${esc(pl)}</strong><span>${esc(w)}</span>${shopMapLink(g, q, w || pl)}</td>`
     + `<td class="st-h">${esc(h)}</td></tr>`).join("")}</table>`;
 }
 
@@ -1179,7 +1196,7 @@ if (PAGE === "drive") {
       + `<td class="st-p"><strong>${esc(pl)}</strong><em class="st-fee-m">${md(fee)}</em><span>${md(how)}</span>${g ? geoLink("開車", g) : ""}</td>`
       + `<td class="st-h st-fee">${md(fee)}</td></tr>`; }).join("")}</table>`;
 
-  /* 沿線加油站：同商店清單樣式，路段放在站名上方；手機版營業時間移到站名下。沒有 GEO 座標，地圖按鈕用站名＋地址搜尋 */
+  /* 沿線加油站：同商店清單樣式，路段放在站名上方；手機版營業時間移到站名下。 */
   const qGeo = (name, query) => `<span class="geo">`
     + `<a class="geo-g" href="${q(query)}" target="_blank" rel="noopener" aria-label="在 Google 地圖開啟 ${esc(name)}">${ICON_G}</a>`
     + `<a class="geo-a" href="https://maps.apple.com/search?query=${encodeURIComponent(query)}" target="_blank" rel="noopener" aria-label="在 Apple 地圖開啟 ${esc(name)}">${ICON_A}</a></span>`;

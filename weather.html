@@ -6,7 +6,7 @@
 <meta name="color-scheme" content="dark">
 <meta name="theme-color" content="#0d0806">
 <title>天氣預報｜德國・奧地利</title>
-<link rel="stylesheet" href="assets/style.css?v=2c48e0ee">
+<link rel="stylesheet" href="assets/style.css?v=8726a506">
 </head>
 <body data-page="weather">
 
@@ -17,19 +17,51 @@
   <div class="pagehead">
     <div class="eyebrow">Forecast</div>
     <h1>天氣預報</h1>
-    <p class="sub">每天各自採用射程涵蓋得到、解析度最高的數值模式。白天 06–18 為主。</p>
+    <p class="sub">「最佳」依旅行季回測，各地區只用最準的一家。白天 06–18 為主。</p>
   </div>
   <p class="asof rv" id="wxasof"></p>
-  <div class="wxtabs rv" id="wxtabs" role="tablist" aria-label="預報來源"></div>
+  <div class="wxtabs" id="wxtabs" role="tablist" aria-label="預報來源"></div>
   <p class="asof wxtabnote rv" id="wxtabnote"></p>
   <div class="wxgrid" id="wxcards"></div>
+
+  <h2 class="sec-h sh-h rv">各地準確度</h2>
+  <p class="sub rv wxacc-sub">拿過去的預報和當地測站實測比，看每個地區、每種來源差多少。每格上面是溫度誤差，也就是白天 06–18 平均氣溫差幾度，越小越好；下面是晴雨猜對，也就是有沒有下雨猜對的比例。</p>
+  <h3 class="wxacc-h rv">四種來源同日比較（2026/2/20–9/22）</h3>
+  <div class="glass rv tblcard wxacc-card"><div class="scroll"><table class="wxacc-tbl">
+    <tr><th>距出發</th><th>官方模式</th><th>ECMWF<br>系集</th><th>GEFS<br>系集</th><th>GEM<br>系集</th></tr>
+    <tr class="grp"><td colspan="5">慕尼黑<small>Day 1、9</small></td></tr><tr><td>1 天</td><td><span class="best">0.62°</span><span class="r best">87%</span><small>ICON-D2</small></td><td><span>0.75°</span><span class="r">77%</span></td><td><span>0.83°</span><span class="r">76%</span></td><td><span>0.91°</span><span class="r">82%</span></td></tr><tr><td>3 天</td><td><span class="best">0.88°</span><span class="r best">81%</span><small>ICON-EU</small></td><td><span>0.93°</span><span class="r">73%</span></td><td><span>1.05°</span><span class="r">69%</span></td><td><span>1.12°</span><span class="r">76%</span></td></tr><tr><td>7 天</td><td><span>2.13°</span><span class="r best">68%</span><small>IFS</small></td><td><span class="best">1.90°</span><span class="r">44%</span></td><td><span>2.06°</span><span class="r">42%</span></td><td><span>1.96°</span><span class="r">45%</span></td></tr>
+    <tr class="grp"><td colspan="5">新天鵝堡、米滕瓦爾德、國王湖<small>Day 2、3、6</small></td></tr><tr><td>1 天</td><td><span class="best">0.65°</span><span class="r best">87%</span><small>ICON-D2</small></td><td><span>0.77°</span><span class="r">66%</span></td><td><span>0.90°</span><span class="r">65%</span></td><td><span>1.06°</span><span class="r">71%</span></td></tr><tr><td>3 天</td><td><span>0.94°</span><span class="r best">77%</span><small>ICON-EU</small></td><td><span class="best">0.91°</span><span class="r">61%</span></td><td><span>1.03°</span><span class="r">58%</span></td><td><span>1.19°</span><span class="r">65%</span></td></tr><tr><td>7 天</td><td><span>2.17°</span><span class="r best">57%</span><small>IFS</small></td><td><span class="best">1.91°</span><span class="r">37%</span></td><td><span>2.05°</span><span class="r">34%</span></td><td><span>2.02°</span><span class="r">38%</span></td></tr>
+    <tr class="grp"><td colspan="5">楚格峰峰頂<small>Day 3</small></td></tr><tr><td>1 天</td><td><span class="best">1.05°</span><small>ICON-D2</small></td><td><span>1.40°</span></td><td><span>1.55°</span></td><td><span>1.98°</span></td></tr><tr><td>3 天</td><td><span class="best">1.27°</span><small>ICON-EU</small></td><td><span>1.37°</span></td><td><span>1.43°</span></td><td><span>1.90°</span></td></tr><tr><td>7 天</td><td><span>2.29°</span><small>IFS</small></td><td><span class="best">2.04°</span></td><td><span>2.19°</span></td><td><span>2.39°</span></td></tr>
+    <tr class="grp"><td colspan="5">因斯布魯克<small>Day 4</small></td></tr><tr><td>1 天</td><td><span class="best">0.99°</span><span class="r best">89%</span><small>AROME＊</small></td><td><span>1.21°</span><span class="r">64%</span></td><td><span>1.18°</span><span class="r">63%</span></td><td><span>1.14°</span><span class="r">67%</span></td></tr><tr><td>3 天</td><td><span class="best">1.06°</span><span class="r best">81%</span><small>ICON-EU</small></td><td><span>1.30°</span><span class="r">61%</span></td><td><span>1.21°</span><span class="r">56%</span></td><td><span>1.31°</span><span class="r">65%</span></td></tr><tr><td>7 天</td><td><span>2.49°</span><span class="r best">57%</span><small>IFS</small></td><td><span>2.16°</span><span class="r">37%</span></td><td><span>2.12°</span><span class="r">32%</span></td><td><span class="best">2.04°</span><span class="r">40%</span></td></tr>
+    <tr class="grp"><td colspan="5">薩爾斯堡、哈修塔特<small>Day 5、7、8</small></td></tr><tr><td>1 天</td><td><span>0.97°</span><span class="r best">84%</span><small>AROME＊</small></td><td><span class="best">0.92°</span><span class="r">68%</span></td><td><span>0.99°</span><span class="r">70%</span></td><td><span>1.05°</span><span class="r">74%</span></td></tr><tr><td>3 天</td><td><span class="best">1.08°</span><span class="r best">79%</span><small>ICON-EU</small></td><td><span class="best">1.08°</span><span class="r">63%</span></td><td><span>1.16°</span><span class="r">65%</span></td><td><span>1.25°</span><span class="r">67%</span></td></tr><tr><td>7 天</td><td><span>2.24°</span><span class="r best">57%</span><small>IFS</small></td><td><span class="best">1.93°</span><span class="r">40%</span></td><td><span>2.09°</span><span class="r">40%</span></td><td><span>2.00°</span><span class="r">40%</span></td></tr>
+  </table></div></div>
+  <h3 class="wxacc-h rv">旅行季節：官方模式（2024/9/15–10/31、2025/9/15–10/31）</h3>
+  <div class="glass rv tblcard wxacc-card"><div class="scroll"><table class="wxacc-tbl">
+    <tr><th>1 天</th><th>3 天</th><th>5 天</th><th>7 天</th><th>8–14 天</th><th>往年<br>平均</th></tr>
+    <tr class="grp"><td colspan="6">慕尼黑<small>Day 1、9</small></td></tr><tr><td>0.69</td><td>1.01</td><td>1.46</td><td>2.01</td><td class="bad">2.46–3.40<small>第 8 天起較差</small></td><td>2.34</td></tr>
+    <tr class="grp"><td colspan="6">新天鵝堡、米滕瓦爾德、國王湖<small>Day 2、3、6</small></td></tr><tr><td>0.81</td><td>1.22</td><td>1.50</td><td>1.98</td><td class="bad">2.45–3.87<small>第 9 天起較差</small></td><td>2.61</td></tr>
+    <tr class="grp"><td colspan="6">楚格峰峰頂<small>Day 3</small></td></tr><tr><td>0.83</td><td>1.33</td><td>2.02</td><td>3.22</td><td class="bad">3.60–4.89<small>第 8 天起較差</small></td><td>3.41</td></tr>
+    <tr class="grp"><td colspan="6">因斯布魯克<small>Day 4</small></td></tr><tr><td>—＊</td><td>1.21</td><td>1.74</td><td>2.21</td><td class="bad">2.25–3.50<small>第 9 天起較差</small></td><td>2.49</td></tr>
+    <tr class="grp"><td colspan="6">薩爾斯堡、哈修塔特<small>Day 5、7、8</small></td></tr><tr><td>—＊</td><td>1.33</td><td>1.89</td><td>2.29</td><td class="bad">2.84–3.95<small>第 8 天起較差</small></td><td>2.51</td></tr>
+  </table></div></div>
+  <ul class="notes">
+    <li>「最佳」的來源：拿 2024/9/15–10/31、2025/9/15–10/31 提前 0–6 天的預報和測站實測比，慕尼黑、新天鵝堡、米滕瓦爾德、國王湖、楚格峰峰頂、因斯布魯克、薩爾斯堡、哈修塔特用 DWD ICON。比的是網站抓得到、射程涵蓋 6 天的五家（DWD ICON、ECMWF IFS 0.25°、NOAA GFS、加拿大 GEM、日本 JMA）。每個地點只用這一家：溫度、雨量、雲量、降雨機率都不向別家借，它報不到的日子顯示「尚無預報」，請改看其他 Tab；它沒提供的欄位顯示「—」。</li>
+    <li>晴雨：約四分之一的日子下雨，全部猜「不下雨」也有約 75%，高於這個才有用。楚格峰峰頂沒有雨量站，只驗溫度。</li>
+    <li>第一張表扣掉了各測站的固定偏差，四種來源才能公平比較。GEFS＋GEM 系集沒有合併回測，列兩家各自的成績。三種系集 8 天以上都沒有回測。</li>
+    <li>＊奧地利提前 1 天，官方模式用 GeoSphere AROME，回測從 3/24 開始，日子和其他欄不完全相同，秋季沒有存檔。</li>
+    <li>系集的晴雨是用成員平均雨量判斷，雨會被攤到很多天，所以偏低。卡片上的「幾成成員下雨」沒有回測過。</li>
+    <li>第二張表的<span class="wxacc-bad">紅字</span>表示比「直接拿往年同期平均當預報」還差；8–14 天那格只要其中有一天較差就標紅，並寫出從第幾天開始。8–14 天用的是同一個 IFS 模式 9 km 版的單次起報存檔。</li>
+    <li>只驗證了白天均溫和有沒有下雨；雲量、降雨機率、雨量和風都沒有驗證。</li>
+  </ul>
+
+  <p class="asof wxsrc-credit rv">天氣資料：<a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>（<a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a>），模式來自 DWD、GeoSphere Austria、ECMWF、NOAA、ECCC、JMA。</p>
 </main>
 
 <footer class="wrap">
-  <div>預報發布 2026-09-26 17:30 UTC</div>
+  <div>預報發布 2026-10-01 03:25 UTC</div>
 </footer>
 
-<script src="assets/data.js?v=f2f52c52"></script>
-<script src="assets/app.js?v=26c7e4a8"></script>
+<script src="assets/data.js?v=2171d1f3"></script>
+<script src="assets/app.js?v=af55a6df"></script>
 </body>
 </html>

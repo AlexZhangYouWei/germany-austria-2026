@@ -301,7 +301,25 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
 .tt-more summary::after{content:"";width:6px;height:6px;border:solid currentColor;border-width:0 1.5px 1.5px 0;
   transform:translateY(-2px) rotate(45deg);transition:transform .2s}
 .tt-more[open] summary::after{transform:translateY(1px) rotate(-135deg)}
-.tl .n{font-size:13px;color:var(--ink2);margin-top:6px;line-height:1.7}
+/* 行程細節：一句一行＋直式步驟＋字色分層（重點 em 粉橘、警示 .w 玫瑰、補充 .d 淡色） */
+.tl .n{display:grid;gap:7px;font-size:13.5px;line-height:1.65;color:var(--ink2);margin-top:8px}
+.tl .n .nl{margin:0;padding-left:13px;position:relative}
+.tl .n .nl::before{content:"";position:absolute;left:1px;top:.7em;width:4px;height:4px;border-radius:50%;background:var(--ink3)}
+.tl .n .nk{display:inline-block;margin:0 7px 2px 0;padding:0 7px;border-radius:6px;font-size:11.5px;font-weight:600;line-height:1.7;
+  color:var(--gold);background:rgba(255,215,155,.08);border:1px solid rgba(255,215,155,.2);vertical-align:1px}
+.tl .n .d{color:var(--ink3);font-size:.93em}
+.w{color:var(--rose);font-weight:600}
+.tl .n .nf{list-style:none;margin:2px 0 4px;padding:0;display:grid;grid-template-columns:max-content 12px minmax(0,1fr);column-gap:9px;align-items:start}
+.tl .n .nf li{display:contents}
+.tl .n .ft{font-variant-numeric:tabular-nums;font-weight:600;color:#ffcb9a;text-align:right;white-space:nowrap}
+.tl .n .fd{position:relative;align-self:stretch}
+.tl .n .fd::before{content:"";position:absolute;left:5px;top:0;bottom:0;width:1.5px;background:rgba(255,222,190,.22)}
+.tl .n .nf li:first-child .fd::before{top:.8em}
+.tl .n .nf li:last-child .fd::before{bottom:auto;height:.8em}
+.tl .n .fn .fd::after{content:"";position:absolute;left:1.5px;top:.52em;width:8.5px;height:8.5px;border-radius:50%;
+  background:var(--amber);box-shadow:0 0 0 3px rgba(255,184,114,.14)}
+.tl .n .fn .fx{color:var(--ink);padding-bottom:6px}
+.tl .n .fg .fx{color:var(--ink3);font-size:12.5px;padding:0 0 6px}
 
 /* ───────── notes ───────── */
 .notes{margin:28px 0 0;padding:0;list-style:none;display:grid;gap:10px}
@@ -1248,10 +1266,55 @@ tr.dim td .v{color:inherit}
   box-shadow:0 2px 14px -2px rgba(255,150,70,.5)}
 .wxtab:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
 .wxtabnote{margin:0 2px 14px}
+/* 預報頁的來源 tab 比照日頁日期列（.rail）：懸浮在視窗底部的玻璃膠囊，選中那顆用同一組暖色漸層。
+   只套預報頁——伴手禮、eSIM 頁也用 .wxtabs，維持原本在內文裡的樣子。
+   fixed 不佔版面流，body 底部補留白，頁尾才不會被蓋住。 */
+body[data-page="weather"]{padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+body[data-page="weather"] .wxtabs{
+  position:fixed;z-index:59;left:0;right:0;bottom:calc(16px + env(safe-area-inset-bottom));
+  width:fit-content;max-width:calc(100% - 32px);margin:0 auto;
+  height:58px;flex-wrap:nowrap;align-items:center;gap:4px;padding:0 6px;border-radius:999px;
+  overflow-x:auto;overflow-y:hidden;scrollbar-width:none;
+  background:rgba(25,14,9,.76);border:1px solid rgba(255,184,118,.34);
+  -webkit-backdrop-filter:blur(28px) saturate(165%);backdrop-filter:blur(28px) saturate(165%);
+  box-shadow:inset 0 1px 0 rgba(255,229,203,.13),0 14px 36px -15px rgba(7,2,0,.9);
+}
+body[data-page="weather"] .wxtabs::-webkit-scrollbar{display:none}
+body[data-page="weather"] .wxtab{flex:0 0 auto;height:44px;padding:0 18px;border:0;background:transparent;
+  color:rgba(255,235,217,.55);font-size:13px;font-weight:500;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+body[data-page="weather"] .wxtab:hover{color:var(--ink2)}
+body[data-page="weather"] .wxtab.on{color:#291306;font-weight:700;
+  background:linear-gradient(155deg,#ffe0b9 0%,#ffc17f 58%,#ffad67 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.42),0 7px 20px -7px rgba(255,155,78,.68)}
+@media (max-width:600px){
+  body[data-page="weather"] .wxtabs{left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));
+    width:auto;max-width:none;margin:0}
+  body[data-page="weather"] .wxtab{flex:1 1 auto;padding:0 8px;font-size:12px}
+}
 
 /* 預報出處：抬頭下的一行小字。low = 系集或尚無資料，壓暗與行文區隔。 */
 .wxc-src{margin:6px 0 0;font-size:11px;color:var(--ink3);letter-spacing:.02em}
 .wxc-src.low{color:rgba(251,242,234,.34)}
+.wxsrc-credit{margin-top:18px}
+.wxsrc-credit a{color:var(--ink2)}
+/* 各地準確度表：地點是分組標題列；格內溫度誤差、晴雨猜對、模式各一行。
+   best＝該列最準，bad＝比往年平均差 */
+.wxacc-sub{margin:-6px 0 16px}
+.wxacc-h{margin:22px 0 10px;font-size:14px;font-weight:600;color:var(--ink2)}
+.wxacc-tbl th,.wxacc-tbl td{padding-right:10px;font-variant-numeric:tabular-nums}
+.wxacc-tbl th{vertical-align:bottom;line-height:1.5}
+.wxacc-tbl td{color:var(--ink3);white-space:nowrap}
+.wxacc-tbl td .r{display:block;margin-top:1px;font-size:12px}
+.wxacc-tbl td small{display:block;margin-top:2px;font-size:10.5px;font-weight:400;color:var(--ink3)}
+.wxacc-tbl tr.grp td{padding:16px 0 6px;color:var(--ink);font-weight:600;white-space:normal}
+.wxacc-tbl tr.grp td small{display:inline;margin:0 0 0 8px}
+.wxacc-tbl .best{color:var(--ink);font-weight:600}
+.wxacc-tbl td.bad,.wxacc-bad{color:var(--hot)}
+@media (max-width:600px){
+  .wxacc-card{padding:4px 16px 10px}
+  .wxacc-tbl{font-size:12.5px}
+  .wxacc-tbl th,.wxacc-tbl td{padding-right:8px}
+}
 
 /* ───────── 全日概況面板（預報頁卡片與日頁共用） ─────────
    整張卡最先要被看到的東西，獨立成面板；底色與框線隨天氣狀況微調，
