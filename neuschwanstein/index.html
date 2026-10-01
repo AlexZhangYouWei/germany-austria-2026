@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>新天鵝堡上山圖解</title>
+<title>新天鵝堡・當日說明</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&display=swap">
 <style>
-/* 本檔由 工作檔案/新天鵝堡圖解/build_nsw.js 產生，請改 template.html 再重跑。 */
+/* 修改本資料夾 template.html，再執行 build.py 產生說明預覽。 */
 /* 景點圖解共用版型：單一夜色設計，暖色霞光當強調色、冰藍標冰川。由 build_lib.js 內嵌進各頁 css 的位置。 */
 *,*::before,*::after{box-sizing:border-box}
 :root{
@@ -232,8 +232,26 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
   svg .alpen,svg .star,svg .cloud,svg .you circle.ring{animation:none}
   .step,.rope,.ph img{transition:none}
 }
-svg .castle{fill:#dfe6ee}
-svg .castle.old{fill:var(--gold)}
+
+.plan time{min-width:115px;font-size:12px}.plan li{grid-template-columns:115px 12px 1fr}@media(max-width:480px){.plan li{grid-template-columns:100px 10px 1fr}.plan time{min-width:0;font-size:11px}}
+.scene{margin-top:0}
+.route-plan{display:grid;gap:16px}
+.route-plan-head{display:grid;gap:6px}
+.route-plan-head h2{font-size:clamp(24px,3.4vw,32px);font-weight:700}
+.route-plan-head p{color:var(--ink2);max-width:68ch}
+.official-map{margin:0;border:1px solid var(--hair);border-radius:18px;overflow:hidden}
+.official-map .zoom{display:block;width:100%;padding:0;background:#eee5cc;cursor:zoom-in}
+.official-map img{display:block;width:100%;height:auto;aspect-ratio:auto;max-height:none;object-fit:contain}
+.official-map figcaption{padding:0 14px 12px}
+.route-clock{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.route-clock article{position:relative;min-height:112px;padding:14px 15px;background:var(--panel);border:1px solid var(--hair2);border-radius:14px}
+.route-clock article:not(:last-child)::after{content:"";position:absolute;top:26px;right:-8px;width:14px;height:2px;background:var(--hair);z-index:1}
+.route-clock .rc-step{display:block;font-family:var(--mono);font-size:11px;color:var(--glow);letter-spacing:.08em;margin-bottom:5px}
+.route-clock b{display:block;font-size:15px;line-height:1.45}
+.route-clock small{display:block;margin-top:5px;font-size:12px;line-height:1.55;color:var(--ink3)}
+.route-summary{color:var(--ink2);font-size:14px}
+@media(max-width:760px){.route-clock{grid-template-columns:repeat(2,minmax(0,1fr))}.route-clock article:nth-child(2)::after{display:none}}
+@media(max-width:480px){.route-clock{grid-template-columns:minmax(0,1fr)}.route-clock article{min-height:0}.route-clock article::after{display:none!important}}
 </style>
 </head>
 <body>
@@ -241,368 +259,91 @@ svg .castle.old{fill:var(--gold)}
 
 <header class="hero">
   <p class="eyebrow">Day 2 · 10/6（二）· 4 位成人</p>
-  <h1>新天鵝堡<em>上山</em>圖解</h1>
-  <p class="lede">車停 P4，搭接駁巴士上到瑪麗安橋（Marienbrücke），在橋上看城堡，再走下坡到城堡入口。11:45 準時入場 Tour 445（中文語音導覽），導覽約 30 分鐘，之後走路下山到霍恩施萬高村（Hohenschwangau）吃午餐。</p>
+  <h1>新天鵝堡<em>怎麼走</em></h1>
+  <p class="lede">07:00 取車、08:00 從慕尼黑出發。車停山腳，巴士上山、步行下山；11:45 參加中文語音導覽。午後慢慢吃飯、逛村、看湖，16:30 離開，約 18:10–18:30 抵達米滕瓦爾德住宿。</p>
   <div class="facts">
     <span><b>11:45</b>入場（Tour 445）</span>
     <span><b>3.50 €</b>巴士上山／人，只收現金</span>
     <span><b>約 30 分</b>城內導覽</span>
-    <span><b>12 €</b>P4 停車 6 小時內</span>
+    <span><b>約 13 €</b>當日停車估算</span>
   </div>
   <nav class="jump" aria-label="頁內導覽">
-    <a href="https://alexzhangyouwei.github.io/germany-austria-2026/day2.html">← 行程網站 Day 2</a>
-    <a href="#ways">巴士、馬車還是走路</a><a href="#views">哪裡看城堡最漂亮</a><a href="#plan">當天怎麼排</a>
+    <a href="#route-plan">上山地圖與時間</a><a href="#lake-map">湖區散步地圖</a><a href="#parking">停車與付款</a><a href="#timing">導覽前時間</a>
+    <a href="#ways">巴士、馬車還是走路</a><a href="#plan">當天怎麼排</a>
     <a href="#ifso">臨時狀況</a><a href="#tix">門票</a>
   </nav>
 </header>
 
-<section class="scene" aria-label="上山路線">
-  <div class="frame">
-    <div class="frame-scroll" id="frame">
-      <svg id="scene" viewBox="0 0 1000 540" data-step="1" role="img" aria-labelledby="scT">
-        <title id="scT">新天鵝堡剖面示意：左下是阿爾卑斯湖、舊天鵝堡與 P4 停車場，接駁巴士沿山路上到右上方的瑪麗安橋站；從站牌走到瑪麗安橋，再走下坡到中間山脊上的新天鵝堡入口；導覽後沿柏油坡道走回村子。</title>
-        <defs>
-          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#0a1120"/><stop offset=".5" stop-color="#172641"/>
-            <stop offset=".82" stop-color="#352f4c"/><stop offset="1" stop-color="#553c47"/>
-          </linearGradient>
-          <linearGradient id="landG" x1="0" y1="0" x2=".9" y2="1">
-            <stop offset="0" stop-color="#2c4a44"/><stop offset=".55" stop-color="#1c3230"/><stop offset="1" stop-color="#111c1e"/>
-          </linearGradient>
-          <linearGradient id="farG" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stop-color="#26334a"/><stop offset="1" stop-color="#1b2536"/>
-          </linearGradient>
-          <linearGradient id="lakeG" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#1f4a5c"/><stop offset=".5" stop-color="#3a7488"/><stop offset="1" stop-color="#1f4a5c"/>
-          </linearGradient>
-        </defs>
-
-        <rect width="1000" height="540" fill="url(#sky)"/>
-        <g aria-hidden="true">
-          <circle class="star" cx="90" cy="46" r="1.3"/><circle class="star" cx="170" cy="92" r="1" style="animation-delay:-1s"/>
-          <circle class="star" cx="260" cy="38" r="1.2" style="animation-delay:-2.2s"/><circle class="star" cx="345" cy="120" r="1" style="animation-delay:-.6s"/>
-          <circle class="star" cx="430" cy="58" r="1.4" style="animation-delay:-1.7s"/><circle class="star" cx="520" cy="30" r="1" style="animation-delay:-2.8s"/>
-          <circle class="star" cx="610" cy="84" r="1.2" style="animation-delay:-.3s"/><circle class="star" cx="905" cy="44" r="1.1" style="animation-delay:-1.3s"/>
-        </g>
-        <!-- 遠山：薩伊林山一帶 -->
-        <path d="M300,540 L380,330 L470,210 L540,150 L600,190 L680,170 L760,120 L840,160 L920,110 L1000,150 L1000,540 Z" fill="url(#farG)" opacity=".6"/>
-        <ellipse class="cloud" cx="260" cy="200" rx="150" ry="14"/>
-        <!-- 城堡所在的山坡，右邊是佩拉特峽谷 -->
-        <path d="M0,540 L0,506 L300,500 L420,478 L520,432 L560,352 L600,334 L700,326 L780,300 L862,284 L874,392 L894,392 L906,276 L1000,244 L1000,540 Z" fill="url(#landG)"/>
-        <ellipse cx="110" cy="512" rx="100" ry="7" fill="url(#lakeG)"/>
-        <g fill="#16241f" aria-hidden="true">
-          <path d="M392,486 l8,-20 l8,20z"/><path d="M470,462 l7,-18 l7,18z"/><path d="M760,312 l6,-16 l6,16z"/><path d="M930,262 l7,-18 l7,18z"/><path d="M960,254 l6,-15 l6,15z"/>
-        </g>
-
-        <g aria-hidden="true">
-          <line class="guide" x1="24" y1="500" x2="1000" y2="500"/><text class="alt" x="28" y="494">800 m</text>
-          <line class="guide" x1="24" y1="375" x2="1000" y2="375"/><text class="alt" x="28" y="369">900</text>
-          <line class="guide" x1="24" y1="250" x2="1000" y2="250"/><text class="alt" x="28" y="244">1,000</text>
-        </g>
-
-        <!-- 舊天鵝堡（小山丘上，黃色） -->
-        <path d="M140,498 Q175,470 215,498 Z" fill="#1c3230"/>
-        <g class="castle old" opacity=".8"><rect x="160" y="470" width="34" height="16"/><rect x="156" y="462" width="8" height="24"/><rect x="190" y="464" width="7" height="22"/></g>
-        <!-- 新天鵝堡 -->
-        <g class="castle" aria-hidden="true">
-          <rect x="585" y="262" width="44" height="72"/><path d="M583,262 L607,236 L631,262 Z"/>
-          <rect x="626" y="218" width="12" height="116"/><path d="M624,218 L632,190 L640,218 Z"/>
-          <rect x="640" y="292" width="40" height="42"/><path d="M638,292 L660,276 L682,292 Z"/>
-          <rect x="664" y="258" width="10" height="36"/><path d="M662,258 L669,240 L676,258 Z"/>
-          <rect x="682" y="304" width="30" height="24" style="fill:#c98a74"/>
-        </g>
-
-        <!-- 路線：巴士（實線）、步行（點線）、馬車（金色虛線） -->
-        <path id="pBus" class="road h2" d="M292,500 C420,497 540,474 640,424 C720,384 790,334 842,286"/>
-        <path id="pHorse" class="tunnel" d="M318,501 C420,494 500,462 560,424 C590,404 612,392 632,384"/>
-        <path id="pBridge" class="walkp h3" d="M842,286 L886,278"/>
-        <path id="pToCastle" class="walkp h4" d="M842,286 C800,302 752,312 712,316"/>
-        <path id="pWalk" class="walkp h6" d="M712,316 C650,352 580,372 540,410 C490,456 400,484 300,500"/>
-        <path d="M866,280 L906,272" stroke="#c9d3de" stroke-width="3"/>
-
-        <g class="spot s1 s6">
-          <rect class="stn" x="282" y="494" width="22" height="10" rx="2"/>
-          <text class="lbl" x="300" y="470" text-anchor="middle">P4 停車場</text>
-          <text class="lbl sub" x="300" y="530" text-anchor="middle">霍恩施萬高村 · 約 800 m</text>
-        </g>
-        <text class="lbl dim" x="120" y="532" text-anchor="middle">阿爾卑斯湖</text>
-        <text class="lbl dim" x="178" y="454" text-anchor="middle">舊天鵝堡</text>
-        <g class="spot s2"><text class="lbl" x="560" y="486" text-anchor="middle">接駁巴士 約 15 分</text></g>
-        <g class="spot s3">
-          <rect class="stn" x="834" y="280" width="16" height="9" rx="2"/>
-          <text class="lbl" x="890" y="232" text-anchor="middle">瑪麗安橋</text>
-          <text class="lbl sub" x="890" y="252" text-anchor="middle">上方站走 5 分</text>
-        </g>
-        <g class="spot s4"><text class="lbl" x="800" y="346" text-anchor="middle">陡下坡 約 15 分</text></g>
-        <g class="spot s5">
-          <text class="lbl" x="630" y="170" text-anchor="middle">新天鵝堡</text>
-          <text class="lbl sub" x="630" y="150" text-anchor="middle">入口 約 965 m</text>
-        </g>
-        <g class="spot s6"><text class="lbl" x="470" y="380" text-anchor="middle">走路下山 1.5 km</text></g>
-        <text class="lbl dim" x="545" y="410" text-anchor="end">馬車（選項）</text>
-        <text class="lbl dim" x="884" y="420" text-anchor="middle">佩拉特峽谷</text>
-
-        <rect class="bus" id="busM" x="-10" y="-5" width="20" height="9" rx="2.5"/>
-        <rect class="train" id="horseM" x="-7" y="-4" width="14" height="7" rx="3" opacity=".8"/>
-        <g class="you" id="you"><circle class="ring" r="7"/><circle class="core" r="5.5"/></g>
-      </svg>
-    </div>
-    <p class="hint">手機可左右滑動剖面圖。實線是巴士、點線是步行、金色虛線是馬車。</p>
+<section class="route-plan" id="route-plan" aria-labelledby="route-plan-title">
+  <div class="route-plan-head">
+    <h2 id="route-plan-title">上山地圖｜山腳 → 瑪麗安橋 → 城堡入口</h2>
+    <p>先從 P4 搭接駁巴士到上方站；瑪麗安橋是旁邊的支線，拍完回到主徑，再走下坡到入口。候車和橋上停留都要另外加時間。</p>
   </div>
-
-  <div class="playbar">
-    <button type="button" class="playbtn" id="play" aria-pressed="true">暫停自動播放</button>
-    <div class="progress" aria-hidden="true"><i id="prog"></i></div>
+  <figure class="ph official-map" id="uphill-figure">
+    <button type="button" class="zoom" data-full="img/uphill-map.png" aria-label="放大上山路線地圖"><img src="img/uphill-map.png" alt="北向上上山示意圖：山腳 P4、村內地標、上方接駁站、瑪麗安橋及新天鵝堡入口，區分巴士與步行路線。" decoding="async"></button>
+    <figcaption><span class="cap">點圖放大｜上山路線、停車場與村內地標</span><span class="cr">依官方資料與既有地圖重新繪製的旅行用示意圖；北方朝上，不按比例。地標供定位，非全部安排參觀。</span></figcaption>
+  </figure>
+  <p class="route-summary">讀圖：上北、下南、左西、右東。① P4 搭巴士到② 上方站；③ 瑪麗安橋為拍照支線，返回主徑後往④ 城堡入口。金色為巴士路線示意，紫色為步行，紅色為山腳步行上山。</p>
+  <div class="route-clock" aria-label="路段時間">
+    <article><span class="rc-step">01 · 山腳</span><b>P4 停車場／接駁站</b><small>先停車、買巴士票；排隊時間另計。</small></article>
+    <article><span class="rc-step">02 · 上山</span><b>接駁巴士約 15 分鐘</b><small>到上方站 Jugend；車程不含等候。</small></article>
+    <article><span class="rc-step">03 · 橋上支線</span><b>瑪麗安橋拍照支線</b><small>拍完原路回主徑，另加回程及停留時間。</small></article>
+    <article><span class="rc-step">04 · 城堡入口</span><b>陡下坡約 15 分鐘</b><small>上方站到入口；目標 11:30 前到中庭。</small></article>
   </div>
+  <p class="route-summary">時間抓法：不去橋，P4 到入口約 30 分鐘，另加候車；去橋拍照另加步行往返、排隊和實際停留。以 11:45 導覽來說，橋上目標 11:05 離開，預留到 11:30 前集合。</p>
+</section>
 
+<section class="route-plan" id="lake-map" aria-labelledby="lake-map-title">
+  <div class="route-plan-head">
+    <h2 id="lake-map-title">湖區地圖｜Alpsee 湖邊散步</h2>
+    <p>下山後先在村內午餐，再到湖岸散步拍照。這張圖獨立呈現完整湖區與周邊地標；本日不繞湖，16:10 回停車場，16:30 離開。</p>
+  </div>
+  <figure class="ph official-map" id="lake-figure">
+    <button type="button" class="zoom" data-full="img/lake-map.png" aria-label="放大 Alpsee 湖區地圖"><img src="img/lake-map.png" alt="北向上 Alpsee 湖區示意圖：東側 P4、博物館與租船處，北岸 Pindarplatz、西岸 Marienmonument、南岸 Alpseebad，以及環湖參考路線。" loading="lazy" decoding="async"></button>
+    <figcaption><span class="cap">點圖放大｜湖岸、觀景點、租船處與回停車場方向</span><span class="cr">北向上旅行用示意圖，不按比例；環湖線供參考，非本日完整安排。</span></figcaption>
+  </figure>
+  <p class="route-summary">官網列 P4 至 Alpseebad 步行約 10 分鐘；整圈環湖約 5.2 公里、約 1.5 小時。兩者是不同路線，湖邊停留依體力與天候調整。<a href="https://www.hohenschwangau.de/en/nature-surroundings/alpseebad-in-hohenschwangau" target="_blank" rel="noopener">Alpseebad 官方說明</a> · <a href="https://www.hohenschwangau.de/en/nature-surroundings/alpsee-hiking-path" target="_blank" rel="noopener">環湖官方說明</a>（查證：2026/10/01）</p>
+</section>
+
+<section class="scene" aria-label="各步驟備註與注意事項">
   <div class="steps" role="tablist" aria-label="路線步驟" style="--n:6">
-    <button type="button" class="step" role="tab" id="t1" aria-controls="p1" aria-selected="true"><span class="n">1</span><b>P4 停車</b><small>09:40</small></button>
-    <button type="button" class="step" role="tab" id="t2" aria-controls="p2" aria-selected="false"><span class="n">2</span><b>接駁巴士</b><small>10:00</small></button>
-    <button type="button" class="step" role="tab" id="t3" aria-controls="p3" aria-selected="false"><span class="n">3</span><b>瑪麗安橋</b><small>10:30</small></button>
-    <button type="button" class="step" role="tab" id="t4" aria-controls="p4" aria-selected="false"><span class="n">4</span><b>走到城堡</b><small>11:00</small></button>
+    <button type="button" class="step" role="tab" id="t1" aria-controls="p1" aria-selected="true"><span class="n">1</span><b>P4 停車</b><small>約 10:00</small></button>
+    <button type="button" class="step" role="tab" id="t2" aria-controls="p2" aria-selected="false"><span class="n">2</span><b>接駁巴士</b><small>目標 10:30 前</small></button>
+    <button type="button" class="step" role="tab" id="t3" aria-controls="p3" aria-selected="false"><span class="n">3</span><b>途中拍照</b><small>瑪麗安橋・可略過</small></button>
+    <button type="button" class="step" role="tab" id="t4" aria-controls="p4" aria-selected="false"><span class="n">4</span><b>走到城堡</b><small>11:30 前集合</small></button>
     <button type="button" class="step" role="tab" id="t5" aria-controls="p5" aria-selected="false"><span class="n">5</span><b>城內導覽</b><small>11:45</small></button>
     <button type="button" class="step" role="tab" id="t6" aria-controls="p6" aria-selected="false"><span class="n">6</span><b>下山午餐</b><small>12:20</small></button>
   </div>
 
-  <article class="panel" id="p1" role="tabpanel" aria-labelledby="t1">
-    <div>
-      <h3>P4 停車場（阿爾卑斯湖停車場）</h3>
-      <p class="where">Alpseeparkplatz P4，舊天鵝堡下方、靠近阿爾卑斯湖</p>
-      <ul>
-        <li>停車 6 小時內 12 €，之後每小時加 1 €、最多 16 €；09:40–14:00 剛好 12 €（官方註明價格可能調整）。</li>
-        <li>接駁巴士站就在 P4 旁邊，離瑪麗安橋最近的就是這個停車場。</li>
-        <li>門票是線上票，手機 QR code 在城堡入口直接掃，<b>不必去售票中心</b>。</li>
-        <li>背包、大包包留在車上：城堡規定不能帶背包進城，售票中心也沒有寄物處。</li>
-        <li>施萬高鎮（Schwangau）的 B17 公路 9/15 起全線封閉到 12 月中，照指示繞經霍恩施萬高，車程多抓一點。</li>
-      </ul>
-    </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/village.jpg?v=ee52f77e" aria-label="放大圖片：霍恩施萬高村、P4 停車場與接駁巴士，左邊小山上是舊天鵝堡，右上山腰是新天鵝堡"><img src="img/village.jpg?v=ee52f77e" alt="霍恩施萬高村、P4 停車場與接駁巴士，左邊小山上是舊天鵝堡，右上山腰是新天鵝堡（示意插畫）" width="1400" height="875" loading="lazy" decoding="async"></button><figcaption><span class="cap">P4 停車場與村子：接駁巴士站就在停車場旁，左邊小山上是黃色的舊天鵝堡，右上山腰是新天鵝堡。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>停車</dt><dd>12 € · 6 小時內</dd><dt>巴士站</dt><dd>P4 旁</dd><dt>售票中心</dt><dd>不必去</dd></dl></aside>
-  </article>
-  <article class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
-    <div>
-      <h3>接駁巴士：P4 → 瑪麗安橋站</h3>
-      <p class="where">上方站叫「Jugend」觀景點／瑪麗安橋站，車程約 15 分鐘（不含等車）</p>
-      <ul>
-        <li>成人上山 3.50 €、下山 3.50 €、來回 5.00 €。<b>只收現金</b>，在下方站的巴士售票亭或跟司機買；德國票（Deutschland-Ticket）等通票都不能用。</li>
-        <li>我們走路下山，只買上山單程：4 人 14 € 現金。</li>
-        <li>約 20 分鐘一班，沒有固定時刻表。城堡夏季開放期（到 10/15）首班上山 08:00、末班上山 17:30、末班下山 18:45。</li>
-        <li>路面有冰雪時停駛；停駛或排太長就改走路（見下方「臨時狀況」）。</li>
-      </ul>
-    </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/bus.jpg?v=96d2202c" aria-label="放大圖片：接駁巴士沿森林道路往瑪麗安橋爬坡"><img src="img/bus.jpg?v=96d2202c" alt="接駁巴士沿森林道路往瑪麗安橋爬坡（示意插畫）" width="1400" height="735" loading="lazy" decoding="async"></button><figcaption><span class="cap">接駁巴士：約 20 分鐘一班、車程約 15 分，只收現金。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>上山</dt><dd>3.50 € · 現金</dd><dt>班距</dt><dd>約 20 分</dd><dt>車程</dt><dd>約 15 分</dd></dl></aside>
-  </article>
-  <article class="panel" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
-    <div>
-      <h3>瑪麗安橋 Marienbrücke</h3>
-      <p class="where">從上方站走 5 分鐘；從這裡看城堡站在峽谷上方的岩脊</p>
-      <ul>
-        <li>鐵橋離峽谷底約 90 m、長約 35 m，底下沒有支撐；正下方是約 30 m 高的佩拉特瀑布。</li>
-        <li>官網 9/29 顯示橋是開放的。冬天冰雪會暫時關閉，每天的狀態公布在售票中心官網首頁；關了不影響城堡導覽。</li>
-        <li>官方沒有公布人數管制；非官方資料說夏季週末可能要排到 30 分鐘。</li>
-        <li><b>11:00 最晚離開瑪麗安橋</b>，往城堡走。</li>
-        <li>有空可以順路到「Jugend」觀景點（上方站走 5 分），看得到舊天鵝堡、阿爾卑斯湖和天鵝湖。</li>
-      </ul>
-    </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/bridge-view.jpg?v=b2f1c0b2" aria-label="放大圖片：從瑪麗安橋看新天鵝堡，城堡站在森林岩脊上，後面是平原與湖"><img src="img/bridge-view.jpg?v=b2f1c0b2" alt="從瑪麗安橋看新天鵝堡，城堡站在森林岩脊上，後面是平原與湖（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">從瑪麗安橋看城堡：最有名的角度，城堡站在峽谷上方的岩脊，後面是平原和湖。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>離峽谷</dt><dd>約 90 m</dd><dt>橋長</dt><dd>約 35 m</dd><dt>最晚離開</dt><dd>11:00</dd></dl></aside>
-  </article>
-  <article class="panel" id="p4" role="tabpanel" aria-labelledby="t4" hidden>
-    <div>
-      <h3>走到城堡入口</h3>
-      <p class="where">上方站到城堡約 500–600 m 的陡下坡（坡度 12–19%），約 15 分鐘</p>
-      <ul>
-        <li>在城堡中庭等候。閘門上方的螢幕會顯示票上的導覽編號（445），時間到才通過閘門，導覽員在裡面接。</li>
-        <li>導覽準時開始，<b>遲到就不能參加</b>；官方提醒要預留可能的安檢時間。</li>
-        <li>城堡外有免費 Wi-Fi（集合點、馬車迴轉處到導覽起訖點之間）。</li>
-        <li>城堡外可以拍照，不能飛空拍機。</li>
-      </ul>
-    </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/gate.jpg?v=91278870" aria-label="放大圖片：城堡紅磚門樓與拱門，門前排隊等導覽的遊客"><img src="img/gate.jpg?v=91278870" alt="城堡紅磚門樓與拱門，門前排隊等導覽的遊客（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">城堡中庭與門樓：在這裡等螢幕顯示導覽編號 445，時間到才過閘門。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>下坡</dt><dd>約 15 分</dd><dt>螢幕編號</dt><dd>445</dd><dt>最晚到中庭</dt><dd>11:30</dd></dl></aside>
-  </article>
-  <article class="panel" id="p5" role="tabpanel" aria-labelledby="t5" hidden>
-    <div>
-      <h3>城內導覽 Tour 445（中文語音導覽）</h3>
-      <p class="where">票面：Tournummer 445 · 10/6 · 入場 11:45 · Audiotour Mandarin</p>
-      <ul>
-        <li>由導覽員帶隊，進城後領中文語音機；約 30 分鐘、14 個房間、約 350 級階梯（有電梯，要事先預約）。</li>
-        <li>3 樓：下層大廳、王座廳、前廳、餐廳、寢室、禮拜室、更衣室、起居室、洞窟與溫室、書房、副官室。</li>
-        <li>4 樓：王座廳上層、上層大廳、歌手大廳。</li>
-        <li><b>城內禁止拍照、攝影</b>。</li>
-        <li>導覽結束在 2 樓：商店、咖啡館、免費的路德維希二世多媒體室；地面層可以看歷史廚房。</li>
-      </ul>
-    </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/throne-hall.jpg?v=1426070b" aria-label="放大圖片：王座廳：藍金色拱廊、金色半圓後殿與王冠形大吊燈"><img src="img/throne-hall.jpg?v=1426070b" alt="王座廳：藍金色拱廊、金色半圓後殿與王冠形大吊燈（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">王座廳：兩層拱廊、金色後殿與王冠形吊燈。城內禁止拍照，圖是依印象畫的示意。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>導覽</dt><dd>約 30 分</dd><dt>房間</dt><dd>14 間</dd><dt>階梯</dt><dd>約 350 級</dd></dl></aside>
-  </article>
-  <article class="panel" id="p6" role="tabpanel" aria-labelledby="t6" hidden>
-    <div>
-      <h3>走路下山、湖邊午餐</h3>
-      <p class="where">城堡到村子的柏油坡道約 1.5 km（官方寫上山 30–40 分，下坡會快一點）</p>
-      <ul>
-        <li>建議走路下山：搭巴士要先從城堡往上爬 500–600 m 回上方站；馬車要先走約 450 m 到迴轉處、下山 4 €、沒有時刻表。</li>
-        <li>多夫維爾特（Dorfwirt，售票中心對面）：餐廳 11:00–19:00、廚房 11:30–18:00，外帶攤 10:00–17:00。</li>
-        <li>凱恩茲咖啡（Café Kainz）：10:00–17:00、熱食 10:30–16:00，露台看得到新天鵝堡。</li>
-        <li>阿爾卑斯湖的租船 10:00–19:00、4 人以內 30 分鐘 15 €、只收現金（好天氣才開）；湖邊步道一圈 5.2 km、約 1.5 小時，這次不走完。</li>
-        <li><b>14:00 開車離開</b>。</li>
-      </ul>
-    </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/alpsee.jpg?v=789eab2f" aria-label="放大圖片：阿爾卑斯湖與湖邊的黃色舊天鵝堡，湖面有倒影"><img src="img/alpsee.jpg?v=789eab2f" alt="阿爾卑斯湖與湖邊的黃色舊天鵝堡，湖面有倒影（示意插畫）" width="1400" height="875" loading="lazy" decoding="async"></button><figcaption><span class="cap">阿爾卑斯湖：午餐後在湖邊走一小段，對岸小山上是舊天鵝堡。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>下山</dt><dd>1.5 km 步行</dd><dt>午餐</dt><dd>12:50–13:45</dd><dt>開車</dt><dd>14:00</dd></dl></aside>
-  </article>
+  <article class="panel" id="p1" role="tabpanel" aria-labelledby="t1"><div><h3>P4 優先，滿位找其他可用車位</h3><p class="where">Alpseeparkplatz P4 · Shuttlebus Neuschwanstein</p><ul><li>P4 是接駁巴士山下站所在停車場。滿位依序找 P1 → P2 → P3，再步行到 P4；這是找位順序，非官方便利性排名。</li><li>一般汽車六小時內 €12，每多一小時加 €1，最高 €16。約 10:00–16:30 停車，預算抓 €13。</li><li>停車場刷卡方式官方未明確公布，備現金；未查到城堡門票折抵停車的優惠。</li><li>正式電子票可直接用 QR Code 入場，不必到售票中心換票。行李放妥，不留外露物品。</li></ul></div><aside><figure class="ph "><button type="button" class="zoom" data-full="img/village.jpg" aria-label="放大圖片：霍恩施萬高村與 P4 接駁站"><img src="img/village.jpg" alt="霍恩施萬高村與 P4 接駁站（示意插畫）" loading="lazy" decoding="async"></button><figcaption><span class="cap">霍恩施萬高村與 P4 接駁站</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>停車估算</dt><dd>€13／車</dd><dt>巴士站</dt><dd>P4</dd><dt>電子票</dt><dd>直接入場</dd></dl></aside></article>
+  <article class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden><div><h3>搭車 15 分鐘，排隊另計</h3><p class="where">P4 → Viewpoint Jugend / Mary’s bridge</p><ul><li>成人上山 €3.50，四人 €14；只收現金，在巴士售票處或向司機購買。</li><li>巴士依需求運行，約每 20 分鐘一班，沒有固定時刻、不能預約。</li><li>目標 10:30 前搭上車。搭車約 15 分鐘；下車後還需走約 15 分鐘到城堡入口。</li><li>巴士不直接到城堡。冰雪可能停駛，當天確認營運狀況。</li></ul></div><aside><figure class="ph "><button type="button" class="zoom" data-full="img/bus.jpg" aria-label="放大圖片：巴士上山約 15 分鐘，排隊另計"><img src="img/bus.jpg" alt="巴士上山約 15 分鐘，排隊另計（示意插畫）" loading="lazy" decoding="async"></button><figcaption><span class="cap">巴士上山約 15 分鐘，排隊另計</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>搭車</dt><dd>約 15 分</dd><dt>排隊</dt><dd>另計</dd><dt>四人上山</dt><dd>€14 現金</dd></dl></aside></article>
+  <article class="panel" id="p3" role="tabpanel" aria-labelledby="t3" hidden><div><h3>瑪麗安橋，時間足夠再去</h3><p class="where">Marienbrücke · 拍照為彈性活動</p><ul><li>時間足夠可到瑪麗安橋拍照，11:05 離開，步行前往城堡入口，準備 11:45 導覽。</li><li>以 11:30 到城堡入口倒推，非 11:45 才抵達；上述是含步行與緩衝的規劃建議。</li></ul></div><aside><figure class="ph "><button type="button" class="zoom" data-full="img/bridge-view.jpg" aria-label="放大圖片：瑪麗安橋看城堡的示意角度"><img src="img/bridge-view.jpg" alt="瑪麗安橋看城堡的示意角度（示意插畫）" loading="lazy" decoding="async"></button><figcaption><span class="cap">瑪麗安橋看城堡的示意角度</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>拍照</dt><dd>視時間</dd><dt>離開橋</dt><dd>11:05</dd><dt>優先</dt><dd>準時導覽</dd></dl></aside></article>
+  <article class="panel" id="p4" role="tabpanel" aria-labelledby="t4" hidden><div><h3>下車後步行到城堡入口</h3><p class="where">巴士上方站 → 城堡入口／中庭</p><ul><li>官方估計約 15 分鐘陡下坡；步行速度及路況會影響時間。</li><li>11:30 前到城堡入口／中庭，準備票券並留安檢緩衝。</li><li>10:30 上車 → 約 10:45 下車 → 不停留拍照，約 11:00 到入口；排隊不包含在這 30 分鐘內。</li></ul></div><aside><figure class="ph "><button type="button" class="zoom" data-full="img/gate.jpg" aria-label="放大圖片：城堡入口：11:30 前抵達"><img src="img/gate.jpg" alt="城堡入口：11:30 前抵達（示意插畫）" loading="lazy" decoding="async"></button><figcaption><span class="cap">城堡入口：11:30 前抵達</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>步行</dt><dd>約 15 分</dd><dt>集合</dt><dd>11:30 前</dd><dt>入場</dt><dd>11:45</dd></dl></aside></article>
+  <article class="panel" id="p5" role="tabpanel" aria-labelledby="t5" hidden><div><h3>Tour 445 中文語音導覽</h3><p class="where">2026/10/06 · 11:45 · Audiotour Mandarin</p><ul><li>四位成人已購正式電子票，手機有電、螢幕及 QR Code 清楚即可；另印紙本備用。</li><li>票面每人門票 €21＋預售手續費 €2.50＝€23.50；四人已付 €94。</li><li>11:45 是城堡入場時間，不是巴士時間。遲到不能保證入場，票券不可退換。</li><li>導覽後抓約 12:20 離開，屬規劃估算，以現場進度為準。城內禁止拍照。</li></ul></div><aside><figure class="ph "><button type="button" class="zoom" data-full="img/throne-hall.jpg" aria-label="放大圖片：城內導覽示意，室內禁止拍照"><img src="img/throne-hall.jpg" alt="城內導覽示意，室內禁止拍照（示意插畫）" loading="lazy" decoding="async"></button><figcaption><span class="cap">城內導覽示意，室內禁止拍照</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>入場</dt><dd>11:45</dd><dt>團號</dt><dd>445</dd><dt>已付</dt><dd>€94／四人</dd></dl></aside></article>
+  <article class="panel" id="p6" role="tabpanel" aria-labelledby="t6" hidden><div><h3>下山後，把下午留給休息</h3><p class="where">Hohenschwangau 村 → Alpsee 湖岸</p><ul><li>下山預留 30–40 分鐘，是規劃估算；約 13:00 回村內用餐。</li><li>午餐 75 分鐘、逛村 45 分鐘、湖邊拍照 30 分鐘，再留咖啡休息與延誤緩衝。</li><li>不繞湖、不另加教堂或其他城鎮。16:10 開始回車上，16:30 離開。</li><li>前往住宿車程採討論估算 1 小時 40 分鐘，18:10 抵達；交通緩衝抓至 18:30。</li></ul></div><aside><figure class="ph "><button type="button" class="zoom" data-full="img/alpsee.jpg" aria-label="放大圖片：Alpsee 湖岸，午後短暫散步"><img src="img/alpsee.jpg" alt="Alpsee 湖岸，午後短暫散步（示意插畫）" loading="lazy" decoding="async"></button><figcaption><span class="cap">Alpsee 湖岸，午後短暫散步</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>午餐</dt><dd>13:00–14:15</dd><dt>離開</dt><dd>16:30</dd><dt>住宿</dt><dd>18:10–18:30</dd></dl></aside></article>
 </section>
 
-<section class="sec" id="ways" aria-labelledby="h-ways">
-  <div class="sec-h">
-    <h2 id="h-ways">巴士、馬車還是走路</h2>
-    <p class="verdict">上山搭巴士到瑪麗安橋，下山走路最順。</p>
-    <p>三種方式到的地方不一樣：巴士停在城堡上方的瑪麗安橋站，馬車停在城堡下方的迴轉處，走路是從村子直接走柏油坡道到城堡。佩拉特峽谷步道因落石封閉，沒有第四條路。</p>
-  </div>
-  <div class="tbl-wrap">
-    <table class="ctab">
-      <thead><tr><th></th><th>接駁巴士</th><th>馬車</th><th>走路</th></tr></thead>
-      <tbody>
-        <tr><th>從哪裡</th><td>P4 旁</td><td>Hotel Müller 對面</td><td>村子</td></tr>
-        <tr><th>到哪裡</th><td><b>瑪麗安橋站</b>（比城堡高）</td><td>城堡下方迴轉處</td><td><b>城堡入口</b></td></tr>
-        <tr><th>還要走</th><td>到橋 5 分；到城堡陡下坡約 15 分</td><td>上坡約 450 m、10–15 分</td><td>—</td></tr>
-        <tr><th>時間</th><td>約 15 分＋等車</td><td>約 20 分</td><td>約 30–40 分（上山）</td></tr>
-        <tr><th>費用</th><td>上 3.50 € · 下 3.50 € · 來回 5 €</td><td>上 8 € · 下 4 €</td><td>免費</td></tr>
-        <tr><th>班次</th><td>約 20 分一班，無時刻表</td><td>約 30 分一班，無時刻表</td><td>—</td></tr>
-        <tr><th>付款</th><td>只收現金</td><td>在馬車上付</td><td>—</td></tr>
-        <tr><th>注意</th><td>冰雪停駛</td><td>全年行駛</td><td>坡很陡、全程柏油路</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="rides">
-    <div class="ride">
-      <div>
-        <p class="rk">上山 · 接駁巴士</p>
-        <h3>先到瑪麗安橋，再往下走到城堡</h3>
-        <p>巴士停在比城堡高的地方，看完橋一路往下走，不必爬坡。回程不建議搭巴士：要從城堡再爬回上方站。</p>
-      </div>
-      <div class="shots"><figure class="ph wide"><button type="button" class="zoom" data-full="img/bus.jpg?v=96d2202c" aria-label="放大圖片：接駁巴士沿森林道路往瑪麗安橋爬坡"><img src="img/bus.jpg?v=96d2202c" alt="接駁巴士沿森林道路往瑪麗安橋爬坡（示意插畫）" width="1400" height="735" loading="lazy" decoding="async"></button><figcaption><span class="cap">接駁巴士：約 20 分鐘一班、車程約 15 分，只收現金。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure></div>
-    </div>
-    <div class="ride">
-      <div>
-        <p class="rk">下山 · 走路</p>
-        <h3>柏油坡道 1.5 km 走回村子</h3>
-        <p>沿著森林裡的坡道往下，秋天兩旁是黃葉和橘葉。坡很陡，穿好走的鞋；走到村子直接去吃午餐。</p>
-        <p class="tip" style="margin-top:14px">想省腳力，下山也可以從城堡下方的迴轉處搭馬車（4 €，沒有時刻表）。</p>
-      </div>
-      <div class="shots"><figure class="ph wide"><button type="button" class="zoom" data-full="img/walk.jpg?v=15c4c962" aria-label="放大圖片：森林裡轉彎的柏油步道，陽光從樹縫照下來"><img src="img/walk.jpg?v=15c4c962" alt="森林裡轉彎的柏油步道，陽光從樹縫照下來（示意插畫）" width="1400" height="875" loading="lazy" decoding="async"></button><figcaption><span class="cap">走路下山：城堡到村子的柏油坡道約 1.5 km，坡很陡，秋天兩旁是黃葉。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure></div>
-    </div>
-  </div>
-</section>
+<section class="sec" id="parking" aria-labelledby="h-parking"><div class="sec-h"><h2 id="h-parking">停車與付款，一次準備好</h2></div><p>P4 優先 → 滿位依序找 P1 → P2 → P3。其他停車場至 P4 的步行另留時間。城堡門票、停車與上山交通分開計費。</p><div class="tbl-wrap"><table class="ctab"><thead><tr><th>環節</th><th>費用</th><th>付款</th></tr></thead><tbody><tr><td>P1–P4 一般汽車</td><td>六小時 €12；之後每小時 €1；最高 €16</td><td>刷卡未確認，備現金</td></tr><tr><td>本日停車估算</td><td>約 10:00–16:30，抓 €13</td><td>以現場計費為準</td></tr><tr><td>巴士上山</td><td>€3.50／人；四人 €14</td><td>只收現金</td></tr><tr><td>巴士來回（如選用）</td><td>€5／人；四人 €20</td><td>只收現金</td></tr></tbody></table></div><p class="tip">我們上山搭巴士、下山走路：停車＋四人上山約 €27，建議備 €30–40 小額現金。未查到憑城堡門票免費停車或折抵的官方優惠。</p></section>
+<section class="sec" id="timing" aria-labelledby="h-timing"><div class="sec-h"><h2 id="h-timing">11:45 導覽，怎麼抓時間</h2></div><p class="verdict">P4→上方站巴士約 15 分＋上方站→入口步行約 15 分；橋上拍照是支線，另加步行往返與停留。</p><div class="tbl-wrap"><table class="ctab"><thead><tr><th>時間</th><th>控制點</th></tr></thead><tbody><tr><td>約 10:00–10:20</td><td>抵達停車場，停妥後直接排隊</td></tr><tr><td>目標 10:30 前</td><td>搭上巴士；依剩餘時間決定橋上拍照</td></tr><tr><td>11:05</td><td>離開瑪麗安橋，往城堡走</td></tr><tr><td>11:30 前</td><td>到城堡入口／中庭</td></tr><tr><td>11:45</td><td>Tour 445 入場</td></tr></tbody></table></div><p class="tip">沒有能保證趕上的「最晚到停車場時間」。若 11:00 才搭上巴士，取消拍照直接去城堡，約 30 分鐘交通已用盡緩衝。</p></section>
+<section class="sec" id="ways" aria-labelledby="h-ways"><div class="sec-h"><h2 id="h-ways">巴士、馬車，還是步行</h2></div><p>推薦巴士上山、步行下山。以下不含停車場至乘車點的步行、排隊及拍照。</p><div class="tbl-wrap"><table class="ctab"><thead><tr><th>方式</th><th>乘車</th><th>下車後步行</th><th>到入口時間</th><th>上山費</th></tr></thead><tbody><tr><td>巴士：P4 出發</td><td>約 15 分</td><td>約 15 分陡下坡</td><td>約 30 分＋排隊</td><td>€3.50／人</td></tr><tr><td>馬車：Hotel Müller 對面</td><td>約 20 分</td><td>約 15 分上坡</td><td>約 35 分＋排隊</td><td>€8／人</td></tr><tr><td>步行：山腳售票中心一帶</td><td>—</td><td>約 30–40 分上坡</td><td>約 30–40 分，另留緩衝</td><td>免費</td></tr></tbody></table></div><p class="tip">巴士和馬車都不能預約、沒有固定時刻，也不直接送到入口。上方站稱 Jugend／Mary’s bridge；山下找「Shuttlebus Neuschwanstein」與 P4 指標。</p></section>
 
-<section class="sec" id="views" aria-labelledby="h-views">
-  <div class="sec-h">
-    <h2 id="h-views">哪裡看城堡最漂亮</h2>
-    <p class="verdict">經典的全景在瑪麗安橋；村子和湖邊看得到城堡在山腰上的樣子。</p>
-    <p>城堡裡面不能拍照，拍城堡要在外面。圖都可以點開放大；這些是依實景畫的示意插畫，城堡、山形和比例都有簡化。</p>
-  </div>
-  <div class="tbl-wrap">
-    <table class="ctab">
-      <thead><tr><th></th><th>瑪麗安橋</th><th>城堡中庭與門樓</th><th>村子、阿爾卑斯湖</th></tr></thead>
-      <tbody>
-        <tr><th>看到什麼</th><td><b>城堡側面全景</b>，站在峽谷上方的岩脊，後面是平原和湖</td><td>紅磚門樓、主樓近看</td><td>城堡小小地站在山腰，湖邊是黃色的舊天鵝堡</td></tr>
-        <tr><th>什麼時候</th><td>10:30–11:00</td><td>11:15–11:45 等導覽時</td><td>12:50 之後午餐前後</td></tr>
-        <tr><th>注意</th><td>人多時要排隊；冬天可能關</td><td>11:45 前要在中庭</td><td>湖邊步道一圈 1.5 小時，這次只走一小段</td></tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="vs">
-    <div class="vs-col">
-      <h3>瑪麗安橋 <span class="num">約 90 m 高</span></h3>
-      <p>從橋上看城堡是最有名的角度；轉身往下是峽谷和瀑布。</p>
-      <figure class="ph"><button type="button" class="zoom" data-full="img/bridge-view.jpg?v=b2f1c0b2" aria-label="放大圖片：從瑪麗安橋看新天鵝堡，城堡站在森林岩脊上，後面是平原與湖"><img src="img/bridge-view.jpg?v=b2f1c0b2" alt="從瑪麗安橋看新天鵝堡，城堡站在森林岩脊上，後面是平原與湖（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">從瑪麗安橋看城堡：最有名的角度，城堡站在峽谷上方的岩脊，後面是平原和湖。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure>
-      <figure class="ph"><button type="button" class="zoom" data-full="img/bridge.jpg?v=86838f4f" aria-label="放大圖片：瑪麗安橋橫跨佩拉特峽谷，橋下是瀑布，橋上站滿遊客"><img src="img/bridge.jpg?v=86838f4f" alt="瑪麗安橋橫跨佩拉特峽谷，橋下是瀑布，橋上站滿遊客（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">瑪麗安橋：離峽谷底約 90 m、長約 35 m，正下方是約 30 m 高的佩拉特瀑布。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure>
-    </div>
-    <div class="vs-col plat">
-      <h3>村子與湖邊 <span class="num">約 800 m</span></h3>
-      <p>停車場和村子看得到新天鵝堡在山腰、舊天鵝堡在小山丘上；阿爾卑斯湖邊可以看倒影。</p>
-      <figure class="ph"><button type="button" class="zoom" data-full="img/village.jpg?v=ee52f77e" aria-label="放大圖片：霍恩施萬高村、P4 停車場與接駁巴士，左邊小山上是舊天鵝堡，右上山腰是新天鵝堡"><img src="img/village.jpg?v=ee52f77e" alt="霍恩施萬高村、P4 停車場與接駁巴士，左邊小山上是舊天鵝堡，右上山腰是新天鵝堡（示意插畫）" width="1400" height="875" loading="lazy" decoding="async"></button><figcaption><span class="cap">P4 停車場與村子：接駁巴士站就在停車場旁，左邊小山上是黃色的舊天鵝堡，右上山腰是新天鵝堡。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure>
-      <figure class="ph"><button type="button" class="zoom" data-full="img/alpsee.jpg?v=789eab2f" aria-label="放大圖片：阿爾卑斯湖與湖邊的黃色舊天鵝堡，湖面有倒影"><img src="img/alpsee.jpg?v=789eab2f" alt="阿爾卑斯湖與湖邊的黃色舊天鵝堡，湖面有倒影（示意插畫）" width="1400" height="875" loading="lazy" decoding="async"></button><figcaption><span class="cap">阿爾卑斯湖：午餐後在湖邊走一小段，對岸小山上是舊天鵝堡。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure>
-    </div>
-  </div>
-</section>
 
-<section class="sec" id="plan" aria-labelledby="h-plan">
-  <div class="sec-h">
-    <h2 id="h-plan">當天怎麼排</h2>
-    <p>依 V5 行程。唯一不能延誤的是 11:45 入場，瑪麗安橋、午餐和湖邊都讓位給它。</p>
-  </div>
-  <div class="legend"><span><i style="background:var(--steel)"></i>搭車</span><span><i style="background:var(--glow)"></i>城堡</span><span><i style="background:var(--ice)"></i>橋、湖邊</span><span><i style="background:repeating-linear-gradient(90deg,var(--ink2) 0 4px,transparent 4px 8px)"></i>走路</span></div>
-  <ol class="plan">
-    <li data-lv="ride"><time>07:50</time><span class="bar"></span><div class="t"><b>慕尼黑出發</b><span>車程約 1 小時 50 分；B17 施萬高段封路，照指示繞行</span></div></li>
-    <li data-lv="ride"><time>09:40</time><span class="bar"></span><div class="t"><b>P4 停車</b><span>洗手間、背包留車上、準備巴士現金 14 €</span></div></li>
-    <li data-lv="ride"><time>10:00</time><span class="bar"></span><div class="t"><b>接駁巴士上山</b><span>約 15 分＋等車</span></div></li>
-    <li data-lv="plat"><time>10:30</time><span class="bar"></span><div class="t"><b>瑪麗安橋</b><span>拍照 30 分；<b>11:00 最晚離開</b></span></div></li>
-    <li data-lv="walk"><time>11:00</time><span class="bar"></span><div class="t"><b>陡下坡走到城堡中庭</b><span>約 15 分，11:30 前到中庭等螢幕顯示 445</span></div></li>
-    <li data-lv="top"><time>11:45</time><span class="bar"></span><div class="t"><b>Tour 445 中文語音導覽</b><span>約 30 分，結束在 2 樓商店與咖啡館</span></div></li>
-    <li data-lv="walk"><time>12:20</time><span class="bar"></span><div class="t"><b>走路下山</b><span>1.5 km 柏油坡道</span></div></li>
-    <li data-lv="plat"><time>12:50</time><span class="bar"></span><div class="t"><b>村子午餐、阿爾卑斯湖邊</b><span>到 13:45</span></div></li>
-    <li data-lv="ride"><time>14:00</time><span class="bar"></span><div class="t"><b>P4 開車離開</b><span>往聖科洛曼教堂</span></div></li>
-  </ol>
-</section>
 
-<section class="sec" id="ifso" aria-labelledby="h-ifso">
-  <div class="sec-h">
-    <h2 id="h-ifso">臨時狀況怎麼辦</h2>
-  </div>
-  <div class="walks">
-    <div class="walk warn"><h3>10:15 巴士還在排長隊</h3><span class="dur">改走路</span>
-      <p>從村子走柏油坡道直接上城堡，約 30–40 分鐘，11:00 前到得了中庭；瑪麗安橋改到導覽後再去（城堡往上走約 15 分），看完搭巴士下山（3.50 €）。</p></div>
-    <div class="walk"><h3>巴士停駛（路面結冰）</h3><span class="dur">改走路</span>
-      <p>同上，走路上城堡。冰雪時瑪麗安橋也可能關，就不去橋。</p></div>
-    <div class="walk"><h3>瑪麗安橋關閉</h3><span class="dur">改看觀景點</span>
-      <p>到上方站旁的「Jugend」觀景點（走 5 分），再往城堡走。</p></div>
-    <div class="walk warn"><h3>快趕不上 11:45</h3><span class="dur">直接去中庭</span>
-      <p>導覽準時開始，遲到不能參加；線上票不能換場也不能退。11:00 一到就離開橋，不要等人少再拍。</p></div>
-  </div>
-</section>
+<section class="sec" id="plan" aria-labelledby="h-plan"><div class="sec-h"><h2 id="h-plan">當天怎麼排</h2></div><p>與每日行程一致；瑪麗安橋穿插在上山途中，固定入場時段以票券為準，其餘為規劃估算。</p><ol class="plan"><li data-lv="ride"><time>07:00–08:00</time><span class="bar"></span><div class="t"><b>取車／退房</b><span>SIXT 取車、檢查車況，回住宿裝行李。</span></div></li><li data-lv="ride"><time>08:00–10:20</time><span class="bar"></span><div class="t"><b>開車／停車</b><span>P4 優先，滿位依序找 P1 → P2 → P3。停車費約 €13，備現金。</span></div></li><li data-lv="ride"><time>抵達後–11:45</time><span class="bar"></span><div class="t"><b>接駁上山／途中拍照／集合</b><span>巴士單程 €3.50、來回 €5／人，現金。搭車 15 分＋步行 15 分，排隊另計。時間足夠可到瑪麗安橋拍照，11:05 離開往城堡走；11:30 前到中庭，備妥 QR Code。</span></div></li><li data-lv="top"><time>11:45–12:20</time><span class="bar"></span><div class="t"><b>城堡導覽</b><span>Tour 445，中文語音導覽，城內禁止拍照。</span></div></li><li data-lv="plat"><time>12:20–16:30</time><span class="bar"></span><div class="t"><b>下山／午餐／村內與湖邊散步</b><span>下山約 30–40 分鐘，午餐後逛村、Alpsee 湖邊拍照，喝咖啡休息。16:10 回停車場，16:30 離開。</span></div></li><li data-lv="ride"><time>16:30–18:10</time><span class="bar"></span><div class="t"><b>前往住宿</b><span>車程估算 1 小時 40 分鐘；約 17:10 聯絡住宿。</span></div></li><li data-lv="plat"><time>18:10 起</time><span class="bar"></span><div class="t"><b>Check-in／晚餐</b><span>預留交通緩衝，入住、休息，約 19:00 到 Wildfang 晚餐。</span></div></li></ol><p>晚餐：<a href="https://maps.app.goo.gl/HE3DrUYs6jM6putt5">Wildfang</a>（巴伐利亞料理），約 19:00 用餐；週二 11:00–22:00，廚房至 20:30。建議電話訂位，尚未預約。</p><p><a href="https://maps.app.goo.gl/ZyM8nnp2XGAu4NGt5">La Viola</a>、<a href="https://maps.app.goo.gl/a89BcYbiKfeXzVVy9">Indian Grill</a> 官網皆列週二公休，10/6 不安排。</p><p><a href="https://www.google.com/maps/dir/Parkplatz+P4,+Alpseestraße+27,+87645+Schwangau-Hohenschwangau,+德國/mittenwald-ferien.de,+Mühlenweg+36-38,+82481+Mittenwald,+德國/@47.6078285,10.8895522,9.81z/am=t/data=!4m19!4m18!1m5!1m1!1s0x479cf7f04abada5d:0x608bfa24e08de7b8!2m2!1d10.735957!2d47.5542978!1m5!1m1!1s0x479d0ea791bac98b:0x2b19e24c04066045!2m2!1d11.2629145!2d47.4348604!2m3!6e0!7e2!8j1790841600!3e0!5i1!5m1!1e1?entry=ttu&g_ep=EgoyMDI2MDkyOC4wIKXMDSoASAFQAw%3D%3D">P4 → 住宿 Google Maps 導航</a></p><p class="tip">提前和房東約好 18:10–18:30 抵達。約 17:10 由乘客聯絡，或安全停車後致電；實際抵達依當天導航調整。</p></section>
 
-<section class="sec" id="tix" aria-labelledby="h-tix">
-  <div class="sec-h">
-    <h2 id="h-tix">門票</h2>
-    <p>4 張成人票已經買好：Tour 445，10/6 11:45 入場，中文語音導覽。</p>
-  </div>
-  <div class="cols">
-    <div class="tbl-wrap">
-      <table class="tix">
-        <tr><th>門票（官方 2026 年價，已付）</th><th style="text-align:right">價格</th></tr>
-        <tr><td>新天鵝堡成人票</td><td class="num">21.00 €</td></tr>
-        <tr><td>線上訂票手續費</td><td class="num">2.50 €</td></tr>
-        <tr class="sum"><td>每人</td><td class="num">23.50 €</td></tr>
-        <tr><th>當天另付</th><th></th></tr>
-        <tr><td>接駁巴士上山 × 4（現金）</td><td class="num">14.00 €</td></tr>
-        <tr><td>P4 停車（6 小時內）</td><td class="num">12.00 €</td></tr>
-      </table>
-    </div>
-    <div class="buy">
-      <div><h3>入場用手機 QR code</h3><p>線上票不必到售票中心換票，在城堡入口直接掃。手機要有電，也可以先截圖或下載離線票。</p></div>
-      <div><h3>不能換、不能退</h3><p>線上票不能改場次也不能退費。當天售票中心 08:00 起只有少量現場票。</p></div>
-    </div>
-  </div>
-  <p class="tip">城堡到 10/15 是夏季時間 09:00–18:00，10/16 起冬季 10:00–16:00。</p>
-</section>
+<section class="sec" id="ifso" aria-labelledby="h-ifso"><div class="sec-h"><h2 id="h-ifso">臨時狀況怎麼辦</h2></div><div class="walks"><div class="walk"><h3>P4 滿位</h3><p>依序找 P1 → P2 → P3，並依現場導引停車；留步行到巴士站的時間。</p></div><div class="walk"><h3>10:30 還在排長隊</h3><p>依體力與現場隊伍評估改步行直接到城堡，上坡約 30–40 分鐘，再留緩衝；取消橋上拍照。</p></div><div class="walk"><h3>橋關閉或交通延誤</h3><p>直接往城堡入口，不以拍照影響固定導覽。巴士遇冰雪可能停駛。</p></div><div class="walk"><h3>下午疲倦或下雨</h3><p>逛村、湖邊可縮短，咖啡時間作休息或延誤緩衝；不必等到 16:30 才離開。</p></div></div></section>
+
+<section class="sec" id="tix" aria-labelledby="h-tix"><div class="sec-h"><h2 id="h-tix">電子票：直接入場，不需換票</h2></div><p>已購四張成人票：2026/10/06、11:45、Tour 445、Audiotour Mandarin。</p><div class="tbl-wrap"><table class="ctab"><thead><tr><th>票面項目</th><th>金額</th></tr></thead><tbody><tr><td>成人門票／人</td><td>€21</td></tr><tr><td>預售手續費／人</td><td>€2.50</td></tr><tr><td>每人已付</td><td>€23.50</td></tr><tr><td>四人已付</td><td>€94</td></tr></tbody></table></div><p>正式電子門票可在入口掃 QR Code，不必到山下售票中心換票。提前下載每人的票券，保持手機有電、螢幕完好、票碼清楚；另印紙本備用。門票不含停車、巴士或馬車。票面要求約提前 15 分鐘到中庭；遲到票券失效、不退款。</p></section>
 
 <section class="sec" aria-labelledby="h-pack">
   <div class="sec-h">
     <h2 id="h-pack">要帶什麼</h2>
-    <p>背包留在車上，隨身只帶小包。</p>
+    <p>行李放妥，隨身帶票券、現金與小包。</p>
   </div>
-  <div class="pack"><span>現金（巴士 14 €、馬車）</span><span>手機裡的門票 QR code</span><span>好走的鞋</span><span>薄外套</span><span>小包包</span></div>
+  <div class="pack"><span>小額現金 €30–40</span><span>手機裡的門票 QR code</span><span>好走的鞋</span><span>薄外套</span><span>小包包</span></div>
 </section>
 
-<footer class="src">
-  <p>這是我們的旅行筆記，不是官方頁面。內容依官方網站整理，2026-09-29 查詢；出發前一晚請再確認。剖面圖是示意，距離與坡度不照比例，海拔是約略值（官方沒有公布）。</p>
-  <h2>資料來源</h2>
-  <ul>
-    <li><a href="https://www.hohenschwangau.de/en/tours-tickets/official-tickets-neuschwanstein-hohenschwangau" target="_blank" rel="noopener">霍恩施萬高售票中心：門票與導覽</a>、<a href="https://www.hohenschwangau.de/en/visitor-information-2-2" target="_blank" rel="noopener">常見問題</a>、<a href="https://www.hohenschwangau.de/tickets-fuehrung/transportmoeglichkeiten-1-1" target="_blank" rel="noopener">巴士與馬車</a>、<a href="https://www.hohenschwangau.de/besucherinformation/parken-ortsplan" target="_blank" rel="noopener">停車</a>、<a href="https://www.hohenschwangau.de/tickets-fuehrung/oeffnungszeiten-1" target="_blank" rel="noopener">開放時間</a></li>
-    <li><a href="https://www.neuschwanstein.de/englisch/palace/tour.htm" target="_blank" rel="noopener">巴伐利亞宮殿管理局：導覽路線</a>、<a href="https://www.neuschwanstein.de/englisch/tourist/index.htm" target="_blank" rel="noopener">參觀須知</a>、<a href="https://www.neuschwanstein.de/englisch/tourist/howtoget.htm" target="_blank" rel="noopener">交通</a>、<a href="https://www.neuschwanstein.de/englisch/tourist/admiss.htm" target="_blank" rel="noopener">票價</a></li>
-    <li><a href="https://www.hohenschwangau.de/natur-umgebung/marienbruecke-1" target="_blank" rel="noopener">瑪麗安橋</a>、<a href="https://www.schloesser.bayern.de/deutsch/presse/archiv21/neuschwan/marienbruecke27-05-21.htm" target="_blank" rel="noopener">瑪麗安橋尺寸（宮殿管理局）</a>、<a href="https://www.hohenschwangau.de/natur-umgebung/aussichtspunkt-jugend" target="_blank" rel="noopener">Jugend 觀景點</a>、<a href="https://www.hohenschwangau.de/natur-umgebung/alpsee-rundwanderweg" target="_blank" rel="noopener">阿爾卑斯湖步道</a>、<a href="https://www.hohenschwangau.de/natur-umgebung/bootsverleih-am-alpsee" target="_blank" rel="noopener">租船</a></li>
-    <li><a href="https://www.hohenschwangau.de/gastronomie/dorfwirt" target="_blank" rel="noopener">Dorfwirt</a>、<a href="https://www.hohenschwangau.de/restaurant-cafe-kainz" target="_blank" rel="noopener">Café Kainz</a>、<a href="https://baustelle-b17.de/" target="_blank" rel="noopener">B17 施萬高封路</a></li>
-    <li>非官方：<a href="https://thebettervacation.com/de/M%C3%BCnchen/schlossbr%C3%BCcke-neuschwanstein/" target="_blank" rel="noopener">瑪麗安橋排隊時間</a></li>
-  </ul>
-  <h2>插畫</h2>
-  <p>本頁插畫是用程式畫的示意圖（仿動畫電影背景的畫風），城堡、山形和比例依實景簡化，不是照片。</p>
-</footer>
+<footer class="src"><p>私人旅行說明預覽。查證日期：2026/10/01。取車、導覽依既有預約與票券；車程和散步時長為估算。兩張平面地圖依官方資料與既有地圖重新繪製，為北向上旅行用示意圖，不按比例；插畫為示意，非實景照片。</p><h2>官方資料來源</h2><p>餐廳查證（2026/10/01）：<a href="https://www.restaurant-wildfang.de/">Wildfang</a>、<a href="https://ristorante-laviola.de/kontakt/">La Viola</a>、<a href="https://www.indiangrill-mittenwald.de/">Indian Grill</a>。</p><ul><li><a href="https://www.hohenschwangau.de/en/visitor-information/how-to-reach-the-castles" target="_blank" rel="noopener">上山方式、巴士費用及付款</a></li><li><a href="https://www.hohenschwangau.de/en/visitor-information/local-map-and-parking" target="_blank" rel="noopener">停車場與停車費</a></li><li><a href="https://www.hohenschwangau.de/en/visitor-information-2-2" target="_blank" rel="noopener">電子票與參觀 FAQ</a></li><li><a href="https://www.hohenschwangau.de/en/shop" target="_blank" rel="noopener">村內商店</a></li><li><a href="https://www.hohenschwangau.de/en/nature-surroundings/alpsee-hiking-path" target="_blank" rel="noopener">Alpsee 湖岸步道</a></li><li><a href="https://www.fuessen.de/service/aktuelles-aus-fuessen/aktuelle-meldung/sperrung-der-b17-ortsdurchfahrt-schwangau-durch-bauarbeiten/" target="_blank" rel="noopener">B17 施工改道</a></li></ul><h2>插畫</h2><p>沿用專案既有示意插畫，城堡與地形已簡化，非實景照片。</p></footer>
 
 </div>
 
@@ -612,136 +353,41 @@ svg .castle.old{fill:var(--gold)}
 </dialog>
 
 <script>
-const SCENE = {
-  movers:[
-    { id:"busM", path:"pBus", T:22, ph:0 },
-    { id:"horseM", path:"pHorse", T:34, ph:.3 },
-  ],
-  steps:[
-    { stay:["pBus", 0] },
-    { move:[["pBus", 0, 1]] },
-    { move:[["pBridge", 0, 1]] },
-    { move:[["pBridge", 1, 0], ["pToCastle", 0, 1]] },
-    { stay:["pToCastle", 1] },
-    { move:[["pWalk", 0, 1]] },
-  ],
-};
-/* 景點圖解共用的剖面圖動畫：由 build_lib.js 內嵌進各頁 engine 的位置，放在頁面定義的 SCENE 之後。
-   SCENE = {
-     movers: [{ id, path, T, ph, kind }]   背景一直在動的車廂、巴士、火車；kind "shuttle" 到站停一下再折返，"loop" 單向循環
-     steps:  [{ stay:[path, f] } 或 { move:[[path, 起點 f, 終點 f], …] }]   每一步「你」停在哪、沿哪條路走
-   }
-   path 是 #scene 裡 <path> 的 id，f 是路線上的位置（0 起點、1 終點）。 */
 (() => {
-  const svg = document.getElementById("scene");
-  const frame = document.getElementById("frame");
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const VBW = svg.viewBox.baseVal.width;
-  const P = {}, LEN = {};
-  const ids = new Set([...SCENE.movers.map(m => m.path), ...SCENE.steps.flatMap(s => s.stay ? [s.stay[0]] : s.move.map(m => m[0]))]);
-  for (const k of ids){ P[k] = svg.querySelector("#" + k); LEN[k] = P[k].getTotalLength(); }
-  const at = (k, f) => P[k].getPointAtLength(LEN[k] * Math.min(1, Math.max(0, f)));
-  const put = (el, p) => el.setAttribute("transform", `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
-  const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-
-  /* 背景：車廂對開（到站停一下再折返），火車、巴士單向循環 */
-  const movers = SCENE.movers.map(m => ({ ...m, el:svg.querySelector("#" + m.id) }));
-  const shuttle = u => { const tri = 1 - Math.abs(1 - 2 * (u % 1)); return ease(Math.min(1, Math.max(0, (tri - .08) / .84))); };
-  const pos = (m, s) => m.kind === "loop" ? (s / m.T + (m.ph || 0)) % 1 : shuttle(s / m.T + (m.ph || 0));
-  function ambient(now){
-    const s = now / 1000;
-    for (const m of movers) put(m.el, at(m.path, pos(m, s)));
-    if (!reduce) requestAnimationFrame(ambient);
+  const tabs = [...document.querySelectorAll('.step')];
+  let current = 0;
+  function show(n) {
+    current = n;
+    tabs.forEach((tab, i) => {
+      tab.setAttribute('aria-selected', String(i === n));
+      tab.tabIndex = i === n ? 0 : -1;
+      document.getElementById(tab.getAttribute('aria-controls')).hidden = i !== n;
+    });
   }
-  if (reduce) movers.forEach((m, i) => put(m.el, at(m.path, i % 2 ? .7 : .3)));
-  else requestAnimationFrame(ambient);
-
-  /* 你的位置：停在站點，或沿路線移動 */
-  const you = svg.querySelector("#you");
-  const STEPS = SCENE.steps;
-  let tok = 0;
-  function follow(p){
-    if (frame.scrollWidth <= frame.clientWidth + 2) return;
-    const scale = svg.getBoundingClientRect().width / VBW;
-    frame.scrollTo({ left:Math.max(0, p.x * scale - frame.clientWidth / 2), behavior:reduce ? "auto" : "smooth" });
-  }
-  function travel(segs, dur){
-    const my = ++tok;
-    let i = 0, t0 = performance.now();
-    const per = dur / segs.length;
-    function fr(now){
-      if (my !== tok) return;
-      const [k, a, b] = segs[i];
-      const t = Math.min(1, (now - t0) / per);
-      put(you, at(k, a + (b - a) * ease(t)));
-      if (t < 1) return requestAnimationFrame(fr);
-      if (++i < segs.length){ t0 = now; follow(at(segs[i][0], segs[i][1])); requestAnimationFrame(fr); }
-    }
-    requestAnimationFrame(fr);
-  }
-
-  const tabs = [...document.querySelectorAll(".step")];
-  const panels = tabs.map(t => document.getElementById(t.getAttribute("aria-controls")));
-  let cur = 0;
-  function show(n){
-    cur = n;
-    svg.dataset.step = String(n + 1);
-    tabs.forEach((t, i) => t.setAttribute("aria-selected", String(i === n)));
-    panels.forEach((p, i) => { p.hidden = i !== n; });
-    const s = STEPS[n];
-    if (s.stay || reduce){
-      tok++;
-      const last = s.move && s.move[s.move.length - 1];
-      const [k, f] = s.stay || [last[0], last[2]];
-      const p = at(k, f); put(you, p); follow(p);
-    } else {
-      const [k0, a0] = s.move[0];
-      put(you, at(k0, a0)); follow(at(k0, a0));
-      travel(s.move, s.move.length * 2600);
-    }
-  }
-
-  /* 自動播放：每步停 6.5 秒；點步驟、看插畫就暫停 */
-  const btn = document.getElementById("play"), prog = document.getElementById("prog");
-  const HOLD = 6500;
-  let playing = !reduce, since = performance.now();
-  function setPlay(on){
-    playing = on; since = performance.now();
-    btn.setAttribute("aria-pressed", String(on));
-    btn.textContent = on ? "暫停自動播放" : "自動播放路線";
-    if (!on) prog.style.width = "0";
-  }
-  function tick(now){
-    if (playing && !document.hidden){
-      const f = (now - since) / HOLD;
-      prog.style.width = Math.min(100, f * 100) + "%";
-      if (f >= 1){ since = now; show((cur + 1) % STEPS.length); }
-    } else since = now - (parseFloat(prog.style.width) || 0) / 100 * HOLD;
-    requestAnimationFrame(tick);
-  }
-  tabs.forEach((t, i) => t.addEventListener("click", () => { setPlay(false); show(i); }));
-  document.querySelector(".steps").addEventListener("keydown", e => {
-    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-    const n = (cur + (e.key === "ArrowRight" ? 1 : STEPS.length - 1)) % STEPS.length;
-    setPlay(false); show(n); tabs[n].focus();
+  tabs.forEach((tab, i) => tab.addEventListener('click', () => show(i)));
+  document.querySelector('.steps').addEventListener('keydown', event => {
+    let n;
+    if (event.key === 'ArrowRight') n = (current + 1) % tabs.length;
+    else if (event.key === 'ArrowLeft') n = (current + tabs.length - 1) % tabs.length;
+    else if (event.key === 'Home') n = 0;
+    else if (event.key === 'End') n = tabs.length - 1;
+    else return;
+    event.preventDefault(); show(n); tabs[n].focus();
   });
-  btn.addEventListener("click", () => setPlay(!playing));
-  setPlay(playing);
   show(0);
-  requestAnimationFrame(tick);
-
-  /* 放大看插畫：用同一個 dialog，圖說跟著帶過去 */
-  const lb = document.getElementById("lb"), lbImg = document.getElementById("lbImg"), lbCap = document.getElementById("lbCap");
-  document.querySelectorAll(".zoom").forEach(b => b.addEventListener("click", () => {
-    const img = b.querySelector("img"), fc = b.parentElement.querySelector("figcaption");
-    lbImg.src = b.dataset.full; lbImg.alt = img.alt;
-    lbCap.innerHTML = fc ? fc.innerHTML : "";
-    setPlay(false);
-    if (lb.showModal) lb.showModal(); else window.open(b.dataset.full, "_blank");
+  const dialog = document.getElementById('lb');
+  document.querySelectorAll('.zoom').forEach(button => button.addEventListener('click', () => {
+    const img = button.querySelector('img');
+    document.getElementById('lbImg').src = button.dataset.full;
+    document.getElementById('lbImg').alt = img.alt;
+    const caption = button.parentElement.querySelector('figcaption');
+    document.getElementById('lbCap').innerHTML = caption ? caption.innerHTML : '';
+    dialog.showModal();
   }));
-  document.getElementById("lbX").addEventListener("click", () => lb.close());
-  lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });
+  document.getElementById('lbX').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close(); });
 })();
+
 </script>
 </body>
 </html>
