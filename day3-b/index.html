@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Day 3 B plan｜帕特納赫峽谷＋加米施老街</title>
+<meta name="description" content="10/7 帕特納赫峽谷備案：停車、步行與原路往返圖解，門票付款、施工提醒、加米施老街與當日時辰。">
+<style>/* 景點圖解共用版型：單一夜色設計，暖色霞光當強調色、冰藍標冰川。由 build_lib.js 內嵌進各頁 css 的位置。 */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  color-scheme:dark;
+  --night:#0c121a; --panel:#121a25; --panel2:#172130;
+  --ink:#eef2f6; --ink2:#b7c3cf; --ink3:#7f8d9b;
+  --glow:#ff9a66; --glow2:#ffc48c; --gold:#f2c96b; --ice:#9fd3e4; --steel:#a3b3c4;
+  --hair:rgba(230,237,243,.12); --hair2:rgba(230,237,243,.07);
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Heiti TC","Microsoft JhengHei",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+html{background:var(--night);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--night);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.75;
+  padding-inline:max(16px,env(safe-area-inset-left),min(4vw,40px));
+  padding-block:calc(28px + env(safe-area-inset-top,0px)) calc(64px + env(safe-area-inset-bottom,0px))}
+img{max-width:100%}
+[hidden]{display:none!important}
+.wrap{max-width:1080px;margin:0 auto;display:grid;gap:64px}
+h1,h2,h3{font-family:var(--serif);text-wrap:balance;margin:0;letter-spacing:.01em}
+p{margin:0}
+a{color:var(--glow2);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--glow2);outline-offset:3px;border-radius:6px}
+.eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;color:var(--glow);text-transform:uppercase}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ── 開場 ── */
+.hero{display:grid;gap:14px;max-width:720px}
+.hero h1{font-size:clamp(34px,6vw,58px);font-weight:900;line-height:1.12}
+.hero h1 em{font-style:normal;color:var(--glow2)}
+.lede{font-size:16.5px;color:var(--ink2);max-width:62ch}
+.facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:6px;font-size:13px;color:var(--ink3)}
+.facts b{font-family:var(--mono);font-weight:600;color:var(--ink);font-size:15px;margin-right:6px}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.jump a{font-size:13px;color:var(--ink2);text-decoration:none;border:1px solid var(--hair);border-radius:999px;padding:4px 12px}
+.jump a:hover{border-color:var(--glow2);color:var(--ink)}
+
+/* ── 剖面圖＋步驟 ── */
+.scene{display:grid;gap:18px;margin-top:-28px}
+.frame{border-radius:20px;overflow:hidden;border:1px solid var(--hair);background:#0a1120}
+.frame-scroll{overflow-x:auto;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.frame svg{display:block;width:100%;min-width:640px;height:auto}
+.hint{display:none;font-size:12px;color:var(--ink3);padding:8px 14px 10px;border-top:1px solid var(--hair2)}
+@media (max-width:660px){.hint{display:block}}
+
+svg .lbl{font-family:var(--sans);font-size:17px;font-weight:500;fill:var(--ink)}
+svg .lbl.sub{font-size:14px;font-weight:400;fill:var(--ink2)}
+svg .lbl.dim{fill:var(--ink3);font-size:14px}
+svg .alt{font-family:var(--mono);font-size:13px;fill:var(--ink3)}
+svg .guide{stroke:rgba(230,237,243,.08);stroke-dasharray:2 6}
+svg .rope{fill:none;stroke:var(--steel);stroke-width:1.6;opacity:.75;transition:stroke .4s,opacity .4s,stroke-width .4s}
+svg .tunnel{fill:none;stroke:var(--gold);stroke-width:2;stroke-dasharray:6 7;opacity:.45}
+svg .stn{fill:#dfe6ee}
+svg .cab rect{fill:#dfe6ee}
+svg .cab line{stroke:#dfe6ee;stroke-width:1.4}
+svg .train{fill:var(--gold)}
+svg .bus{fill:#dfe6ee}
+svg .spot{opacity:.35;transition:opacity .4s}
+svg .walkp{fill:none;stroke:var(--ink2);stroke-width:2;stroke-dasharray:1 7;stroke-linecap:round;opacity:.55;transition:stroke .4s,opacity .4s}
+svg .road{fill:none;stroke:#8b97a8;stroke-width:3;opacity:.4;stroke-linecap:round;transition:stroke .4s,opacity .4s}
+/* 目前步驟：class 有 sN 的站點、hN 的路線在第 N 步變亮 */
+svg[data-step="1"] .s1, svg[data-step="2"] .s2, svg[data-step="3"] .s3, svg[data-step="4"] .s4, svg[data-step="5"] .s5, svg[data-step="6"] .s6, svg[data-step="7"] .s7, svg[data-step="8"] .s8{opacity:1}
+svg[data-step="1"] .h1, svg[data-step="2"] .h2, svg[data-step="3"] .h3, svg[data-step="4"] .h4, svg[data-step="5"] .h5, svg[data-step="6"] .h6, svg[data-step="7"] .h7, svg[data-step="8"] .h8{stroke:var(--glow2);stroke-width:2.6;opacity:1}
+svg .you circle.core{fill:var(--glow2)}
+svg .you circle.ring{fill:none;stroke:var(--glow2);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:ping 1.8s ease-out infinite}
+@keyframes ping{from{transform:scale(.6);opacity:.9}to{transform:scale(2.4);opacity:0}}
+svg .alpen{animation:alpen 9s ease-in-out infinite alternate}
+@keyframes alpen{from{opacity:.35}to{opacity:.9}}
+svg .star{fill:#fff;animation:tw 3.6s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:.8}}
+svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
+@keyframes drift{from{transform:translateX(-120px)}to{transform:translateX(160px)}}
+
+.steps{display:grid;grid-template-columns:repeat(var(--n,6),minmax(0,1fr));gap:8px}
+.step{appearance:none;cursor:pointer;text-align:left;font:inherit;color:var(--ink2);
+  background:var(--panel);border:1px solid var(--hair2);border-radius:14px;padding:10px 12px 11px;
+  display:grid;gap:2px;transition:background .25s,border-color .25s,color .25s}
+.step:hover{border-color:var(--hair);color:var(--ink)}
+.step .n{font-family:var(--mono);font-size:11.5px;color:var(--ink3);letter-spacing:.08em}
+.step b{font-weight:700;font-size:14.5px;line-height:1.35;color:inherit}
+.step small{font-family:var(--mono);font-size:12px;color:var(--ink3)}
+.step[aria-selected="true"]{background:linear-gradient(160deg,#2a2230,#3a2a2a);border-color:rgba(255,178,122,.55);color:var(--ink)}
+.step[aria-selected="true"] .n,.step[aria-selected="true"] small{color:var(--glow2)}
+@media (max-width:760px){.steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.playbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.playbtn{appearance:none;cursor:pointer;font:inherit;font-size:13px;color:var(--ink);background:transparent;
+  border:1px solid var(--hair);border-radius:999px;padding:6px 14px}
+.playbtn:hover{border-color:var(--glow2)}
+.progress{flex:1;min-width:120px;max-width:260px;height:3px;border-radius:3px;background:var(--hair2);overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--glow2)}
+
+.panel{background:var(--panel);border:1px solid var(--hair2);border-radius:18px;padding:22px 24px 24px;
+  display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px 32px}
+.panel h3{font-size:22px;font-weight:700}
+.panel .where{font-size:13px;color:var(--ink3);margin-top:4px}
+.panel ul{margin:12px 0 0;padding-left:1.1em;display:grid;gap:6px;color:var(--ink2)}
+.panel li::marker{color:var(--glow)}
+.panel aside{display:grid;gap:14px;align-content:start}
+.panel dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13.5px}
+.panel dt{color:var(--ink3)}
+.panel dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+@media (max-width:760px){.panel{grid-template-columns:minmax(0,1fr);padding:18px 18px 20px}}
+
+/* ── 插畫 ── */
+.ph{margin:0;display:grid;gap:8px;align-content:start}
+.zoom{appearance:none;display:block;padding:0;border:0;background:#0a1017;border-radius:14px;overflow:hidden;cursor:zoom-in}
+.ph img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;transition:transform .5s}
+.zoom:hover img{transform:scale(1.03)}
+.ph.pano img{aspect-ratio:3/1}
+.ph.wide img{aspect-ratio:2/1}
+.ph.tall img{aspect-ratio:3/4}
+.ph figcaption{display:grid;gap:3px}
+.ph .cap{font-size:13.5px;color:var(--ink2);line-height:1.65}
+.ph .cr{font-size:11.5px;color:var(--ink3);line-height:1.5}
+.ph .cr a{color:var(--ink3)}
+.panel .ph img{aspect-ratio:16/10}
+
+/* ── 共用段落 ── */
+.sec{display:grid;gap:24px}
+.sec-h{display:grid;gap:6px}
+.sec-h h2{font-size:clamp(24px,3.4vw,32px);font-weight:700}
+.sec-h p{color:var(--ink2);max-width:62ch}
+.verdict{font-family:var(--serif);font-size:clamp(18px,2.4vw,22px);font-weight:700;color:var(--glow2);max-width:40ch}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+@media (max-width:760px){.cols{grid-template-columns:minmax(0,1fr)}}
+.tbl-wrap{overflow-x:auto}
+.ctab{width:100%;border-collapse:collapse;font-size:14px}
+.ctab th,.ctab td{text-align:left;vertical-align:top;padding:11px 14px 11px 0;border-bottom:1px solid var(--hair2)}
+.ctab thead th{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.06em}
+.ctab tbody th{font-weight:500;color:var(--ink3);white-space:nowrap;font-size:13px}
+.ctab td{color:var(--ink2)}
+.ctab td b{color:var(--ink)}
+.ctab .hl{color:var(--ink)}
+
+/* 山頂 vs 平台：兩欄並排比插畫 */
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.vs-col{display:grid;gap:18px;align-content:start}
+.vs-col h3{font-size:22px;font-weight:700;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.vs-col h3 .num{font-size:15px;font-weight:500;color:var(--glow)}
+.vs-col.plat h3 .num{color:var(--ice)}
+.vs-col > p{color:var(--ink2);font-size:14.5px}
+@media (max-width:760px){.vs{grid-template-columns:minmax(0,1fr)}}
+
+/* 上山過程：依壯觀程度排，左文右照 */
+.rides{display:grid}
+.ride{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr);gap:18px 32px;padding:26px 0;border-top:1px solid var(--hair2)}
+.ride:first-child{border-top:0;padding-top:4px}
+.ride .rk{font-family:var(--mono);font-size:13px;color:var(--glow)}
+.ride h3{font-size:21px;font-weight:700;margin:2px 0 6px}
+.ride p{color:var(--ink2);font-size:14.5px}
+.ride .shots{display:grid;gap:14px}
+.ride .shots.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ride .shots .span2{grid-column:1/-1}
+@media (max-width:760px){.ride{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:480px){.ride .shots.two{grid-template-columns:minmax(0,1fr)}}
+.tip{border-left:3px solid var(--glow);padding:4px 0 4px 16px;color:var(--ink);font-size:14.5px}
+
+/* 當天時間：時間在左，層別用色條 */
+.plan{list-style:none;margin:0;padding:0;display:grid}
+.plan li{display:grid;grid-template-columns:62px 12px minmax(0,1fr);gap:0 14px;align-items:start}
+.plan time{font-family:var(--mono);font-size:14px;color:var(--ink);padding-top:10px}
+.plan .bar{align-self:stretch;width:4px;justify-self:center;background:var(--hair)}
+.plan li[data-lv="top"] .bar{background:var(--glow)}
+.plan li[data-lv="plat"] .bar{background:var(--ice)}
+.plan li[data-lv="ride"] .bar{background:repeating-linear-gradient(var(--steel) 0 4px,transparent 4px 8px)}
+.plan li[data-lv="train"] .bar{background:repeating-linear-gradient(var(--gold) 0 4px,transparent 4px 8px)}
+.plan li[data-lv="walk"] .bar{background:repeating-linear-gradient(var(--ink2) 0 4px,transparent 4px 8px)}
+.plan .t{padding:8px 0 12px;border-bottom:1px solid var(--hair2)}
+.plan .t b{font-weight:700}
+.plan .t span{display:block;font-size:13px;color:var(--ink3)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--ink3)}
+.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.plan-h{font-family:var(--sans);font-size:16px;font-weight:700;margin-bottom:8px}
+.plan-h small{font-weight:400;color:var(--ink3);margin-left:8px;font-size:13px}
+
+/* 散步：時間長度用刻度條表示（60 分為滿格） */
+.walks{display:grid;gap:12px}
+.walk{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:14px 0 16px;border-bottom:1px solid var(--hair2)}
+.walk h3{font-family:var(--sans);font-size:16px;font-weight:700}
+.walk .dur{font-family:var(--mono);font-size:14px;color:var(--ink);text-align:right}
+.walk p{grid-column:1/-1;font-size:13.5px;color:var(--ink2)}
+.walk .meter{grid-column:1/-1;height:6px;border-radius:3px;background:var(--hair2);overflow:hidden}
+.walk .meter i{display:block;height:100%;border-radius:3px}
+.walk[data-lv="top"] .meter i{background:var(--glow)}
+.walk[data-lv="plat"] .meter i{background:var(--ice)}
+.walk[data-lv="lake"] .meter i{background:#7fb3a3}
+.walk.warn h3{color:var(--glow2)}
+
+/* 票 */
+.tix{width:100%;border-collapse:collapse;font-size:14px}
+.tix th,.tix td{text-align:left;padding:10px 12px 10px 0;border-bottom:1px solid var(--hair2)}
+.tix th{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.08em}
+.tix td.num{text-align:right;padding-right:0;font-size:15px}
+.tix tr.sum td{color:var(--glow2);font-weight:700;border-bottom:0}
+.buy{display:grid;gap:14px}
+.buy div{background:var(--panel);border:1px solid var(--hair2);border-radius:16px;padding:16px 18px}
+.buy h3{font-family:var(--sans);font-size:15.5px;font-weight:700;margin-bottom:4px}
+.buy p{font-size:13.5px;color:var(--ink2)}
+
+.pack{display:flex;flex-wrap:wrap;gap:8px}
+.pack span{border:1px solid var(--hair);border-radius:999px;padding:5px 13px;font-size:13.5px;color:var(--ink2)}
+
+.src{font-size:13px;color:var(--ink3);display:grid;gap:12px}
+.src h2{font-family:var(--sans);font-size:14px;font-weight:700;color:var(--ink2)}
+.src ul{margin:0;padding-left:1.1em;display:grid;gap:4px}
+.src a{color:var(--ink2)}
+
+/* 放大看插畫 */
+.lb{width:min(1200px,calc(100vw - 24px));max-height:calc(100vh - 24px);padding:0;border:1px solid var(--hair);border-radius:16px;
+  background:#0a1017;color:var(--ink);overflow:auto}
+.lb::backdrop{background:rgba(4,7,11,.85)}
+.lb img{display:block;width:100%;height:auto;max-height:78vh;object-fit:contain;background:#05080c}
+.lb-bar{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;padding:12px 16px 14px}
+.lb-cap{display:grid;gap:3px;font-size:13.5px;color:var(--ink2)}
+.lb-cap .cr{font-size:11.5px;color:var(--ink3)}
+.lb-cap .cr a{color:var(--ink3)}
+.lb-x{appearance:none;flex:none;cursor:pointer;font:inherit;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--hair);border-radius:999px;padding:5px 14px}
+
+@media (prefers-reduced-motion:reduce){
+  svg .alpen,svg .star,svg .cloud,svg .you circle.ring{animation:none}
+  .step,.rope,.ph img{transition:none}
+}
+
+:root{--glow:#69c9bb;--glow2:#a0e6d6;--ice:#89bde3}
+.hero{max-width:850px}.scene{margin-top:-20px}.scene .steps{--n:6}
+.notice{border:1px solid #69c9bb66;background:#112823;padding:18px 22px;border-radius:16px;display:grid;gap:6px}
+.notice p,.card p{color:var(--ink2)}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{background:var(--panel);border:1px solid var(--hair);padding:22px;border-radius:16px;display:grid;gap:10px;align-content:start}.card h3{font-size:20px}
+.cards .k{font:12px var(--mono);color:var(--glow)}.panel aside{border-left:1px solid var(--hair);padding-left:24px}
+.ctab th{white-space:normal!important}.ctab td{overflow-wrap:anywhere}.source{font-size:13px;color:var(--ink3);display:grid;gap:8px}.source a{overflow-wrap:anywhere}
+.frame svg{min-width:740px}.map-note{font-size:12px;color:var(--ink3)}.panel p{color:var(--ink2);margin-top:12px}
+@media(max-width:760px){.cards{grid-template-columns:1fr}.panel aside{border-left:0;border-top:1px solid var(--hair);padding:16px 0 0}}
+</style>
+</head>
+<body>
+<main class="wrap">
+<header class="hero">
+<p class="eyebrow">07 OCT 2026 · MITTENWALD · PLAN B</p>
+<h1>山頂藏進雲裡，<br>換到<em>峽谷與老街</em>。</h1>
+<p class="lede">帕特納赫峽谷 Partnachklamm → 路德維希大街 Ludwigstraße → 米滕瓦爾德。上午看岩壁與急流，下午吃午餐、逛彩繪屋、喝咖啡，16:30 回住宿休息。</p>
+<div class="facts"><span><b>07:30</b>決定方案</span><span><b>原路往返</b>峽谷動線</span><span><b>中</b>體力強度</span></div>
+<nav class="jump" aria-label="頁面導覽"><a href="#decision">什麼時候選 B</a><a href="#route">怎麼走</a><a href="#fees">門票與付款</a><a href="#town">老街看什麼</a><a href="#timing">當日時辰</a><a href="../day3.html">每日行程 Day 3</a></nav>
+</header>
+<section class="sec" id="decision">
+<div class="sec-h"><p class="eyebrow">BEFORE YOU LEAVE</p><h2>山上能見度差，山下仍適合走路，才選 B。</h2></div>
+<div class="cards">
+<article class="card"><span class="k">PLAN A</span><h3>山頂視野好</h3><p>楚格峰纜車正常營運、天候適合，執行原本的楚格峰＋艾布湖。</p><a href="../zugspitze/index.html">楚格峰纜車圖解 →</a></article>
+<article class="card"><span class="k">PLAN B</span><h3>山上不佳，峽谷開放</h3><p>山頂起霧或不適合上山，且峽谷官方開放、道路與步道安全。出發前再看公告。</p><a href="https://www.partnachklamm.de/en">查看峽谷營運狀態 →</a></article>
+<article class="card"><span class="k">PLAN C</span><h3>峽谷關閉或天候危險</h3><p>改米滕瓦爾德老街、咖啡館與住宿休息。大雨、雷雨或步道不安全時，B 不能當成必走的雨天方案。</p></article>
+</div>
+<aside class="notice"><strong>10/7 施工提醒：採峽谷原路往返。</strong><p>官方公告：2026/9/21–11/20，峽谷後方通往 Vordergraseck 的步道封閉。這次不走 Graseck 繞山環線；現場若另有封閉或單向管制，依工作人員指示調整。</p><a href="https://www.partnachklamm.de/en">官方公告 · 查詢 2026/10/01</a></aside>
+</section>
+<section class="scene" id="route" aria-labelledby="route-title">
+<div class="sec-h"><p class="eyebrow">FOLLOW THE ROUTE</p><h2 id="route-title">停好車，步行進峽谷，再走回來。</h2><p>點選步驟查看動線。上午留約 3 小時，包含停車、入場、拍照與步行往返。</p></div>
+<div class="frame"><div class="frame-scroll" id="frame">
+<svg id="scene" viewBox="0 0 1080 455" role="img" aria-labelledby="map-title map-desc">
+<title id="map-title">Day 3 B 方案動線示意圖</title><desc id="map-desc">奧林匹克滑雪體育場停車，沿河步行至北入口，通過峽谷到南出口後原路返回。午餐前開車到路德維希大街，再返回米滕瓦爾德藥局與住宿。圖非比例地圖。</desc>
+<defs><linearGradient id="sky" x2="0" y2="1"><stop stop-color="#17302f"/><stop offset="1" stop-color="#0c121a"/></linearGradient><linearGradient id="cliff"><stop stop-color="#293a45"/><stop offset="1" stop-color="#14212b"/></linearGradient></defs>
+<rect width="1080" height="455" fill="url(#sky)"/>
+<path d="M0 172L112 87 172 122 240 62 340 160 408 115 473 192 574 88 640 155 738 56 826 142 931 84 1080 164V282H0Z" fill="#293d43" opacity=".6"/>
+<path d="M502 110L565 160 553 250 485 272 473 218Z M708 103L640 157 651 250 728 277 749 191Z" fill="url(#cliff)"/>
+<path d="M625 175Q566 209 613 242T733 277" fill="none" stroke="#72b7b9" stroke-width="9" opacity=".7"/>
+<path d="M180 259Q311 243 474 236" id="approach" class="walkp h2 h4"/>
+<path d="M474 236Q539 206 572 229T648 240" id="gorge" class="walkp h3 h4"/>
+<path d="M180 259Q146 332 291 363" id="town-road" class="road h5"/>
+<path d="M291 363Q559 406 901 364" id="home-road" class="road h6"/>
+<path d="M670 231L805 202" stroke="#a77c78" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="751" y="155" class="lbl sub">Vordergraseck</text><text x="751" y="177" class="lbl dim">通往此處步道施工封閉</text>
+<g transform="translate(793 203)" stroke="#e8a59b" stroke-width="3"><path d="M-7-7L7 7M7-7L-7 7"/></g>
+<g fill="#273d42" stroke="#607980" stroke-width="1"><path d="M104 220L140 176 163 176 178 220Z"/><path d="M185 220L224 181 239 189 251 220Z"/><rect x="106" y="225" width="144" height="22"/></g>
+<g class="spot s1 s2 s4"><circle cx="180" cy="259" r="7" class="stn"/><text x="46" y="118" class="lbl">① 奧林匹克滑雪體育場</text><text x="46" y="142" class="lbl sub">Olympia-Skistadion · 停車</text><text x="229" y="284" class="lbl sub">步行約 25–30 分</text></g>
+<g class="spot s2 s4"><circle cx="474" cy="236" r="6" class="stn"/><text x="384" y="303" class="lbl">② 北入口／驗票</text></g>
+<g class="spot s3"><circle cx="648" cy="240" r="6" class="stn"/><text x="509" y="89" class="lbl">③ 峽谷通道</text><text x="548" y="113" class="lbl sub">岩壁 · 急流 · 隧道</text><text x="656" y="308" class="lbl sub">南出口折返 ↶</text></g>
+<g fill="#a88d75"><path d="M245 355V324L269 304 293 324V355Z"/><path d="M294 355V319L317 299 340 319V355Z"/></g><g fill="#263e46"><rect x="254" y="327" width="9" height="11"/><rect x="274" y="327" width="9" height="11"/><rect x="304" y="322" width="9" height="12"/></g>
+<g class="spot s5"><circle cx="291" cy="363" r="6" class="stn"/><text x="56" y="406" class="lbl">⑤ Ludwigstraße</text><text x="56" y="429" class="lbl sub">午餐 · 彩繪屋 · 咖啡</text></g>
+<g class="spot s6"><circle cx="901" cy="364" r="6" class="stn"/><text x="760" y="406" class="lbl">⑥ 米滕瓦爾德</text><text x="760" y="429" class="lbl sub">藥局採買 → 住宿休息</text></g>
+<g id="you" class="you"><circle class="ring" r="13"/><circle class="core" r="6"/></g>
+<text x="25" y="31" class="alt">ROUTE SCHEMATIC · NOT TO SCALE</text>
+</svg></div><p class="hint">可左右滑動查看整張動線圖</p></div>
+<p class="map-note">動線示意，非比例地圖；導航請使用下方地圖連結。</p>
+<div class="steps" role="tablist" aria-label="旅程步驟">
+<button class="step" id="tab1" role="tab" aria-controls="panel1" aria-selected="true"><span class="n">01 · PARK</span><b>停車</b><small>08:05 左右</small></button>
+<button class="step" id="tab2" role="tab" aria-controls="panel2" aria-selected="false"><span class="n">02 · WALK</span><b>走到入口</b><small>25–30 分</small></button>
+<button class="step" id="tab3" role="tab" aria-controls="panel3" aria-selected="false"><span class="n">03 · GORGE</span><b>峽谷拍照</b><small>往返預留 60–90 分</small></button>
+<button class="step" id="tab4" role="tab" aria-controls="panel4" aria-selected="false"><span class="n">04 · RETURN</span><b>原路回車旁</b><small>11:30 前</small></button>
+<button class="step" id="tab5" role="tab" aria-controls="panel5" aria-selected="false"><span class="n">05 · OLD TOWN</span><b>午餐與老街</b><small>12:00–15:15</small></button>
+<button class="step" id="tab6" role="tab" aria-controls="panel6" aria-selected="false"><span class="n">06 · HOME</span><b>藥局與住宿</b><small>16:30 回住宿</small></button>
+</div>
+<div class="playbar"><button class="playbtn" id="play" aria-pressed="false">自動播放路線</button><div class="progress" aria-hidden="true"><i id="prog"></i></div></div>
+<article class="panel" id="panel1" role="tabpanel" aria-labelledby="tab1"><div><h3>車停 Olympia-Skistadion</h3><p>導航到體育場停車場，保留停車、穿外套與整理背包的時間。不能把車直接開到峽谷入口。</p></div><aside><a href="https://www.google.com/maps/search/?api=1&query=Parkplatz+Olympia-Skistadion+Garmisch-Partenkirchen">停車場導航 →</a><p>官方列為最近的付費停車場。費率與付款方式未查到可靠官方明細，以現場標示為準，備卡與現金。</p></aside></article>
+<article class="panel" id="panel2" role="tabpanel" aria-labelledby="tab2" hidden><div><h3>沿指標走到北入口</h3><p>官方估約 25 分步行，行程抓 30 分。購票與驗票另留緩衝，約 08:45–09:00 進入較從容。</p></div><aside><p>售票處在峽谷入口附近。電子票先下載至手機，官方提醒山區無行動訊號與 Wi-Fi。</p></aside></article>
+<article class="panel" id="panel3" role="tabpanel" aria-labelledby="tab3" hidden><div><h3>看急流、岩壁與隧道光影</h3><p>沿既有通道慢慢走，拍照時靠邊、讓出通行空間。這份安排預留峽谷往返 60–90 分鐘，屬含拍照的估算。</p></div><aside><p>南出口折返，原路穿回峽谷。門票規則列每方向一次通行；保留票券，回程依現場查驗。</p></aside></article>
+<article class="panel" id="panel4" role="tabpanel" aria-labelledby="tab4" hidden><div><h3>回到北入口，再步行回停車場</h3><p>北入口至體育場再抓 25–30 分，目標 11:30 前回車旁。早走完就休息，不必等到固定時間才離開。</p></div><aside><p>此次避開通往 Vordergraseck 的施工路段，不加碼山路環線。安全鞋底、防水外層比撐傘更實用。</p></aside></article>
+<article class="panel" id="panel5" role="tabpanel" aria-labelledby="tab5" hidden><div><h3>開車到 Partenkirchen 老街</h3><p>先午餐，再沿 Ludwigstraße 看彩繪屋、招牌與噴泉，最後找咖啡館坐下來。老街本身建議抓 60–90 分，其餘留給用餐休息。</p></div><aside><a href="https://www.google.com/maps/search/?api=1&query=Ludwigstra%C3%9Fe+Garmisch-Partenkirchen">老街導航 →</a><p>可搜尋 Parkplatz Badgasse 找市區停車。需另付停車費，滿位依現場引導改找可用車位。</p></aside></article>
+<article class="panel" id="panel6" role="tabpanel" aria-labelledby="tab6" hidden><div><h3>15:15 離開，順路完成藥局採買</h3><p>回米滕瓦爾德的 Bahnhof-Apotheke，買完回住宿。主行程車程估約 23 分，並非即時交通；16:30 前回住宿仍有緩衝。</p></div><aside><a href="https://www.google.com/maps/search/?api=1&query=Bahnhof-Apotheke+Bahnhofplatz+10+Mittenwald">藥局導航 →</a><p>地址 Bahnhofplatz 10。官網週三 08:30–18:00；指定品項可先詢問或預留，庫存尚未確認。</p></aside></article>
+</section>
+<section class="sec" id="fees"><div class="sec-h"><p class="eyebrow">TICKETS & PAYMENT</p><h2>入場前再買票，卡片與現金都帶著。</h2></div>
+<div class="tbl-wrap"><table class="ctab"><thead><tr><th scope="col">環節</th><th scope="col">收費／方式</th><th scope="col">要記得</th></tr></thead><tbody>
+<tr><th scope="row">峽谷門票</th><td>成人 €10／人</td><td>Alpenwelt Karwendel 等適用有效 Guest Card 可用成人 €9.50 優惠；是否持有需向住宿確認。</td></tr>
+<tr><th scope="row">購票與刷卡</th><td>官網、現場售票處、入口售票機；官網標示支援卡片付款</td><td>先確認開放，再購票。電子 QR 先離線保存；已購票原則不退改。</td></tr>
+<tr><th scope="row">停車</th><td>體育場與市區停車另計</td><td>尚未核實最新費率及各機器支援的付款方式，依現場標示，備現金。</td></tr>
+<tr><th scope="row">10 月營業</th><td>08:00–18:00，最後入場 17:30</td><td>營業時段不保證 10/7 必定開放；當天出發前再查公告。</td></tr>
+</tbody></table></div>
+<p class="tip">穿有止滑紋路的鞋、帶防水外層與小背包。隧道低矮、路面可能濕滑；工作人員可因安全限制傘、自拍棒與腳架。</p>
+</section>
+<section class="sec" id="town"><div class="sec-h"><p class="eyebrow">A SLOW AFTERNOON</p><h2>下午留給彩繪屋與咖啡。</h2><p>這次以 Partenkirchen 的 Ludwigstraße 為核心，不再跨到另一邊增加步行與找停車的時間。</p></div><div class="cards">
+<article class="card"><span class="k">01 · LOOK UP</span><h3>彩繪立面</h3><p>看房屋外牆的 Lüftlmalerei。Gasthof Fraundorfer 外牆畫的是婚宴場景，適合停下來拍一張。</p></article>
+<article class="card"><span class="k">02 · STROLL</span><h3>招牌與噴泉</h3><p>沿老街慢走至 Floriansplatz 一帶，看看店家招牌、街景與噴泉；路線長短依體力調整。</p></article>
+<article class="card"><span class="k">03 · TAKE A BREAK</span><h3>午餐與咖啡</h3><p>中午在老街附近用餐，下午留一段坐著休息。餐廳尚未指定或訂位，依當天營業與空位選擇。</p></article>
+</div></section>
+<section class="sec" id="timing"><div class="sec-h"><p class="eyebrow">YOUR DAY, AT A GLANCE</p><h2>一天的時辰</h2><p>以下為可執行的估算，車程沿用主行程，包含步行與拍照緩衝；無固定預約。</p></div>
+<ol class="plan">
+<li data-lv="top"><time>07:00</time><i class="bar"></i><div class="t"><b>早餐與天候確認</b><span>07:30 決定 A／B／C，峽谷關閉直接改 C。</span></div></li>
+<li data-lv="ride"><time>07:45</time><i class="bar"></i><div class="t"><b>住宿出發，約 08:05 到停車場</b><span>車程沿用主行程約 19 分；停車、裝備另留 10–15 分。</span></div></li>
+<li data-lv="walk"><time>08:15</time><i class="bar"></i><div class="t"><b>步行前往入口</b><span>抓 25–30 分，購票排隊另計，約 08:45–09:00 入場。</span></div></li>
+<li data-lv="plat"><time>09:00</time><i class="bar"></i><div class="t"><b>峽谷往返與拍照</b><span>抓 60–90 分，南出口折返；之後步行回停車場。</span></div></li>
+<li data-lv="ride"><time>11:30</time><i class="bar"></i><div class="t"><b>回車旁，前往老街</b><span>11:45 左右開車，車程估約 7 分，找位與步行另留緩衝。</span></div></li>
+<li data-lv="top"><time>12:00</time><i class="bar"></i><div class="t"><b>午餐 → 彩繪屋 → 咖啡</b><span>15:15 前回到車旁，下午保持輕鬆。</span></div></li>
+<li data-lv="ride"><time>15:15</time><i class="bar"></i><div class="t"><b>返回米滕瓦爾德，藥局採買</b><span>車程估約 23 分；16:30 前回住宿休息。</span></div></li>
+<li data-lv="top"><time>17:15</time><i class="bar"></i><div class="t"><b>鎮上晚餐與散步</b><span>20:00 初判隔天是否搭北鏈纜車。</span></div></li>
+</ol>
+</section>
+<footer class="source"><p>核對日期：2026/10/01。官方事實、建議時辰與尚待確認項目已分開標示。</p>
+<p>峽谷：<a href="https://www.partnachklamm.de/en">開放與施工公告</a> · <a href="https://www.partnachklamm.de/en/Arrival">停車與步行</a> · <a href="https://www.partnachklamm.de/en/Hours%20-%20Fees">票價與營業時間</a> · <a href="https://www.partnachklamm.de/Partnachklamm/Benutzungsordnung%20f%C3%BCr%20die%20Partnachklamm%20ab%2004_2026englisch_unterschr.pdf">2026 使用規則</a></p>
+<p>市區：<a href="https://www.gapa-tourismus.de/en/Tourenplanner/Through-Partenkirchen-in-the-footsteps-of-the-Romans_tour_120">GaPa 官方老街介紹</a> · <a href="https://www.bahnhofapotheke-mittenwald.de/kontakt">米滕瓦爾德車站藥局</a></p>
+<p><a href="../day3.html">← 回每日行程 Day 3</a></p></footer>
+</main>
+<dialog id="lb"><button id="lbX" type="button" aria-label="關閉">×</button><img id="lbImg" alt=""><div id="lbCap"></div></dialog>
+<script>
+const SCENE={movers:[],steps:[{stay:['approach',0]},{move:[['approach',0,1]]},{move:[['gorge',0,1]]},{move:[['gorge',1,0],['approach',1,0]]},{move:[['town-road',0,1]]},{move:[['home-road',0,1]]}]};
+/* 景點圖解共用的剖面圖動畫：由 build_lib.js 內嵌進各頁 engine 的位置，放在頁面定義的 SCENE 之後。
+   SCENE = {
+     movers: [{ id, path, T, ph, kind }]   背景一直在動的車廂、巴士、火車；kind "shuttle" 到站停一下再折返，"loop" 單向循環
+     steps:  [{ stay:[path, f] } 或 { move:[[path, 起點 f, 終點 f], …] }]   每一步「你」停在哪、沿哪條路走
+   }
+   path 是 #scene 裡 <path> 的 id，f 是路線上的位置（0 起點、1 終點）。 */
+(() => {
+  const svg = document.getElementById("scene");
+  const frame = document.getElementById("frame");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const VBW = svg.viewBox.baseVal.width;
+  const P = {}, LEN = {};
+  const ids = new Set([...SCENE.movers.map(m => m.path), ...SCENE.steps.flatMap(s => s.stay ? [s.stay[0]] : s.move.map(m => m[0]))]);
+  for (const k of ids){ P[k] = svg.querySelector("#" + k); LEN[k] = P[k].getTotalLength(); }
+  const at = (k, f) => P[k].getPointAtLength(LEN[k] * Math.min(1, Math.max(0, f)));
+  const put = (el, p) => el.setAttribute("transform", `translate(${p.x.toFixed(1)} ${p.y.toFixed(1)})`);
+  const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+  /* 背景：車廂對開（到站停一下再折返），火車、巴士單向循環 */
+  const movers = SCENE.movers.map(m => ({ ...m, el:svg.querySelector("#" + m.id) }));
+  const shuttle = u => { const tri = 1 - Math.abs(1 - 2 * (u % 1)); return ease(Math.min(1, Math.max(0, (tri - .08) / .84))); };
+  const pos = (m, s) => m.kind === "loop" ? (s / m.T + (m.ph || 0)) % 1 : shuttle(s / m.T + (m.ph || 0));
+  function ambient(now){
+    const s = now / 1000;
+    for (const m of movers) put(m.el, at(m.path, pos(m, s)));
+    if (!reduce) requestAnimationFrame(ambient);
+  }
+  if (reduce) movers.forEach((m, i) => put(m.el, at(m.path, i % 2 ? .7 : .3)));
+  else requestAnimationFrame(ambient);
+
+  /* 你的位置：停在站點，或沿路線移動 */
+  const you = svg.querySelector("#you");
+  const STEPS = SCENE.steps;
+  let tok = 0;
+  function follow(p){
+    if (frame.scrollWidth <= frame.clientWidth + 2) return;
+    const scale = svg.getBoundingClientRect().width / VBW;
+    frame.scrollTo({ left:Math.max(0, p.x * scale - frame.clientWidth / 2), behavior:reduce ? "auto" : "smooth" });
+  }
+  function travel(segs, dur){
+    const my = ++tok;
+    let i = 0, t0 = performance.now();
+    const per = dur / segs.length;
+    function fr(now){
+      if (my !== tok) return;
+      const [k, a, b] = segs[i];
+      const t = Math.min(1, (now - t0) / per);
+      put(you, at(k, a + (b - a) * ease(t)));
+      if (t < 1) return requestAnimationFrame(fr);
+      if (++i < segs.length){ t0 = now; follow(at(segs[i][0], segs[i][1])); requestAnimationFrame(fr); }
+    }
+    requestAnimationFrame(fr);
+  }
+
+  const tabs = [...document.querySelectorAll(".step")];
+  const panels = tabs.map(t => document.getElementById(t.getAttribute("aria-controls")));
+  let cur = 0;
+  function show(n){
+    cur = n;
+    svg.dataset.step = String(n + 1);
+    tabs.forEach((t, i) => t.setAttribute("aria-selected", String(i === n)));
+    panels.forEach((p, i) => { p.hidden = i !== n; });
+    const s = STEPS[n];
+    if (s.stay || reduce){
+      tok++;
+      const last = s.move && s.move[s.move.length - 1];
+      const [k, f] = s.stay || [last[0], last[2]];
+      const p = at(k, f); put(you, p); follow(p);
+    } else {
+      const [k0, a0] = s.move[0];
+      put(you, at(k0, a0)); follow(at(k0, a0));
+      travel(s.move, s.move.length * 2600);
+    }
+  }
+
+  /* 自動播放：每步停 6.5 秒；點步驟、看插畫就暫停 */
+  const btn = document.getElementById("play"), prog = document.getElementById("prog");
+  const HOLD = 6500;
+  let playing = !reduce, since = performance.now();
+  function setPlay(on){
+    playing = on; since = performance.now();
+    btn.setAttribute("aria-pressed", String(on));
+    btn.textContent = on ? "暫停自動播放" : "自動播放路線";
+    if (!on) prog.style.width = "0";
+  }
+  function tick(now){
+    if (playing && !document.hidden){
+      const f = (now - since) / HOLD;
+      prog.style.width = Math.min(100, f * 100) + "%";
+      if (f >= 1){ since = now; show((cur + 1) % STEPS.length); }
+    } else since = now - (parseFloat(prog.style.width) || 0) / 100 * HOLD;
+    requestAnimationFrame(tick);
+  }
+  tabs.forEach((t, i) => t.addEventListener("click", () => { setPlay(false); show(i); }));
+  document.querySelector(".steps").addEventListener("keydown", e => {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    const n = (cur + (e.key === "ArrowRight" ? 1 : STEPS.length - 1)) % STEPS.length;
+    setPlay(false); show(n); tabs[n].focus();
+  });
+  btn.addEventListener("click", () => setPlay(!playing));
+  setPlay(playing);
+  show(0);
+  requestAnimationFrame(tick);
+
+  /* 放大看插畫：用同一個 dialog，圖說跟著帶過去 */
+  const lb = document.getElementById("lb"), lbImg = document.getElementById("lbImg"), lbCap = document.getElementById("lbCap");
+  document.querySelectorAll(".zoom").forEach(b => b.addEventListener("click", () => {
+    const img = b.querySelector("img"), fc = b.parentElement.querySelector("figcaption");
+    lbImg.src = b.dataset.full; lbImg.alt = img.alt;
+    lbCap.innerHTML = fc ? fc.innerHTML : "";
+    setPlay(false);
+    if (lb.showModal) lb.showModal(); else window.open(b.dataset.full, "_blank");
+  }));
+  document.getElementById("lbX").addEventListener("click", () => lb.close());
+  lb.addEventListener("click", e => { if (e.target === lb) lb.close(); });
+})();
+
+</script>
+</body>
+</html>
