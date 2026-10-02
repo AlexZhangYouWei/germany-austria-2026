@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1240" role="img" aria-labelledby="title desc">
+<title id="title">國王湖 Day 6 北向上路線示意圖</title><desc id="desc">北端停車場步行至 Seelände，搭船經西岸聖巴多羅買到南端 Salet。步行沿上湖西岸至東南岸 Fischunkelalm，原路回 Salet 搭船。北岸東側另有畫家角環線，最高點岔至烏鴉岩後原支線返回，經 Jennerbahn 回停車場。</desc>
+<defs><pattern id="forest" width="70" height="70" patternUnits="userSpaceOnUse"><path d="M20 15l-9 18h18z" fill="#678463" opacity=".15"/></pattern><marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto-start-reverse"><path d="M0 0l8 4-8 4z" fill="#26769b"/></marker><style>text{font-family:system-ui,'PingFang TC',sans-serif;fill:#263d3b}.label{font-size:22px;font-weight:700}.sub{font-size:16px;fill:#52675f}.boat{fill:none;stroke:#26769b;stroke-width:7;stroke-dasharray:12 9}.walk{fill:none;stroke:#c77c39;stroke-width:7;stroke-linejoin:round}.opt{fill:none;stroke:#8567a7;stroke-width:6;stroke-dasharray:7 7}.pin{fill:#fffaf0;stroke:#2f635b;stroke-width:3}</style></defs>
+<rect width="960" height="1240" rx="24" fill="#f3efdf"/><rect x="20" y="140" width="920" height="1020" rx="30" fill="url(#forest)"/>
+<text x="42" y="62" font-size="31" font-weight="800">國王湖 Königssee</text><text x="42" y="98" class="sub">Day 6｜搭船南下 → 上湖健行 → 原路返航 → 北岸散步</text>
+<path d="M890 95V42m-12 18 12-18 12 18" fill="none" stroke="#263d3b" stroke-width="3"/><text x="884" y="120" class="label">N</text>
+<path d="M375 239Q312 280 338 363Q373 411 328 470Q256 520 318 580Q345 620 292 675Q311 775 425 855Q506 816 474 738Q427 676 477 602Q504 520 465 465Q401 405 442 340Q447 261 410 239Z" fill="#acd4d5" stroke="#6ca5a2" stroke-width="3"/>
+<path d="M482 940Q536 897 584 945Q627 976 689 980Q750 1027 748 1100Q684 1130 637 1076Q569 1044 541 1013Q498 991 482 940Z" fill="#acd4d5" stroke="#6ca5a2" stroke-width="3"/>
+<text x="325" y="500" font-size="27" fill="#43757d">國王湖</text><text x="579" y="1000" class="label">上湖 Obersee</text>
+<path d="M392 248Q395 375 375 455L325 601Q377 715 423 840" class="boat" marker-end="url(#arr)"/><text x="475" y="530" class="label">① 搭船往返</text><text x="475" y="561" class="sub">單程約 55 分鐘</text><text x="475" y="587" class="sub">去程 08:45；回程排隊候船</text>
+<path d="M400 175L393 239" class="walk"/><circle cx="400" cy="166" r="10" class="pin"/><text x="60" y="165" class="label">P 國王湖停車場</text><text x="60" y="196" class="sub">停車後步行約 10–15 分 → 碼頭</text>
+<circle cx="393" cy="239" r="10" class="pin"/><text x="48" y="270" class="label">Seelände 北岸碼頭</text><text x="48" y="301" class="sub">08:25 前報到</text>
+<circle cx="325" cy="601" r="10" class="pin"/><text x="42" y="594" class="label">聖巴多羅買</text><text x="42" y="625" class="sub">St. Bartholomä</text><text x="42" y="651" class="sub">本日經過，不下船</text>
+<circle cx="423" cy="840" r="10" class="pin"/><text x="95" y="827" class="label">Salet 南端碼頭</text><text x="95" y="858" class="sub">約 09:40 下船</text>
+<path d="M423 840L454 897L482 940Q491 999 546 1040Q608 1090 651 1121L745 1132" class="walk"/>
+<circle cx="454" cy="897" r="9" class="pin"/><text x="94" y="917" class="label">Saletalm 午餐</text><circle cx="482" cy="940" r="9" class="pin"/>
+<text x="50" y="982" class="label">② 上湖西岸步道</text><text x="50" y="1014" class="sub">約 5.5 km 往返；純步行 1h45</text><text x="50" y="1041" class="sub">含拍照休息留約 2.5 小時</text><text x="50" y="1068" class="sub">走橘線到終點，再原路回碼頭</text>
+<circle cx="745" cy="1132" r="10" class="pin"/><text x="594" y="1173" class="label">Fischunkelalm 釣魚牧場</text><text x="594" y="1202" class="sub">10/10 已休季；不加走瀑布</text>
+<rect x="520" y="153" width="405" height="280" rx="20" fill="#fffaf0" stroke="#c4c7b6"/><text x="541" y="184" class="label">③ 北岸可選散步（局部放大）</text>
+<path d="M551 225L596 315Q684 368 716 301Q723 255 772 242L851 215L885 244" class="opt"/>
+<path d="M772 242L820 330" class="opt"/>
+<text x="540" y="220" font-size="15">碼頭</text><text x="548" y="354" font-size="17">畫家角</text><text x="747" y="289" font-size="15">岔路</text><text x="796" y="356" font-size="17">烏鴉岩</text><text x="835" y="205" font-size="15">Jennerbahn</text><text x="841" y="269" font-size="15">停車場</text>
+<text x="541" y="394" class="sub">環線 → 支線往返 → 接環線回停車場</text><text x="541" y="419" class="sub">不沿湖岸往南走；整段先留 2 小時</text>
+<path d="M65 1140h50" class="boat"/><text x="128" y="1146" class="sub">藍線：遊船</text><path d="M65 1176h50" class="walk"/><text x="128" y="1182" class="sub">橘線：步道原路往返</text><text x="42" y="1220" font-size="14">原創相對位置示意，不按比例；局部圖另行放大。實際行走依現場路標與開放狀況。</text>
+</svg>
