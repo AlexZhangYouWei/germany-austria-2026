@@ -230,6 +230,16 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
   svg .alpen,svg .star,svg .cloud,svg .you circle.ring{animation:none}
   .step,.rope,.ph img{transition:none}
 }
+
+/* 北向上平面圖：保留完整長寬比，點圖放大。 */
+.plan-map{margin:0;border:1px solid var(--hair);border-radius:20px;overflow:hidden;background:#f4efd9}
+.plan-map .zoom{display:block;width:100%;padding:0;background:transparent;cursor:zoom-in}
+.plan-map img{display:block;width:100%;height:auto;max-height:none;object-fit:contain;aspect-ratio:auto}
+.plan-map figcaption{padding:12px 16px;background:var(--panel);display:grid;gap:4px}
+.map-times{width:100%;border-collapse:collapse}.map-times th,.map-times td{padding:12px;text-align:left;border-bottom:1px solid var(--hair)}
+.map-times th{color:var(--glow2)}
+@media(max-width:660px){.map-times th,.map-times td{padding:9px 6px;font-size:13px}}
+
 </style>
 </head>
 <body>
@@ -247,10 +257,24 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
   </div>
   <nav class="jump" aria-label="頁內導覽">
     <a href="https://alexzhangyouwei.github.io/germany-austria-2026/day3.html">← 行程網站 Day 3</a>
-    <a href="#views">山頂還是平台漂亮</a><a href="#rides">哪段上山最壯觀</a><a href="#modes">纜車和火車差在哪</a>
+    <a href="#plan-map">平面位置地圖</a><a href="#views">山頂還是平台漂亮</a><a href="#rides">哪段上山最壯觀</a><a href="#modes">纜車和火車差在哪</a>
     <a href="#plan">當天怎麼排</a><a href="#walk">散步</a><a href="#tix">買票</a>
   </nav>
 </header>
+
+<section class="sec" id="plan-map" aria-labelledby="h-plan-map">
+  <div class="sec-h"><p class="eyebrow">NORTH-UP · RELATIVE POSITIONS</p><h2 id="h-plan-map">平面地圖｜艾布湖 → 山頂 → 冰川平台</h2><p>先看位置，再看下方上山圖解。北方朝上；山腳放大區用來辨認停車場、兩種車站與湖岸。</p></div>
+  <figure class="ph plan-map"><button type="button" class="zoom" data-full="img/plan-map.png" aria-label="放大楚格峰北向上平面地圖"><img src="img/plan-map.png" alt="楚格峰北向上相對位置示意圖：北側艾布湖、停車場與山下站，南側楚格峰山頂及更南側冰川平台；標示大纜車、冰川纜車、齒軌火車與湖岸散步路線。" decoding="async"></button><figcaption><span class="cap">點圖放大｜山腳停車、纜車與火車站、山頂觀景台、冰川平台及湖岸散步</span><span class="cr">旅行用相對位置示意圖，不按比例；地標供定位，非全部安排參觀。導航依實際地圖與現場指標。</span></figcaption></figure>
+  <div class="tbl-wrap"><table class="map-times"><thead><tr><th scope="col">移動區間</th><th scope="col">方式／時間</th><th scope="col">安排</th></tr></thead><tbody>
+  <tr><td>停車場 → 山下站</td><td>步行，依停車位置與指標</td><td>另留停車、購票與候車時間</td></tr>
+  <tr><td>艾布湖山下站 ↔ 楚格峰山頂</td><td>大纜車，單程約 10 分</td><td>本日主要上、下山方式</td></tr>
+  <tr><td>山頂 ↔ 冰川平台</td><td>冰川纜車，單程約 4 分</td><td>時間與體力允許再去</td></tr>
+  <tr><td>艾布湖火車站 ↔ 冰川平台</td><td>齒軌火車，依官方班次</td><td>替代方式，非本日預設動線</td></tr>
+  <tr><td>艾布湖湖岸</td><td>短程步行，約 30 分後折返</td><td>下山午餐後散步，不走完整環湖</td></tr>
+  </tbody></table></div>
+  <p class="tip">讀圖：上北、下南、左西、右東。山頂與冰川平台是不同高度、不同位置；大纜車直達山頂，火車到冰川平台。圖中時間不含排隊，步行時長為行程建議。</p>
+  <p style="font-size:13px;color:var(--ink3)">地圖與車程核對：2026/10/02。<a href="https://zugspitze.de/Downloads/Prospekte/BZB_Sommerplan_EN.pdf">官方區域圖</a> · <a href="https://zugspitze.de/de/Service-Informationen/Betriebszeiten-Fahrplaene">官方纜車時刻表</a> · <a href="https://www.eibsee.de/de/lage-anfahrt/">艾布湖抵達資訊</a></p>
+</section>
 
 <section class="scene" aria-label="上山路線">
   <div class="frame">
@@ -378,8 +402,8 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
       <p class="where">Seilbahn Zugspitze 山下站　Am Eibsee 6, 82491 Grainau</p>
       <ul>
         <li>從米滕瓦爾德開車到山下站停車場。停車要收費，官網停車頁有即時空位。</li>
-        <li>官方建議好天氣 10 點前到；我們 08:30 到，剛好搭首班。</li>
-        <li>07:30 看過山頂即時影像再決定上不上山，決定了就立刻用手機線上買票。</li>
+        <li>本行程 09:00 從住宿出發，車程估約 40–45 分；不趕首班，另留停車與候車時間。</li>
+        <li>出發前看山頂即時影像與營運狀態；抵達後再次確認，再決定是否購票。</li>
         <li>齒軌火車艾布湖站在隔壁（Seefeldweg 1），直線約 140 m。</li>
       </ul>
     </div>
@@ -444,7 +468,7 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
       <p class="where">一張票含一次下山，兩種擇一</p>
       <ul>
         <li><b>大纜車</b>：從平台搭冰川纜車回山頂再下山，至少每 30 分一班，時間彈性，下山再看一次艾布湖。</li>
-        <li><b>齒軌火車</b>：直接從平台下山，每小時 :30 開、約 45 分到艾布湖站。11:30 那班 12:15 到，剛好接午餐；錯過就等下一小時。</li>
+        <li><b>齒軌火車</b>：直接從平台下山，每小時 :30 開、約 45 分到艾布湖站。車程與候車依官方時刻表安排，可能延後午餐；改搭火車就縮短湖岸或下午自由活動。</li>
         <li>火車艾布湖站和纜車山下站相距約 140 m，下車走回停車場。</li>
       </ul>
     </div>
@@ -547,39 +571,20 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
   </div>
   <p class="note" style="font-size:12.5px;color:var(--ink3)">火車班次取自官網目前連結的時刻表（2024 年版 PDF），加米施最後一班 14:15 與 2026 營運頁一致；出發前一晚再確認。</p>
 
-  <div class="cols">
-    <div>
-      <p class="plan-h">天氣好：纜車上山、火車下山<small>建議</small></p>
-      <ol class="plan">
-        <li data-lv="ride"><time>08:30</time><span class="bar"></span><div class="t"><b>大纜車上山</b><span>08:40 到山頂，趁人少先看全景</span></div></li>
-        <li data-lv="top"><time>08:40</time><span class="bar"></span><div class="t"><b>山頂觀景台，德奧兩側</b><span>到 10:10</span></div></li>
-        <li data-lv="ride"><time>10:15</time><span class="bar"></span><div class="t"><b>冰川纜車下平台</b><span>4 分鐘</span></div></li>
-        <li data-lv="plat"><time>10:20</time><span class="bar"></span><div class="t"><b>小教堂、冰川步道</b><span>到 11:25</span></div></li>
-        <li data-lv="train"><time>11:30</time><span class="bar"></span><div class="t"><b>平台搭齒軌火車下山</b><span>12:15 到艾布湖站，走回停車場吃午餐</span></div></li>
-      </ol>
-    </div>
-    <div class="buy">
-      <div><h3>為什麼先搭纜車</h3><p>先搭火車的話，艾布湖首班 08:45 開、09:28 才到平台，再轉冰川纜車，到山頂要 09:40 以後，而且最好的一小時都在隧道裡。山頂 → 平台 → 火車下山一路往下，不走回頭路。</p></div>
-      <div><h3>要注意</h3><p>火車一小時才一班，錯過 11:30 就等 12:30（13:15 才到山下）。想參加 11:00 冰川導覽也會趕不上 11:30。只想輕鬆，就上下都搭纜車。</p></div>
-      <div><h3>只有這種情況先搭火車</h3><p>08:30 纜車站排很長，就走到隔壁火車站搭 08:45 上平台，再從平台往山頂走。</p></div>
-    </div>
-  </div>
+  <div class="buy"><div><h3>本日預設：上下都搭大纜車</h3><p>09:00 從住宿出發，先到山頂觀景；冰川平台依體力與時間選擇性安排。回山頂後搭大纜車下山，較容易配合湖邊午餐與散步。</p></div><div><h3>想試火車：平台搭火車下山</h3><p>可以從平台搭齒軌火車回艾布湖站，但需依官方班次調整。候車與較長車程可能延後午餐，縮短湖岸或下午自由活動即可；不要追趕原定時辰。</p></div></div>
 </section>
 
 <section class="sec" id="plan" aria-labelledby="h-plan">
   <div class="sec-h">
     <h2 id="h-plan">當天怎麼排（上下都搭纜車）</h2>
-    <p>V5 行程給山上 08:30–12:15。這是上下都搭纜車的排法，依現場人潮調整；冰川導覽和冰川步道擇一。想試火車就用上一段的排法。</p>
+    <p>與目前 Day 3 A 方案一致：09:00 從住宿出發，山頂與冰川平台依天候、排隊和體力調整。下山後午餐、湖岸散步。</p>
   </div>
-  <div class="legend"><span><i style="background:var(--glow)"></i>山頂</span><span><i style="background:var(--ice)"></i>平台</span><span><i style="background:repeating-linear-gradient(90deg,var(--steel) 0 4px,transparent 4px 8px)"></i>搭纜車</span><span><i style="background:repeating-linear-gradient(90deg,var(--gold) 0 4px,transparent 4px 8px)"></i>搭火車</span></div>
   <ol class="plan">
-    <li data-lv="ride"><time>07:30</time><span class="bar"></span><div class="t"><b>看山頂即時影像，決定 A／B／C</b><span>上山就立刻線上買 4 張來回票</span></div></li>
-    <li data-lv="ride"><time>08:30</time><span class="bar"></span><div class="t"><b>大纜車上山</b><span>約 10 分鐘</span></div></li>
-    <li data-lv="top"><time>08:45</time><span class="bar"></span><div class="t"><b>山頂觀景台，德奧兩側拍照</b><span>約 1 小時；想聽纜車導覽就排 09:45 那場</span></div></li>
-    <li data-lv="ride"><time>10:30</time><span class="bar"></span><div class="t"><b>冰川纜車下平台</b><span>約 4 分鐘</span></div></li>
-    <li data-lv="plat"><time>10:40</time><span class="bar"></span><div class="t"><b>小教堂</b><span>從平台走一小段</span></div></li>
-    <li data-lv="plat"><time>10:50</time><span class="bar"></span><div class="t"><b>冰川步道一圈，或 11:00 免費冰川導覽</b><span>步道去程 15 分＋一圈 45 分；導覽約 60 分</span></div></li>
-    <li data-lv="ride"><time>11:55</time><span class="bar"></span><div class="t"><b>冰川纜車回山頂 → 大纜車下山</b><span>12:15 前回到艾布湖午餐，13:15 起湖畔散步</span></div></li>
+    <li data-lv="ride"><time>09:00</time><span class="bar"></span><div class="t"><b>從住宿出發</b><span>車程估約 40–45 分，09:45 左右到停車場；購票、走到站內與候車另計。</span></div></li>
+    <li data-lv="top"><time>10:15–10:45</time><span class="bar"></span><div class="t"><b>預估抵達山頂，觀景拍照</b><span>大纜車單程約 10 分；實際抵達依排隊狀況。</span></div></li>
+    <li data-lv="plat"><time>山頂遊覽後</time><span class="bar"></span><div class="t"><b>冰川平台（選擇性）</b><span>冰川纜車約 4 分；小教堂與平台散步依時間、步道狀態及體力調整。</span></div></li>
+    <li data-lv="ride"><time>12:30</time><span class="bar"></span><div class="t"><b>開始下山</b><span>若在平台，先搭冰川纜車回山頂，再搭大纜車；目標 13:00 左右回山下。</span></div></li>
+    <li data-lv="plat"><time>13:00–15:15</time><span class="bar"></span><div class="t"><b>艾布湖午餐、湖岸散步</b><span>休息後短程散步拍照，15:15 左右回停車場出發。</span></div></li>
   </ol>
 </section>
 
@@ -602,7 +607,7 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
       <p>平台。德國海拔最高的教堂，從平台走一小段就到。</p>
       <span class="meter"><i style="width:14%"></i></span></div>
     <div class="walk" data-lv="lake"><h3>艾布湖短環線</h3><span class="dur">行程 120 分</span>
-      <p>山下。下山吃完午餐後 13:15–15:15，選短環線慢走，不一定要走完一整圈。</p>
+      <p>山下。下山後 13:00–15:15 午餐、休息與短程湖岸散步，走約 30 分鐘後原路折返，不走完整環湖。</p>
       <span class="meter"><i style="width:100%"></i></span></div>
     <div class="walk warn" data-lv="top"><h3>金色十字架：不建議</h3><span class="dur">—</span>
       <p>山頂。要爬短梯、抓鋼索，常排隊，秋天可能結冰，在觀景台拍就好（非官方資料）。</p></div>
