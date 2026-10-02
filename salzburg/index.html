@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>薩爾茲堡地圖｜Day 5 分區慢遊</title>
+<meta name="description" content="薩爾茲堡北向上中文位置圖，依米拉貝爾、糧食胡同、南側老城與要塞分區整理 Day 5 時辰及導航。">
+<style>/* 景點圖解共用版型：單一夜色設計，暖色霞光當強調色、冰藍標冰川。由 build_lib.js 內嵌進各頁 css 的位置。 */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  color-scheme:dark;
+  --night:#0c121a; --panel:#121a25; --panel2:#172130;
+  --ink:#eef2f6; --ink2:#b7c3cf; --ink3:#7f8d9b;
+  --glow:#ff9a66; --glow2:#ffc48c; --gold:#f2c96b; --ice:#9fd3e4; --steel:#a3b3c4;
+  --hair:rgba(230,237,243,.12); --hair2:rgba(230,237,243,.07);
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --sans:"Noto Sans TC","PingFang TC","Heiti TC","Microsoft JhengHei",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+}
+html{background:var(--night);-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--night);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.75;
+  padding-inline:max(16px,env(safe-area-inset-left),min(4vw,40px));
+  padding-block:calc(28px + env(safe-area-inset-top,0px)) calc(64px + env(safe-area-inset-bottom,0px))}
+img{max-width:100%}
+[hidden]{display:none!important}
+.wrap{max-width:1080px;margin:0 auto;display:grid;gap:64px}
+h1,h2,h3{font-family:var(--serif);text-wrap:balance;margin:0;letter-spacing:.01em}
+p{margin:0}
+a{color:var(--glow2);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--glow2);outline-offset:3px;border-radius:6px}
+.eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;color:var(--glow);text-transform:uppercase}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* ── 開場 ── */
+.hero{display:grid;gap:14px;max-width:720px}
+.hero h1{font-size:clamp(34px,6vw,58px);font-weight:900;line-height:1.12}
+.hero h1 em{font-style:normal;color:var(--glow2)}
+.lede{font-size:16.5px;color:var(--ink2);max-width:62ch}
+.facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:6px;font-size:13px;color:var(--ink3)}
+.facts b{font-family:var(--mono);font-weight:600;color:var(--ink);font-size:15px;margin-right:6px}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.jump a{font-size:13px;color:var(--ink2);text-decoration:none;border:1px solid var(--hair);border-radius:999px;padding:4px 12px}
+.jump a:hover{border-color:var(--glow2);color:var(--ink)}
+
+/* ── 剖面圖＋步驟 ── */
+.scene{display:grid;gap:18px;margin-top:-28px}
+.frame{border-radius:20px;overflow:hidden;border:1px solid var(--hair);background:#0a1120}
+.frame-scroll{overflow-x:auto;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+.frame svg{display:block;width:100%;min-width:640px;height:auto}
+.hint{display:none;font-size:12px;color:var(--ink3);padding:8px 14px 10px;border-top:1px solid var(--hair2)}
+@media (max-width:660px){.hint{display:block}}
+
+svg .lbl{font-family:var(--sans);font-size:17px;font-weight:500;fill:var(--ink)}
+svg .lbl.sub{font-size:14px;font-weight:400;fill:var(--ink2)}
+svg .lbl.dim{fill:var(--ink3);font-size:14px}
+svg .alt{font-family:var(--mono);font-size:13px;fill:var(--ink3)}
+svg .guide{stroke:rgba(230,237,243,.08);stroke-dasharray:2 6}
+svg .rope{fill:none;stroke:var(--steel);stroke-width:1.6;opacity:.75;transition:stroke .4s,opacity .4s,stroke-width .4s}
+svg .tunnel{fill:none;stroke:var(--gold);stroke-width:2;stroke-dasharray:6 7;opacity:.45}
+svg .stn{fill:#dfe6ee}
+svg .cab rect{fill:#dfe6ee}
+svg .cab line{stroke:#dfe6ee;stroke-width:1.4}
+svg .train{fill:var(--gold)}
+svg .bus{fill:#dfe6ee}
+svg .spot{opacity:.35;transition:opacity .4s}
+svg .walkp{fill:none;stroke:var(--ink2);stroke-width:2;stroke-dasharray:1 7;stroke-linecap:round;opacity:.55;transition:stroke .4s,opacity .4s}
+svg .road{fill:none;stroke:#8b97a8;stroke-width:3;opacity:.4;stroke-linecap:round;transition:stroke .4s,opacity .4s}
+/* 目前步驟：class 有 sN 的站點、hN 的路線在第 N 步變亮 */
+svg[data-step="1"] .s1, svg[data-step="2"] .s2, svg[data-step="3"] .s3, svg[data-step="4"] .s4, svg[data-step="5"] .s5, svg[data-step="6"] .s6, svg[data-step="7"] .s7, svg[data-step="8"] .s8{opacity:1}
+svg[data-step="1"] .h1, svg[data-step="2"] .h2, svg[data-step="3"] .h3, svg[data-step="4"] .h4, svg[data-step="5"] .h5, svg[data-step="6"] .h6, svg[data-step="7"] .h7, svg[data-step="8"] .h8{stroke:var(--glow2);stroke-width:2.6;opacity:1}
+svg .you circle.core{fill:var(--glow2)}
+svg .you circle.ring{fill:none;stroke:var(--glow2);stroke-width:2;transform-box:fill-box;transform-origin:center;animation:ping 1.8s ease-out infinite}
+@keyframes ping{from{transform:scale(.6);opacity:.9}to{transform:scale(2.4);opacity:0}}
+svg .alpen{animation:alpen 9s ease-in-out infinite alternate}
+@keyframes alpen{from{opacity:.35}to{opacity:.9}}
+svg .star{fill:#fff;animation:tw 3.6s ease-in-out infinite}
+@keyframes tw{0%,100%{opacity:.15}50%{opacity:.8}}
+svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
+@keyframes drift{from{transform:translateX(-120px)}to{transform:translateX(160px)}}
+
+.steps{display:grid;grid-template-columns:repeat(var(--n,6),minmax(0,1fr));gap:8px}
+.step{appearance:none;cursor:pointer;text-align:left;font:inherit;color:var(--ink2);
+  background:var(--panel);border:1px solid var(--hair2);border-radius:14px;padding:10px 12px 11px;
+  display:grid;gap:2px;transition:background .25s,border-color .25s,color .25s}
+.step:hover{border-color:var(--hair);color:var(--ink)}
+.step .n{font-family:var(--mono);font-size:11.5px;color:var(--ink3);letter-spacing:.08em}
+.step b{font-weight:700;font-size:14.5px;line-height:1.35;color:inherit}
+.step small{font-family:var(--mono);font-size:12px;color:var(--ink3)}
+.step[aria-selected="true"]{background:linear-gradient(160deg,#2a2230,#3a2a2a);border-color:rgba(255,178,122,.55);color:var(--ink)}
+.step[aria-selected="true"] .n,.step[aria-selected="true"] small{color:var(--glow2)}
+@media (max-width:760px){.steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+.playbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.playbtn{appearance:none;cursor:pointer;font:inherit;font-size:13px;color:var(--ink);background:transparent;
+  border:1px solid var(--hair);border-radius:999px;padding:6px 14px}
+.playbtn:hover{border-color:var(--glow2)}
+.progress{flex:1;min-width:120px;max-width:260px;height:3px;border-radius:3px;background:var(--hair2);overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--glow2)}
+
+.panel{background:var(--panel);border:1px solid var(--hair2);border-radius:18px;padding:22px 24px 24px;
+  display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:18px 32px}
+.panel h3{font-size:22px;font-weight:700}
+.panel .where{font-size:13px;color:var(--ink3);margin-top:4px}
+.panel ul{margin:12px 0 0;padding-left:1.1em;display:grid;gap:6px;color:var(--ink2)}
+.panel li::marker{color:var(--glow)}
+.panel aside{display:grid;gap:14px;align-content:start}
+.panel dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:13.5px}
+.panel dt{color:var(--ink3)}
+.panel dd{margin:0;font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--ink)}
+@media (max-width:760px){.panel{grid-template-columns:minmax(0,1fr);padding:18px 18px 20px}}
+
+/* ── 插畫 ── */
+.ph{margin:0;display:grid;gap:8px;align-content:start}
+.zoom{appearance:none;display:block;padding:0;border:0;background:#0a1017;border-radius:14px;overflow:hidden;cursor:zoom-in}
+.ph img{display:block;width:100%;height:auto;aspect-ratio:3/2;object-fit:cover;transition:transform .5s}
+.zoom:hover img{transform:scale(1.03)}
+.ph.pano img{aspect-ratio:3/1}
+.ph.wide img{aspect-ratio:2/1}
+.ph.tall img{aspect-ratio:3/4}
+.ph figcaption{display:grid;gap:3px}
+.ph .cap{font-size:13.5px;color:var(--ink2);line-height:1.65}
+.ph .cr{font-size:11.5px;color:var(--ink3);line-height:1.5}
+.ph .cr a{color:var(--ink3)}
+.panel .ph img{aspect-ratio:16/10}
+
+/* ── 共用段落 ── */
+.sec{display:grid;gap:24px}
+.sec-h{display:grid;gap:6px}
+.sec-h h2{font-size:clamp(24px,3.4vw,32px);font-weight:700}
+.sec-h p{color:var(--ink2);max-width:62ch}
+.verdict{font-family:var(--serif);font-size:clamp(18px,2.4vw,22px);font-weight:700;color:var(--glow2);max-width:40ch}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+@media (max-width:760px){.cols{grid-template-columns:minmax(0,1fr)}}
+.tbl-wrap{overflow-x:auto}
+.ctab{width:100%;border-collapse:collapse;font-size:14px}
+.ctab th,.ctab td{text-align:left;vertical-align:top;padding:11px 14px 11px 0;border-bottom:1px solid var(--hair2)}
+.ctab thead th{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.06em}
+.ctab tbody th{font-weight:500;color:var(--ink3);white-space:nowrap;font-size:13px}
+.ctab td{color:var(--ink2)}
+.ctab td b{color:var(--ink)}
+.ctab .hl{color:var(--ink)}
+
+/* 山頂 vs 平台：兩欄並排比插畫 */
+.vs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.vs-col{display:grid;gap:18px;align-content:start}
+.vs-col h3{font-size:22px;font-weight:700;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.vs-col h3 .num{font-size:15px;font-weight:500;color:var(--glow)}
+.vs-col.plat h3 .num{color:var(--ice)}
+.vs-col > p{color:var(--ink2);font-size:14.5px}
+@media (max-width:760px){.vs{grid-template-columns:minmax(0,1fr)}}
+
+/* 上山過程：依壯觀程度排，左文右照 */
+.rides{display:grid}
+.ride{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.4fr);gap:18px 32px;padding:26px 0;border-top:1px solid var(--hair2)}
+.ride:first-child{border-top:0;padding-top:4px}
+.ride .rk{font-family:var(--mono);font-size:13px;color:var(--glow)}
+.ride h3{font-size:21px;font-weight:700;margin:2px 0 6px}
+.ride p{color:var(--ink2);font-size:14.5px}
+.ride .shots{display:grid;gap:14px}
+.ride .shots.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.ride .shots .span2{grid-column:1/-1}
+@media (max-width:760px){.ride{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:480px){.ride .shots.two{grid-template-columns:minmax(0,1fr)}}
+.tip{border-left:3px solid var(--glow);padding:4px 0 4px 16px;color:var(--ink);font-size:14.5px}
+
+/* 當天時間：時間在左，層別用色條 */
+.plan{list-style:none;margin:0;padding:0;display:grid}
+.plan li{display:grid;grid-template-columns:62px 12px minmax(0,1fr);gap:0 14px;align-items:start}
+.plan time{font-family:var(--mono);font-size:14px;color:var(--ink);padding-top:10px}
+.plan .bar{align-self:stretch;width:4px;justify-self:center;background:var(--hair)}
+.plan li[data-lv="top"] .bar{background:var(--glow)}
+.plan li[data-lv="plat"] .bar{background:var(--ice)}
+.plan li[data-lv="ride"] .bar{background:repeating-linear-gradient(var(--steel) 0 4px,transparent 4px 8px)}
+.plan li[data-lv="train"] .bar{background:repeating-linear-gradient(var(--gold) 0 4px,transparent 4px 8px)}
+.plan li[data-lv="walk"] .bar{background:repeating-linear-gradient(var(--ink2) 0 4px,transparent 4px 8px)}
+.plan .t{padding:8px 0 12px;border-bottom:1px solid var(--hair2)}
+.plan .t b{font-weight:700}
+.plan .t span{display:block;font-size:13px;color:var(--ink3)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--ink3)}
+.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.plan-h{font-family:var(--sans);font-size:16px;font-weight:700;margin-bottom:8px}
+.plan-h small{font-weight:400;color:var(--ink3);margin-left:8px;font-size:13px}
+
+/* 散步：時間長度用刻度條表示（60 分為滿格） */
+.walks{display:grid;gap:12px}
+.walk{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 16px;padding:14px 0 16px;border-bottom:1px solid var(--hair2)}
+.walk h3{font-family:var(--sans);font-size:16px;font-weight:700}
+.walk .dur{font-family:var(--mono);font-size:14px;color:var(--ink);text-align:right}
+.walk p{grid-column:1/-1;font-size:13.5px;color:var(--ink2)}
+.walk .meter{grid-column:1/-1;height:6px;border-radius:3px;background:var(--hair2);overflow:hidden}
+.walk .meter i{display:block;height:100%;border-radius:3px}
+.walk[data-lv="top"] .meter i{background:var(--glow)}
+.walk[data-lv="plat"] .meter i{background:var(--ice)}
+.walk[data-lv="lake"] .meter i{background:#7fb3a3}
+.walk.warn h3{color:var(--glow2)}
+
+/* 票 */
+.tix{width:100%;border-collapse:collapse;font-size:14px}
+.tix th,.tix td{text-align:left;padding:10px 12px 10px 0;border-bottom:1px solid var(--hair2)}
+.tix th{font-size:12px;font-weight:500;color:var(--ink3);letter-spacing:.08em}
+.tix td.num{text-align:right;padding-right:0;font-size:15px}
+.tix tr.sum td{color:var(--glow2);font-weight:700;border-bottom:0}
+.buy{display:grid;gap:14px}
+.buy div{background:var(--panel);border:1px solid var(--hair2);border-radius:16px;padding:16px 18px}
+.buy h3{font-family:var(--sans);font-size:15.5px;font-weight:700;margin-bottom:4px}
+.buy p{font-size:13.5px;color:var(--ink2)}
+
+.pack{display:flex;flex-wrap:wrap;gap:8px}
+.pack span{border:1px solid var(--hair);border-radius:999px;padding:5px 13px;font-size:13.5px;color:var(--ink2)}
+
+.src{font-size:13px;color:var(--ink3);display:grid;gap:12px}
+.src h2{font-family:var(--sans);font-size:14px;font-weight:700;color:var(--ink2)}
+.src ul{margin:0;padding-left:1.1em;display:grid;gap:4px}
+.src a{color:var(--ink2)}
+
+/* 放大看插畫 */
+.lb{width:min(1200px,calc(100vw - 24px));max-height:calc(100vh - 24px);padding:0;border:1px solid var(--hair);border-radius:16px;
+  background:#0a1017;color:var(--ink);overflow:auto}
+.lb::backdrop{background:rgba(4,7,11,.85)}
+.lb img{display:block;width:100%;height:auto;max-height:78vh;object-fit:contain;background:#05080c}
+.lb-bar{display:flex;gap:14px;align-items:flex-start;justify-content:space-between;padding:12px 16px 14px}
+.lb-cap{display:grid;gap:3px;font-size:13.5px;color:var(--ink2)}
+.lb-cap .cr{font-size:11.5px;color:var(--ink3)}
+.lb-cap .cr a{color:var(--ink3)}
+.lb-x{appearance:none;flex:none;cursor:pointer;font:inherit;font-size:13px;color:var(--ink);background:transparent;border:1px solid var(--hair);border-radius:999px;padding:5px 14px}
+
+@media (prefers-reduced-motion:reduce){
+  svg .alpen,svg .star,svg .cloud,svg .you circle.ring{animation:none}
+  .step,.rope,.ph img{transition:none}
+}
+
+:root{--glow:#e9af73;--glow2:#f4d09c}.hero{max-width:900px}
+.map{margin:0;border:1px solid var(--hair);border-radius:20px;overflow:hidden;background:#f4efdc}
+.map .zoom{display:block;width:100%;padding:0;border:0;background:transparent;cursor:zoom-in}
+.map img{display:block;width:100%;height:auto;max-height:none;object-fit:contain;aspect-ratio:auto}
+.map figcaption{padding:14px 18px;background:var(--panel);display:grid;gap:5px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.card{padding:24px;background:var(--panel);border:1px solid var(--hair);border-radius:18px;display:grid;gap:12px;align-content:start}
+.card h3{font-size:22px}.card p,.sec p{color:var(--ink2)}.card .k{font:12px var(--mono);color:var(--glow2)}.card ul{margin:0;padding-left:20px}
+.ctab th{white-space:normal!important}.ctab td{overflow-wrap:anywhere}.ctab td:first-child{min-width:100px}.navtable a{display:inline-block;margin:2px 12px 2px 0}.source{font-size:13px;color:var(--ink3);display:grid;gap:12px}.source a{overflow-wrap:anywhere}
+#lb{padding:12px;background:var(--night);color:var(--ink);border:1px solid var(--hair);border-radius:16px;max-width:96vw;max-height:94dvh}
+#lb::backdrop{background:#000c}#lb img{display:block;max-width:90vw;max-height:80dvh;width:auto;height:auto;object-fit:contain}#lbX{position:sticky;top:0;float:right;font-size:24px;border:0;border-radius:50%;width:40px;height:40px;background:var(--panel2);color:var(--ink);cursor:pointer}#lb p{padding-top:10px;color:var(--ink2)}
+@media(max-width:760px){.cards{grid-template-columns:1fr}.card{padding:20px}.ctab th,.ctab td{padding:10px 8px;font-size:13px}.ctab td:first-child{min-width:80px}}
+</style></head>
+<body><main class="wrap">
+<header class="hero"><p class="eyebrow">09 OCT 2026 · SALZBURG · DAY 5</p><h1>薩爾茲堡，<br>沿河走進<em>老城與要塞</em>。</h1>
+<p class="lede">米拉貝爾 → 糧食胡同與莫札特出生地 → 南側廣場群與要塞 → 河岸。把相鄰景點一起逛，下午留給咖啡與自由散步。</p>
+<div class="facts"><span><b>09:00</b>住宿出發</span><span><b>3 區</b>主要景點</span><span><b>步行＋公車</b>市區移動</span></div>
+<nav class="jump" aria-label="頁面導覽"><a href="#map">北向上地圖</a><a href="#areas">分區怎麼逛</a><a href="#timing">Day 5 時辰</a><a href="#navigation">地點導航</a><a href="#tickets">票券與時間</a><a href="https://alexzhangyouwei.github.io/germany-austria-2026/day5.html">每日行程 Day 5</a></nav></header>
+<section class="sec" id="map"><div class="sec-h"><p class="eyebrow">ORIENT YOURSELF</p><h2>先看位置，再按分區走。</h2><p>北方朝上，河東先逛米拉貝爾，過橋後由糧食胡同往南側老城，再搭纜車上要塞。</p></div>
+<figure class="ph map"><button class="zoom" type="button" data-full="img/city-map.png?v=9db10956" aria-label="放大薩爾茲堡分區地圖"><img src="img/city-map.png?v=9db10956" alt="北向上薩爾茲堡相對位置圖：北側河東米拉貝爾，河西糧食胡同與莫札特出生地，南側主教座堂、聖彼得墓園與要塞；住宿在老城東側。" decoding="async"></button><figcaption><span class="cap">點圖放大｜中文景點、橋梁、河岸、住宿與三區散步順序</span><span class="cr">旅行用相對位置示意圖，不按比例；公車線僅示方向，實際班次與路線依當日導航。</span></figcaption></figure>
+<p class="tip">莫札特出生地在糧食胡同；馬卡特廣場旁的是莫札特故居，兩者不同。本日入內參觀安排在出生地。</p></section>
+<section class="sec" id="areas"><div class="sec-h"><p class="eyebrow">THREE NEIGHBOURHOODS</p><h2>同一區，一起逛完。</h2></div>
+<div class="cards">
+<article class="card"><span class="k">01 · 09:00–11:00</span><h3>米拉貝爾與河東</h3><p>從住宿出發，先到花園，再沿馬卡特廣場與行人橋走進河西老城。</p><ul><li>米拉貝爾花園：飛馬噴泉、花園中軸</li><li>馬卡特廣場：街景與故居外觀定位</li><li>馬卡特行人橋：河岸與要塞景</li></ul></article>
+<article class="card"><span class="k">02 · 11:00–13:30</span><h3>糧食胡同與午餐</h3><p>預計 11:00 進莫札特出生地，參觀約一小時，附近散步後午餐。</p><ul><li>莫札特出生地：首次使用薩爾茲堡卡</li><li>糧食胡同：招牌與老城街景</li><li>大學廣場、大學教堂周邊</li><li>12:30 左右午餐</li></ul></article>
+<article class="card"><span class="k">03 · 13:30–16:50</span><h3>廣場群與要塞</h3><p>相連廣場與墓園放在上山前，14:40 左右搭纜車，16:50 左右下山。</p><ul><li>莫札特廣場 → 主教宮廣場</li><li>主教座堂外觀 → 卡比第廣場</li><li>聖彼得墓園 → 城堡纜車</li><li>要塞參觀與城市全景</li></ul></article>
+</div><p>下山後找咖啡館、自由逛街或到莫札特橋與河岸拍照，18:30 左右晚餐。</p></section>
+<section class="sec" id="timing"><div class="sec-h"><p class="eyebrow">THE DAY AT A GLANCE</p><h2>Day 5 時辰表</h2><p>與行程主資料一致。交通、候車與停留均為規劃估算，11:00 開卡為目標時間。</p></div><div class="tbl-wrap"><table class="ctab"><thead><tr><th scope="col">時間</th><th scope="col">分區／安排</th><th scope="col">重點</th></tr></thead><tbody><tr><td>09:00–11:00</td><td>住宿 → 米拉貝爾花園、馬卡特廣場、馬卡特行人橋</td><td>09:00 住宿出發；花園 → 馬卡特廣場 → 行人橋，公車含候車估 25–35 分</td></tr><tr><td>11:00–13:30</td><td>莫札特出生地、糧食胡同、大學廣場與大學教堂</td><td>11:00 左右進出生地、首次使用卡片；12:30 左右午餐</td></tr><tr><td>13:30–16:50</td><td>莫札特廣場、主教宮廣場、主教座堂外觀、卡比第廣場、聖彼得墓園 → 薩爾茲堡要塞</td><td>相連廣場、主教座堂外觀與墓園；14:40 左右搭纜車上要塞</td></tr><tr><td>16:50–18:30</td><td>老城咖啡館、莫札特橋與薩爾察赫河岸</td><td>喝咖啡、自由逛街、莫札特橋與河岸拍照</td></tr><tr><td>18:30–20:00</td><td>老城或河岸 → 住宿</td><td>老城或河岸晚餐，搭公車或步行回住宿</td></tr></tbody></table></div></section>
+<section class="sec" id="navigation"><div class="sec-h"><p class="eyebrow">OPEN YOUR MAP</p><h2>需要導航時，直接開地圖。</h2><p>位置圖用來理解相對位置，下面連結用來實際找路。</p></div><div class="tbl-wrap"><table class="ctab navtable"><thead><tr><th scope="col">地點</th><th scope="col">導航</th></tr></thead><tbody><tr><th scope="row">In the heart of the city of Salzburg（Bürglsteinstraße 19）</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=B%C3%BCrglsteinstra%C3%9Fe%2019%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=B%C3%BCrglsteinstra%C3%9Fe%2019%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">米拉貝爾花園 Mirabellgarten</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Mirabellgarten%2C%20Mirabellplatz%203%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Mirabellgarten%2C%20Mirabellplatz%203%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">馬卡特廣場 Makartplatz</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Makartplatz%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Makartplatz%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">馬卡特行人橋 Makartsteg</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Makartsteg%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Makartsteg%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">莫札特出生地 Mozarts Geburtshaus</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Mozarts%20Geburtshaus%2C%20Getreidegasse%209%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Mozarts%20Geburtshaus%2C%20Getreidegasse%209%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">糧食胡同 Getreidegasse</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Getreidegasse%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Getreidegasse%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">大學廣場 Universitätsplatz</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Universit%C3%A4tsplatz%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Universit%C3%A4tsplatz%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">大學教堂 Kollegienkirche</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Kollegienkirche%2C%20Universit%C3%A4tsplatz%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Kollegienkirche%2C%20Universit%C3%A4tsplatz%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">莫札特廣場 Mozartplatz</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Mozartplatz%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Mozartplatz%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">主教宮廣場 Residenzplatz</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Residenzplatz%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Residenzplatz%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">主教座堂 Salzburger Dom</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Salzburger%20Dom%2C%20Domplatz%201a%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Salzburger%20Dom%2C%20Domplatz%201a%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">卡比第廣場 Kapitelplatz</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Kapitelplatz%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Kapitelplatz%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">聖彼得墓園 Petersfriedhof</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Petersfriedhof%2C%20St.-Peter-Bezirk%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Petersfriedhof%2C%20St.-Peter-Bezirk%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">城堡纜車山下站 FestungsBahn</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=FestungsBahn%20Talstation%2C%20Festungsgasse%204%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=FestungsBahn%20Talstation%2C%20Festungsgasse%204%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">薩爾斯堡要塞 Festung Hohensalzburg</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Festung%20Hohensalzburg%2C%20M%C3%B6nchsberg%2034%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Festung%20Hohensalzburg%2C%20M%C3%B6nchsberg%2034%2C%205020%20Salzburg">Apple Maps</a></td></tr><tr><th scope="row">莫札特橋 Mozartsteg</th><td><a href="https://www.google.com/maps/search/?api=1&amp;query=Mozartsteg%2C%205020%20Salzburg">Google Maps</a><a href="https://maps.apple.com/search?query=Mozartsteg%2C%205020%20Salzburg">Apple Maps</a></td></tr></tbody></table></div></section>
+<section class="sec" id="tickets"><div class="sec-h"><p class="eyebrow">TICKETS & TIMING</p><h2>先備好卡片，進出生地時開卡。</h2></div>
+<div class="tbl-wrap"><table class="ctab"><thead><tr><th scope="col">項目</th><th scope="col">安排</th></tr></thead><tbody><tr><th scope="row">薩爾茲堡卡</th><td>24 小時 €38／成人，4 人 €152；預計 11:00 第一次使用，效期以實際使用紀錄為準。四張具名數位卡各自保存。</td></tr><tr><th scope="row">市區公車</th><td>早上使用住宿交通票，09:00 出發後含步行與候車先抓 25–35 分，當天依導航調整。</td></tr><tr><th scope="row">莫札特出生地</th><td>09:00–17:30，最後入場 17:00；參觀約 1 小時。</td></tr><tr><th scope="row">要塞</th><td>10–12 月 09:30–17:00；前段延誤就縮短廣場與墓園停留，保留要塞時間。</td></tr><tr><th scope="row">詳細上山說明</th><td><a href="https://alexzhangyouwei.github.io/germany-austria-2026/festungsbahn/">城堡纜車圖解：乘車、門票與要塞參觀 →</a></td></tr></tbody></table></div></section>
+<footer class="source"><p>查證日期：2026/10/02。地圖為原創旅行示意，不按比例；地標供定位，非全部入內參觀。11:00、14:40 等時段為規劃，非已預約時間。</p>
+<p>官方資料：<a href="https://www.salzburg.info/en/travel-info/city-maps">城市位置圖</a> · <a href="https://www.salzburg.info/en/hotels-offers/salzburg-card/prices">薩爾茲堡卡價格</a> · <a href="https://www2.salzburg.info/en/hotels-offers/salzburg-card/faq">卡片使用 FAQ</a> · <a href="https://mozarteum.at/en/mozart-museums/mozarts-birthplace">莫札特出生地</a> · <a href="https://www.festung-hohensalzburg.at/en/your-visit/opening-hours">要塞開放時間</a></p><p><a href="https://alexzhangyouwei.github.io/germany-austria-2026/day5.html">← 回每日行程 Day 5</a></p></footer>
+</main><dialog id="lb"><button type="button" id="lbX" aria-label="關閉地圖">×</button><img id="lbImg" alt=""><p>北向上相對位置示意，實際找路請使用導航連結。</p></dialog>
+<script>const lb=document.getElementById('lb'),img=document.getElementById('lbImg');document.querySelector('.zoom').addEventListener('click',e=>{const b=e.currentTarget;img.src=b.dataset.full;img.alt=b.querySelector('img').alt;lb.showModal()});document.getElementById('lbX').addEventListener('click',()=>lb.close());lb.addEventListener('click',e=>{if(e.target===lb)lb.close()});</script>
+</body></html>
