@@ -1196,6 +1196,14 @@ if (PAGE === "drive") {
     try { localStorage.setItem(DR_KEY, JSON.stringify(drck)); } catch (e2) {}
   });
 
+  /* 行前速查卡：資料由主檔三張表提供，桌機與手機皆可收合。 */
+  const quick = (title, intro, rows) => fold("dr-guide", title,
+    `<p class="dr-fs">${esc(intro)}</p>`,
+    `<ol class="dr-quick">${rows.map(([k, v]) => `<li><b>${esc(k)}</b><span>${md(v)}</span></li>`).join("")}</ol>`);
+  el("drhandover").innerHTML = quick("取車：10 分鐘出發流程", "文件、租約、驗車與設定，依序做完再離店。", D.handover);
+  el("drsigns").innerHTML = quick("號誌與德文指標速查", "現場號誌、施工牌與附牌優先於導航。", D.signs.map(([k, sign, act]) => [k, `${sign}\n${act}`]));
+  el("drroadside").innerHTML = quick("路邊停車：30 秒判讀", "空位不等於可停；先讀入口牌、同側牌示與附牌。", D.roadsideParking);
+
   /* 經過日欄：「Day 3 A 艾布湖」→ Day 3A＋小字地名。停車場、加油站共用 */
   const splitDay = d => { const [, day = d, sub = ""] = d.match(/^(Day [\d–]+(?: [A-Z](?= |$))?)\s*(.*)$/) || []; return [day.replace(/ ([A-Z])$/, "$1"), sub]; };
   const dayCell = (d, withSub = true) => { const [day, sub] = splitDay(d);

@@ -338,8 +338,8 @@ h2{margin:0 0 8px;font-size:clamp(30px,5vw,46px);font-weight:700;letter-spacing:
 }
 
 /* ───────── cards ───────── */
-.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
-.card{padding:26px 26px 28px}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.card{min-width:0;padding:26px 26px 28px}
 .card h4{margin:8px 0 0;font-size:16.5px;font-weight:600;line-height:1.5;letter-spacing:-.012em}
 .card .meta{
   font-size:11.5px;color:#ffd9b0;font-variant-numeric:tabular-nums;letter-spacing:.05em;
@@ -480,7 +480,7 @@ footer{
   .tt-stop .geo{gap:6px}
   .tt-stop .geo a{width:36px;height:36px}
   .tt-one .geo a{width:40px;height:40px}
-  .cards{grid-template-columns:1fr}
+  .cards{grid-template-columns:minmax(0,1fr)}
   .leg{grid-template-columns:1fr;padding:22px}
   .leg .side{text-align:left}
   summary{padding:16px 20px}
@@ -494,7 +494,7 @@ footer{
 /* 窄桌機／分割視窗仍用桌機導覽，但讓內容有足夠閱讀寬度。 */
 @media (width > 600px) and (max-width:800px){
   .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-  .cards{grid-template-columns:1fr}
+  .cards{grid-template-columns:minmax(0,1fr)}
   .leg{grid-template-columns:1fr}
   .leg .side{text-align:left}
 }
@@ -1008,6 +1008,17 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
 .dr-kv2 dt{padding-right:40px}
 .dr-kv2 dd{color:var(--ink2)}
 .dr-kv2 dt:nth-last-of-type(1),.dr-kv2 dd:last-child{border-bottom:0}
+/* 自駕行前速查：一張收合卡，展開後依步驟讀取。 */
+.dr-guide{padding:0;margin:0}
+.dr-guide .dr-fold>summary{padding:18px 22px;cursor:pointer}
+.dr-guide .dr-fsum h3{margin:0;padding:0;border:0}
+.dr-guide .dr-fs{margin:5px 30px 0 0}
+.dr-guide .sh-chev{top:50%;transform:translateY(-50%)}
+.dr-guide .dr-fold[open]>.dr-quick{border-top:1px solid var(--hair2)}
+.dr-guide .dr-fold[open]>summary .sh-chev{transform:translateY(-50%) rotate(135deg)}
+.dr-quick{margin:0;padding:0 22px;list-style:none}
+.dr-quick li{display:grid;grid-template-columns:minmax(120px,.8fr) minmax(0,2.2fr);gap:18px;padding:14px 0;border-top:1px solid var(--hair2);font-size:13.5px;line-height:1.7}
+.dr-quick li:first-child{border-top:0}.dr-quick b{color:var(--gold);font-weight:600}.dr-quick span{color:var(--ink2)}
 @media (max-width:760px) and (width > 600px){
   .dr-orow{grid-template-columns:1fr;gap:12px}
   .dr-ocols>div:first-child{padding-left:0;border-left:0}
@@ -1039,6 +1050,8 @@ body[data-page="day"] article.day{padding-bottom:26px}   /* 標題卡沒有內�
   .dr-vg{margin:0;font-size:15px}
   .dr-vg b{margin-left:12px;font-size:17px;color:var(--gold)}
   .dr-fold[open] .dr-kv2{margin-top:10px}
+  .dr-guide .dr-fold>summary{padding:15px 16px}.dr-quick{padding:0 16px}
+  .dr-quick li{grid-template-columns:1fr;gap:2px;padding:12px 0;font-size:13px}
 }
 /* ───────── 地區美食：時間軸清單 ───────── */
 .fd-top{display:flex;justify-content:space-between;gap:12px;margin:0 4px 10px;font-size:13.5px;color:var(--ink3)}
@@ -1430,7 +1443,7 @@ body[data-page="day"] .wxc-place{margin-left:0;font-size:15px;color:var(--ink2)}
 .stay-io b{font-size:13.5px;font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums;white-space:nowrap}
 .stay-notes{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:7px;
   font-size:12.5px;color:var(--ink2);line-height:1.7}
-.stay-notes li{position:relative;padding-left:14px}
+.stay-notes li{position:relative;min-width:0;padding-left:14px;overflow-wrap:anywhere}
 .stay-notes li::before{content:"";position:absolute;left:2px;top:.66em;width:4px;height:4px;
   border-radius:50%;background:var(--ink3)}
 /* 設備三態：有＝實心勾、無＝淡化刪除線、未確認＝問號。狀態字獨立標出，不靠顏色單獨傳達。 */
