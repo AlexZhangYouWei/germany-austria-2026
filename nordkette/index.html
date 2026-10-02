@@ -232,6 +232,24 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
   svg .alpen,svg .star,svg .cloud,svg .you circle.ring{animation:none}
   .step,.rope,.ph img{transition:none}
 }
+/* 地圖導向的獨立解說頁：沿用新天鵝堡的閱讀節奏。 */
+.guide-map{margin:0;border:1px solid var(--hair);border-radius:18px;overflow:hidden;background:#f3efdf}
+.guide-map .zoom{display:block;width:100%;padding:0;border:0;border-radius:0;background:transparent;cursor:zoom-in}
+.guide-map img{display:block;width:100%;height:auto;max-height:none;object-fit:contain;aspect-ratio:auto}
+.guide-map figcaption{padding:12px 16px 14px;background:var(--panel);display:grid;gap:3px}
+.route-plan{display:grid;gap:16px}
+.route-plan-head{display:grid;gap:6px}.route-plan-head h2{font-size:clamp(24px,3.4vw,32px);font-weight:700}.route-plan-head p{color:var(--ink2);max-width:68ch}
+.route-clock{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.route-clock article{position:relative;min-height:116px;padding:14px 15px;background:var(--panel);border:1px solid var(--hair2);border-radius:14px}
+.route-clock article:not(:last-child)::after{content:"";position:absolute;top:26px;right:-8px;width:14px;height:2px;background:var(--hair);z-index:1}
+.route-clock .rc-step{display:block;font-family:var(--mono);font-size:11px;color:var(--glow);letter-spacing:.08em;margin-bottom:5px}
+.route-clock b{display:block;font-size:15px;line-height:1.45}.route-clock small{display:block;margin-top:5px;font-size:12px;line-height:1.55;color:var(--ink3)}
+.route-notes{display:grid;gap:0}.route-note{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;padding:16px 0;border-top:1px solid var(--hair2)}
+.route-note:first-child{border-top:0;padding-top:0}.route-note .k{font:12px var(--mono);color:var(--glow2);letter-spacing:.06em}.route-note h3{font-family:var(--sans);font-size:16px;font-weight:700;margin:0 0 3px}.route-note p{font-size:14px;color:var(--ink2);margin:0}
+.guide-source{font-size:13px;color:var(--ink3);display:grid;gap:12px}.guide-source a{overflow-wrap:anywhere}
+.guide-lb{padding:12px;background:var(--night);color:var(--ink);border:1px solid var(--hair);border-radius:16px;max-width:96vw;max-height:94dvh}.guide-lb::backdrop{background:#000c}.guide-lb img{display:block;max-width:90vw;max-height:80dvh;width:auto;height:auto;object-fit:contain}.guide-lb .lb-x{position:sticky;top:0;float:right;font-size:14px;border:1px solid var(--hair);border-radius:999px;padding:5px 14px;background:var(--panel2);color:var(--ink);cursor:pointer}.guide-lb p{padding-top:10px;color:var(--ink2)}.guide-lb .scroll{overflow:auto;height:calc(94dvh - 84px)}.guide-lb .scroll img{width:960px;max-width:none;max-height:none}
+.guide-nav a{display:inline-block;margin:2px 12px 2px 0}.guide-table th{white-space:normal!important}.guide-table td{overflow-wrap:anywhere}.guide-table td:first-child{min-width:96px}
+@media(max-width:760px){.route-clock{grid-template-columns:1fr}.route-clock article{min-height:0}.route-clock article::after{display:none}.route-note{grid-template-columns:1fr;gap:5px}.guide-table th,.guide-table td{padding:10px 8px;font-size:13px}.guide-table td:first-child{min-width:80px}}
 svg .town{fill:#2a3448}
 .town-map-scroll{overflow:auto;border:1px solid var(--hair);border-radius:18px;background:var(--panel)}
 .town-map-svg{display:block;width:100%;min-width:660px;height:auto}
@@ -262,6 +280,12 @@ svg .town{fill:#2a3448}
     <a href="#town-map">市區地圖</a><a href="#onward">補充：途中停留</a><a href="#wx">天氣與十月路況</a><a href="#tix">票與停車</a>
   </nav>
 </header>
+
+<section class="route-clock" aria-label="北鏈當日路線摘要">
+  <article><span class="rc-step">01 · 市區</span><b>Altstadt 站 → 飢餓堡</b><small>從老城邊上車，先跨過茵河。</small></article>
+  <article><span class="rc-step">02 · 山上</span><b>澤格魯貝 → 哈菲勒卡</b><small>轉兩段纜車，再步行 10–15 分到峰頂。</small></article>
+  <article><span class="rc-step">03 · 下午</span><b>下山逛市區 → 15:00 離開</b><small>以因斯布魯克為主；中途停留只作補充。</small></article>
+</section>
 
 <section class="scene" aria-label="上山路線">
   <div class="frame">

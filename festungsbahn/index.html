@@ -232,6 +232,24 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
   svg .alpen,svg .star,svg .cloud,svg .you circle.ring{animation:none}
   .step,.rope,.ph img{transition:none}
 }
+/* 地圖導向的獨立解說頁：沿用新天鵝堡的閱讀節奏。 */
+.guide-map{margin:0;border:1px solid var(--hair);border-radius:18px;overflow:hidden;background:#f3efdf}
+.guide-map .zoom{display:block;width:100%;padding:0;border:0;border-radius:0;background:transparent;cursor:zoom-in}
+.guide-map img{display:block;width:100%;height:auto;max-height:none;object-fit:contain;aspect-ratio:auto}
+.guide-map figcaption{padding:12px 16px 14px;background:var(--panel);display:grid;gap:3px}
+.route-plan{display:grid;gap:16px}
+.route-plan-head{display:grid;gap:6px}.route-plan-head h2{font-size:clamp(24px,3.4vw,32px);font-weight:700}.route-plan-head p{color:var(--ink2);max-width:68ch}
+.route-clock{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.route-clock article{position:relative;min-height:116px;padding:14px 15px;background:var(--panel);border:1px solid var(--hair2);border-radius:14px}
+.route-clock article:not(:last-child)::after{content:"";position:absolute;top:26px;right:-8px;width:14px;height:2px;background:var(--hair);z-index:1}
+.route-clock .rc-step{display:block;font-family:var(--mono);font-size:11px;color:var(--glow);letter-spacing:.08em;margin-bottom:5px}
+.route-clock b{display:block;font-size:15px;line-height:1.45}.route-clock small{display:block;margin-top:5px;font-size:12px;line-height:1.55;color:var(--ink3)}
+.route-notes{display:grid;gap:0}.route-note{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;padding:16px 0;border-top:1px solid var(--hair2)}
+.route-note:first-child{border-top:0;padding-top:0}.route-note .k{font:12px var(--mono);color:var(--glow2);letter-spacing:.06em}.route-note h3{font-family:var(--sans);font-size:16px;font-weight:700;margin:0 0 3px}.route-note p{font-size:14px;color:var(--ink2);margin:0}
+.guide-source{font-size:13px;color:var(--ink3);display:grid;gap:12px}.guide-source a{overflow-wrap:anywhere}
+.guide-lb{padding:12px;background:var(--night);color:var(--ink);border:1px solid var(--hair);border-radius:16px;max-width:96vw;max-height:94dvh}.guide-lb::backdrop{background:#000c}.guide-lb img{display:block;max-width:90vw;max-height:80dvh;width:auto;height:auto;object-fit:contain}.guide-lb .lb-x{position:sticky;top:0;float:right;font-size:14px;border:1px solid var(--hair);border-radius:999px;padding:5px 14px;background:var(--panel2);color:var(--ink);cursor:pointer}.guide-lb p{padding-top:10px;color:var(--ink2)}.guide-lb .scroll{overflow:auto;height:calc(94dvh - 84px)}.guide-lb .scroll img{width:960px;max-width:none;max-height:none}
+.guide-nav a{display:inline-block;margin:2px 12px 2px 0}.guide-table th{white-space:normal!important}.guide-table td{overflow-wrap:anywhere}.guide-table td:first-child{min-width:96px}
+@media(max-width:760px){.route-clock{grid-template-columns:1fr}.route-clock article{min-height:0}.route-clock article::after{display:none}.route-note{grid-template-columns:1fr;gap:5px}.guide-table th,.guide-table td{padding:10px 8px;font-size:13px}.guide-table td:first-child{min-width:80px}}
 svg .fort{fill:#dfe6ee}
 svg .town{fill:#2a3448}
 svg .rail{fill:none;stroke:#8b97a8;stroke-width:5;opacity:.5}
@@ -256,6 +274,12 @@ svg .rail{fill:none;stroke:#8b97a8;stroke-width:5;opacity:.5}
     <a href="#tix">票</a><a href="#food">吃喝</a>
   </nav>
 </header>
+
+<section class="route-clock" aria-label="城堡纜車當日路線摘要">
+  <article><span class="rc-step">01 · 老城</span><b>Festungsgasse 山下站</b><small>由廣場與墓園順路走到纜車口。</small></article>
+  <article><span class="rc-step">02 · 要塞</span><b>54 秒上山 → 兩小時參觀</b><small>先看城內，再依光線選北、南側觀景。</small></article>
+  <article><span class="rc-step">03 · 回城</span><b>16:50 左右下山</b><small>回河岸與老城自由活動；不壓縮要塞時間。</small></article>
+</section>
 
 <section class="scene" aria-label="上山路線">
   <div class="frame">
@@ -373,7 +397,7 @@ svg .rail{fill:none;stroke:#8b97a8;stroke-width:5;opacity:.5}
         <li>手機要有電：數位卡沒電就不能用。</li>
       </ul>
     </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/valley-station.jpg?v=327cd6dd" aria-label="放大圖片：城堡纜車山下站：老城巷口的黃色房子與拱門入口，紅色車廂沿陡坡往上"><img src="img/valley-station.jpg?v=327cd6dd" alt="城堡纜車山下站：老城巷口的黃色房子與拱門入口，紅色車廂沿陡坡往上（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">山下站 Festungsgasse 4：老城巷口，薩爾斯堡卡直接掃描上車。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>纜車</dt><dd>09:00–20:30</dd><dt>班距</dt><dd>10 分</dd><dt>持卡</dt><dd>直接掃</dd></dl></aside>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/valley-station.jpg?v=1ee47be7" aria-label="放大圖片：城堡纜車山下站：老城巷口的黃色房子與拱門入口，紅色車廂沿陡坡往上"><img src="img/valley-station.jpg?v=1ee47be7" alt="城堡纜車山下站：老城巷口的黃色房子與拱門入口，紅色車廂沿陡坡往上（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">山下站 Festungsgasse 4：老城巷口，薩爾斯堡卡直接掃描上車。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>纜車</dt><dd>09:00–20:30</dd><dt>班距</dt><dd>10 分</dd><dt>持卡</dt><dd>直接掃</dd></dl></aside>
   </article>
   <article class="panel" id="p2" role="tabpanel" aria-labelledby="t2" hidden>
     <div>
@@ -386,7 +410,7 @@ svg .rail{fill:none;stroke:#8b97a8;stroke-width:5;opacity:.5}
         <li>薩爾斯堡卡的上山、下山各只能用一次。</li>
       </ul>
     </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/funicular.jpg?v=2cdf5d13" aria-label="放大圖片：紅色纜車車廂斜斜爬上岩壁，左下是老城屋頂與綠色圓頂"><img src="img/funicular.jpg?v=2cdf5d13" alt="紅色纜車車廂斜斜爬上岩壁，左下是老城屋頂與綠色圓頂（示意插畫）" width="1400" height="735" loading="lazy" decoding="async"></button><figcaption><span class="cap">城堡纜車：54 秒爬上最陡 62% 的坡，窗外老城越來越低。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>車程</dt><dd>54 秒</dd><dt>最陡</dt><dd>約 62%</dd><dt>通車</dt><dd>1892 年</dd></dl></aside>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/funicular.jpg?v=41240c81" aria-label="放大圖片：紅色纜車車廂斜斜爬上岩壁，左下是老城屋頂與綠色圓頂"><img src="img/funicular.jpg?v=41240c81" alt="紅色纜車車廂斜斜爬上岩壁，左下是老城屋頂與綠色圓頂（示意插畫）" width="1400" height="735" loading="lazy" decoding="async"></button><figcaption><span class="cap">城堡纜車：54 秒爬上最陡 62% 的坡，窗外老城越來越低。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>車程</dt><dd>54 秒</dd><dt>最陡</dt><dd>約 62%</dd><dt>通車</dt><dd>1892 年</dd></dl></aside>
   </article>
   <article class="panel" id="p3" role="tabpanel" aria-labelledby="t3" hidden>
     <div>
@@ -399,7 +423,7 @@ svg .rail{fill:none;stroke:#8b97a8;stroke-width:5;opacity:.5}
         <li>搭鐘樓（Glockenturm）裡的電梯上到城堡中庭。</li>
       </ul>
     </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/terrace-view.jpg?v=64f2000b" aria-label="放大圖片：從要塞稜堡往下看老城屋頂、主教座堂綠色圓頂、薩爾察赫河與卡普齊納山"><img src="img/terrace-view.jpg?v=64f2000b" alt="從要塞稜堡往下看老城屋頂、主教座堂綠色圓頂、薩爾察赫河與卡普齊納山（示意插畫）" width="1400" height="875" loading="lazy" decoding="async"></button><figcaption><span class="cap">往北看老城：主教座堂的綠頂、整片屋頂和河，下午太陽在背後，順光。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>海拔</dt><dd>536 m</dd><dt>無障礙</dt><dd>是</dd><dt>往上</dt><dd>鐘樓電梯</dd></dl></aside>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/terrace-view.jpg?v=94c3afc6" aria-label="放大圖片：從要塞稜堡往下看老城屋頂、主教座堂綠色圓頂、薩爾察赫河與卡普齊納山"><img src="img/terrace-view.jpg?v=94c3afc6" alt="從要塞稜堡往下看老城屋頂、主教座堂綠色圓頂、薩爾察赫河與卡普齊納山（示意插畫）" width="1400" height="875" loading="lazy" decoding="async"></button><figcaption><span class="cap">往北看老城：主教座堂的綠頂、整片屋頂和河，下午太陽在背後，順光。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>海拔</dt><dd>536 m</dd><dt>無障礙</dt><dd>是</dd><dt>往上</dt><dd>鐘樓電梯</dd></dl></aside>
   </article>
   <article class="panel" id="p4" role="tabpanel" aria-labelledby="t4" hidden>
     <div>
@@ -412,7 +436,7 @@ svg .rail{fill:none;stroke:#8b97a8;stroke-width:5;opacity:.5}
         <li>室內禁用閃光燈，禁止空拍機。</li>
       </ul>
     </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/courtyard.jpg?v=0b518dd1" aria-label="放大圖片：要塞中庭：老房子圍著石板廣場，中間一棵大椴樹"><img src="img/courtyard.jpg?v=0b518dd1" alt="要塞中庭：老房子圍著石板廣場，中間一棵大椴樹（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">城堡中庭：兵器庫、酒館和木偶博物館都在這一帶，中庭有飲水機。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>稜堡</dt><dd>昆堡稜堡</dd><dt>飲水</dt><dd>中庭</dd><dt>閃光燈</dt><dd>禁用</dd></dl></aside>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/courtyard.jpg?v=29b5a13f" aria-label="放大圖片：要塞中庭：老房子圍著石板廣場，中間一棵大椴樹"><img src="img/courtyard.jpg?v=29b5a13f" alt="要塞中庭：老房子圍著石板廣場，中間一棵大椴樹（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">城堡中庭：兵器庫、酒館和木偶博物館都在這一帶，中庭有飲水機。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>稜堡</dt><dd>昆堡稜堡</dd><dt>飲水</dt><dd>中庭</dd><dt>閃光燈</dt><dd>禁用</dd></dl></aside>
   </article>
   <article class="panel" id="p5" role="tabpanel" aria-labelledby="t5" hidden>
     <div>
@@ -426,7 +450,7 @@ svg .rail{fill:none;stroke:#8b97a8;stroke-width:5;opacity:.5}
         <li>官方說全部博物館要約 3 小時；我們只有 2 小時，挑著看。</li>
       </ul>
     </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/golden-hall.jpg?v=7c2f6054" aria-label="放大圖片：侯爵房間的黃金大廳：深藍天花板上的金色鈕扣與扭紋大理石柱"><img src="img/golden-hall.jpg?v=7c2f6054" alt="侯爵房間的黃金大廳：深藍天花板上的金色鈕扣與扭紋大理石柱（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">黃金大廳：主樓 3 樓的侯爵房間，1501/02 年完成。卡含不含要現場確認。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>位置</dt><dd>主樓 3 樓</dd><dt>年代</dt><dd>1501/02</dd><dt>卡含嗎</dt><dd>現場確認</dd></dl></aside>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/golden-hall.jpg?v=aa126cc2" aria-label="放大圖片：侯爵房間的黃金大廳：深藍天花板上的金色鈕扣與扭紋大理石柱"><img src="img/golden-hall.jpg?v=aa126cc2" alt="侯爵房間的黃金大廳：深藍天花板上的金色鈕扣與扭紋大理石柱（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">黃金大廳：主樓 3 樓的侯爵房間，1501/02 年完成。卡含不含要現場確認。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>位置</dt><dd>主樓 3 樓</dd><dt>年代</dt><dd>1501/02</dd><dt>卡含嗎</dt><dd>現場確認</dd></dl></aside>
   </article>
   <article class="panel" id="p6" role="tabpanel" aria-labelledby="t6" hidden>
     <div>
@@ -439,7 +463,7 @@ svg .rail{fill:none;stroke:#8b97a8;stroke-width:5;opacity:.5}
         <li>卡的兩種說法都含全景導覽和四個博物館。</li>
       </ul>
     </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/south-view.jpg?v=fdf96eba" aria-label="放大圖片：從要塞往南看平原與溫特斯山，下午逆光"><img src="img/south-view.jpg?v=fdf96eba" alt="從要塞往南看平原與溫特斯山，下午逆光（示意插畫）" width="1400" height="466" loading="lazy" decoding="async"></button><figcaption><span class="cap">往南看：平原後面是溫特斯山，下午太陽在這邊，偏亮偏霧。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>觀景台</dt><dd>Reckturm</dd><dt>公牛風琴</dt><dd>聽不到</dd><dt>往南</dt><dd>逆光</dd></dl></aside>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/south-view.jpg?v=037a4c17" aria-label="放大圖片：從要塞往南看平原與溫特斯山，下午逆光"><img src="img/south-view.jpg?v=037a4c17" alt="從要塞往南看平原與溫特斯山，下午逆光（示意插畫）" width="1400" height="466" loading="lazy" decoding="async"></button><figcaption><span class="cap">往南看：平原後面是溫特斯山，下午太陽在這邊，偏亮偏霧。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>觀景台</dt><dd>Reckturm</dd><dt>公牛風琴</dt><dd>聽不到</dd><dt>往南</dt><dd>逆光</dd></dl></aside>
   </article>
   <article class="panel" id="p7" role="tabpanel" aria-labelledby="t7" hidden>
     <div>
@@ -452,7 +476,7 @@ svg .rail{fill:none;stroke:#8b97a8;stroke-width:5;opacity:.5}
         <li>也可以沿僧侶山走到現代美術館，搭僧侶山電梯 30 秒下到老城（卡含來回；非官方說走約 30 分）。走路下山就用不到卡的纜車下山。</li>
       </ul>
     </div>
-    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/walk-down.jpg?v=e9724108" aria-label="放大圖片：石牆夾著的陡石板坡道，盡頭是主教座堂的綠頂"><img src="img/walk-down.jpg?v=e9724108" alt="石牆夾著的陡石板坡道，盡頭是主教座堂的綠頂（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">走路下山：Festungsgasse 陡坡直接回老城，盡頭就是主教座堂一帶。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>最後入場</dt><dd>16:30</dd><dt>室內關門</dt><dd>17:00</dd><dt>最後下山</dt><dd>21:00</dd></dl></aside>
+    <aside><figure class="ph"><button type="button" class="zoom" data-full="img/walk-down.jpg?v=dec52c78" aria-label="放大圖片：石牆夾著的陡石板坡道，盡頭是主教座堂的綠頂"><img src="img/walk-down.jpg?v=dec52c78" alt="石牆夾著的陡石板坡道，盡頭是主教座堂的綠頂（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">走路下山：Festungsgasse 陡坡直接回老城，盡頭就是主教座堂一帶。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure><dl><dt>最後入場</dt><dd>16:30</dd><dt>室內關門</dt><dd>17:00</dd><dt>最後下山</dt><dd>21:00</dd></dl></aside>
   </article>
 </section>
 
@@ -480,7 +504,7 @@ svg .rail{fill:none;stroke:#8b97a8;stroke-width:5;opacity:.5}
         <h3>54 秒爬上 62% 的坡</h3>
         <p>奧地利現役最老的登山纜車，車廂整片大窗，老城在腳下越來越低。</p>
       </div>
-      <div class="shots"><figure class="ph wide"><button type="button" class="zoom" data-full="img/funicular.jpg?v=2cdf5d13" aria-label="放大圖片：紅色纜車車廂斜斜爬上岩壁，左下是老城屋頂與綠色圓頂"><img src="img/funicular.jpg?v=2cdf5d13" alt="紅色纜車車廂斜斜爬上岩壁，左下是老城屋頂與綠色圓頂（示意插畫）" width="1400" height="735" loading="lazy" decoding="async"></button><figcaption><span class="cap">城堡纜車：54 秒爬上最陡 62% 的坡，窗外老城越來越低。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure></div>
+      <div class="shots"><figure class="ph wide"><button type="button" class="zoom" data-full="img/funicular.jpg?v=41240c81" aria-label="放大圖片：紅色纜車車廂斜斜爬上岩壁，左下是老城屋頂與綠色圓頂"><img src="img/funicular.jpg?v=41240c81" alt="紅色纜車車廂斜斜爬上岩壁，左下是老城屋頂與綠色圓頂（示意插畫）" width="1400" height="735" loading="lazy" decoding="async"></button><figcaption><span class="cap">城堡纜車：54 秒爬上最陡 62% 的坡，窗外老城越來越低。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure></div>
     </div>
     <div class="ride">
       <div>
@@ -488,7 +512,7 @@ svg .rail{fill:none;stroke:#8b97a8;stroke-width:5;opacity:.5}
         <h3>走 Festungsgasse、諾恩堡或僧侶山</h3>
         <p>Festungsgasse 最直接；諾恩堡修道院接階梯到 Kaigasse；僧侶山大多平路，走到現代美術館再搭電梯下去。三條都沒有官方步行時間。</p>
       </div>
-      <div class="shots"><figure class="ph wide"><button type="button" class="zoom" data-full="img/walk-down.jpg?v=e9724108" aria-label="放大圖片：石牆夾著的陡石板坡道，盡頭是主教座堂的綠頂"><img src="img/walk-down.jpg?v=e9724108" alt="石牆夾著的陡石板坡道，盡頭是主教座堂的綠頂（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">走路下山：Festungsgasse 陡坡直接回老城，盡頭就是主教座堂一帶。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure></div>
+      <div class="shots"><figure class="ph wide"><button type="button" class="zoom" data-full="img/walk-down.jpg?v=dec52c78" aria-label="放大圖片：石牆夾著的陡石板坡道，盡頭是主教座堂的綠頂"><img src="img/walk-down.jpg?v=dec52c78" alt="石牆夾著的陡石板坡道，盡頭是主教座堂的綠頂（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">走路下山：Festungsgasse 陡坡直接回老城，盡頭就是主教座堂一帶。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure></div>
     </div>
   </div>
 </section>
@@ -513,14 +537,14 @@ svg .rail{fill:none;stroke:#8b97a8;stroke-width:5;opacity:.5}
     <div class="vs-col">
       <h3>往北 <span class="num">老城</span></h3>
       <p>從要塞往下看主教座堂的綠頂和整片老城屋頂；從河上往上看，要塞就站在山頂。</p>
-      <figure class="ph"><button type="button" class="zoom" data-full="img/terrace-view.jpg?v=64f2000b" aria-label="放大圖片：從要塞稜堡往下看老城屋頂、主教座堂綠色圓頂、薩爾察赫河與卡普齊納山"><img src="img/terrace-view.jpg?v=64f2000b" alt="從要塞稜堡往下看老城屋頂、主教座堂綠色圓頂、薩爾察赫河與卡普齊納山（示意插畫）" width="1400" height="875" loading="lazy" decoding="async"></button><figcaption><span class="cap">往北看老城：主教座堂的綠頂、整片屋頂和河，下午太陽在背後，順光。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure>
-      <figure class="ph"><button type="button" class="zoom" data-full="img/fortress-town.jpg?v=e03f668a" aria-label="放大圖片：從薩爾察赫河上看老城房子、主教座堂圓頂與山頂的白色要塞"><img src="img/fortress-town.jpg?v=e03f668a" alt="從薩爾察赫河上看老城房子、主教座堂圓頂與山頂的白色要塞（示意插畫）" width="1400" height="875" loading="lazy" decoding="async"></button><figcaption><span class="cap">從河上往上看：老城房子、主教座堂圓頂，要塞站在山頂。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure>
+      <figure class="ph"><button type="button" class="zoom" data-full="img/terrace-view.jpg?v=94c3afc6" aria-label="放大圖片：從要塞稜堡往下看老城屋頂、主教座堂綠色圓頂、薩爾察赫河與卡普齊納山"><img src="img/terrace-view.jpg?v=94c3afc6" alt="從要塞稜堡往下看老城屋頂、主教座堂綠色圓頂、薩爾察赫河與卡普齊納山（示意插畫）" width="1400" height="875" loading="lazy" decoding="async"></button><figcaption><span class="cap">往北看老城：主教座堂的綠頂、整片屋頂和河，下午太陽在背後，順光。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure>
+      <figure class="ph"><button type="button" class="zoom" data-full="img/fortress-town.jpg?v=76048a90" aria-label="放大圖片：從薩爾察赫河上看老城房子、主教座堂圓頂與山頂的白色要塞"><img src="img/fortress-town.jpg?v=76048a90" alt="從薩爾察赫河上看老城房子、主教座堂圓頂與山頂的白色要塞（示意插畫）" width="1400" height="875" loading="lazy" decoding="async"></button><figcaption><span class="cap">從河上往上看：老城房子、主教座堂圓頂，要塞站在山頂。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure>
     </div>
     <div class="vs-col plat">
       <h3>往南 <span class="num">阿爾卑斯</span></h3>
       <p>平原後面就是溫特斯山；下午太陽在這個方向，照片會偏亮偏霧。</p>
-      <figure class="ph pano"><button type="button" class="zoom" data-full="img/south-view.jpg?v=fdf96eba" aria-label="放大圖片：從要塞往南看平原與溫特斯山，下午逆光"><img src="img/south-view.jpg?v=fdf96eba" alt="從要塞往南看平原與溫特斯山，下午逆光（示意插畫）" width="1400" height="466" loading="lazy" decoding="async"></button><figcaption><span class="cap">往南看：平原後面是溫特斯山，下午太陽在這邊，偏亮偏霧。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure>
-      <figure class="ph"><button type="button" class="zoom" data-full="img/courtyard.jpg?v=0b518dd1" aria-label="放大圖片：要塞中庭：老房子圍著石板廣場，中間一棵大椴樹"><img src="img/courtyard.jpg?v=0b518dd1" alt="要塞中庭：老房子圍著石板廣場，中間一棵大椴樹（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">城堡中庭：兵器庫、酒館和木偶博物館都在這一帶，中庭有飲水機。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure>
+      <figure class="ph pano"><button type="button" class="zoom" data-full="img/south-view.jpg?v=037a4c17" aria-label="放大圖片：從要塞往南看平原與溫特斯山，下午逆光"><img src="img/south-view.jpg?v=037a4c17" alt="從要塞往南看平原與溫特斯山，下午逆光（示意插畫）" width="1400" height="466" loading="lazy" decoding="async"></button><figcaption><span class="cap">往南看：平原後面是溫特斯山，下午太陽在這邊，偏亮偏霧。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure>
+      <figure class="ph"><button type="button" class="zoom" data-full="img/courtyard.jpg?v=29b5a13f" aria-label="放大圖片：要塞中庭：老房子圍著石板廣場，中間一棵大椴樹"><img src="img/courtyard.jpg?v=29b5a13f" alt="要塞中庭：老房子圍著石板廣場，中間一棵大椴樹（示意插畫）" width="1400" height="933" loading="lazy" decoding="async"></button><figcaption><span class="cap">城堡中庭：兵器庫、酒館和木偶博物館都在這一帶，中庭有飲水機。</span><span class="cr">示意插畫，非實景照片</span></figcaption></figure>
     </div>
   </div>
 </section>

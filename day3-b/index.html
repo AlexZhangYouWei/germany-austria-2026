@@ -229,6 +229,25 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
   .step,.rope,.ph img{transition:none}
 }
 
+/* 地圖導向的獨立解說頁：沿用新天鵝堡的閱讀節奏。 */
+.guide-map{margin:0;border:1px solid var(--hair);border-radius:18px;overflow:hidden;background:#f3efdf}
+.guide-map .zoom{display:block;width:100%;padding:0;border:0;border-radius:0;background:transparent;cursor:zoom-in}
+.guide-map img{display:block;width:100%;height:auto;max-height:none;object-fit:contain;aspect-ratio:auto}
+.guide-map figcaption{padding:12px 16px 14px;background:var(--panel);display:grid;gap:3px}
+.route-plan{display:grid;gap:16px}
+.route-plan-head{display:grid;gap:6px}.route-plan-head h2{font-size:clamp(24px,3.4vw,32px);font-weight:700}.route-plan-head p{color:var(--ink2);max-width:68ch}
+.route-clock{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.route-clock article{position:relative;min-height:116px;padding:14px 15px;background:var(--panel);border:1px solid var(--hair2);border-radius:14px}
+.route-clock article:not(:last-child)::after{content:"";position:absolute;top:26px;right:-8px;width:14px;height:2px;background:var(--hair);z-index:1}
+.route-clock .rc-step{display:block;font-family:var(--mono);font-size:11px;color:var(--glow);letter-spacing:.08em;margin-bottom:5px}
+.route-clock b{display:block;font-size:15px;line-height:1.45}.route-clock small{display:block;margin-top:5px;font-size:12px;line-height:1.55;color:var(--ink3)}
+.route-notes{display:grid;gap:0}.route-note{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;padding:16px 0;border-top:1px solid var(--hair2)}
+.route-note:first-child{border-top:0;padding-top:0}.route-note .k{font:12px var(--mono);color:var(--glow2);letter-spacing:.06em}.route-note h3{font-family:var(--sans);font-size:16px;font-weight:700;margin:0 0 3px}.route-note p{font-size:14px;color:var(--ink2);margin:0}
+.guide-source{font-size:13px;color:var(--ink3);display:grid;gap:12px}.guide-source a{overflow-wrap:anywhere}
+.guide-lb{padding:12px;background:var(--night);color:var(--ink);border:1px solid var(--hair);border-radius:16px;max-width:96vw;max-height:94dvh}.guide-lb::backdrop{background:#000c}.guide-lb img{display:block;max-width:90vw;max-height:80dvh;width:auto;height:auto;object-fit:contain}.guide-lb .lb-x{position:sticky;top:0;float:right;font-size:14px;border:1px solid var(--hair);border-radius:999px;padding:5px 14px;background:var(--panel2);color:var(--ink);cursor:pointer}.guide-lb p{padding-top:10px;color:var(--ink2)}.guide-lb .scroll{overflow:auto;height:calc(94dvh - 84px)}.guide-lb .scroll img{width:960px;max-width:none;max-height:none}
+.guide-nav a{display:inline-block;margin:2px 12px 2px 0}.guide-table th{white-space:normal!important}.guide-table td{overflow-wrap:anywhere}.guide-table td:first-child{min-width:96px}
+@media(max-width:760px){.route-clock{grid-template-columns:1fr}.route-clock article{min-height:0}.route-clock article::after{display:none}.route-note{grid-template-columns:1fr;gap:5px}.guide-table th,.guide-table td{padding:10px 8px;font-size:13px}.guide-table td:first-child{min-width:80px}}
+
 :root{--glow:#69c9bb;--glow2:#a0e6d6;--ice:#89bde3}
 .hero{max-width:850px}.scene{margin-top:-20px}.scene .steps{--n:6}
 .notice{border:1px solid #69c9bb66;background:#112823;padding:18px 22px;border-radius:16px;display:grid;gap:6px}
@@ -257,6 +276,11 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
 <article class="card"><span class="k">SAFETY</span><h3>關閉就取消峽谷</h3><p>只保留 A、B 方案。若峽谷關閉、大雨、雷雨或步道不安全，取消山區活動，依天候自由安排或休息。</p></article>
 </div>
 <aside class="notice"><strong>10/7 施工提醒：採峽谷原路往返。</strong><p>官方公告：2026/9/21–11/20，峽谷後方通往 Vordergraseck 的步道封閉。這次不走 Graseck 繞山環線；現場若另有封閉或單向管制，依工作人員指示調整。</p><a href="https://www.partnachklamm.de/en">官方公告 · 查詢 2026/10/02</a></aside>
+</section>
+<section class="route-clock" aria-label="Day 3 B 方案路線摘要">
+<article><span class="rc-step">01 · 上午</span><b>停車 → 帕特納赫峽谷</b><small>確認開放後走入峽谷，再原路返回。</small></article>
+<article><span class="rc-step">02 · 下午</span><b>路德維希大街午餐與散步</b><small>只逛 Partenkirchen 一側，不跨區增加移動。</small></article>
+<article><span class="rc-step">03 · 收尾</span><b>藥局 → 16:30 回住宿</b><small>若早上延誤，縮短老街，不趕回原 A 方案時程。</small></article>
 </section>
 <section class="scene" id="route" aria-labelledby="route-title">
 <div class="sec-h"><p class="eyebrow">FOLLOW THE ROUTE</p><h2 id="route-title">停好車，步行進峽谷，再走回來。</h2><p>點選步驟查看動線。上午留約 3 小時，包含停車、入場、拍照與步行往返。</p></div>
