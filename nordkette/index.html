@@ -251,13 +251,11 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
 .guide-nav a{display:inline-block;margin:2px 12px 2px 0}.guide-table th{white-space:normal!important}.guide-table td{overflow-wrap:anywhere}.guide-table td:first-child{min-width:96px}
 @media(max-width:760px){.route-clock{grid-template-columns:1fr}.route-clock article{min-height:0}.route-clock article::after{display:none}.route-note{grid-template-columns:1fr;gap:5px}.guide-table th,.guide-table td{padding:10px 8px;font-size:13px}.guide-table td:first-child{min-width:80px}}
 svg .town{fill:#2a3448}
-.town-map-scroll{overflow:auto;border:1px solid var(--hair);border-radius:18px;background:var(--panel)}
-.town-map-svg{display:block;width:100%;min-width:660px;height:auto}
-.town-map-svg text{font-family:var(--sans);fill:var(--ink);font-size:18px}
-.town-map-svg .sub{font-size:14px;fill:var(--ink2)}
-.town-map-svg .route{fill:none;stroke:var(--glow);stroke-width:5;stroke-dasharray:9 7}
-.town-map-svg .pin{fill:var(--glow);stroke:var(--night);stroke-width:3}
-.town-map-svg a:hover .pin,.town-map-svg a:focus .pin{fill:var(--gold)}
+.plan-map{margin:0;border:1px solid var(--hair);border-radius:20px;overflow:hidden;background:#f4efd9}
+.plan-map .zoom{width:100%;background:transparent}
+.plan-map img{width:100%;height:auto;object-fit:contain;aspect-ratio:auto;max-height:none}
+.plan-map figcaption{padding:12px 16px;background:var(--panel);display:grid;gap:4px}
+.town-links{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}.town-links a{padding:10px 14px;border:1px solid var(--hair);border-radius:10px;background:var(--panel)}
 
 </style>
 </head>
@@ -587,31 +585,18 @@ svg .town{fill:#2a3448}
 
 <section class="sec" id="town-map" aria-labelledby="h-town">
   <div class="sec-h"><h2 id="h-town">因斯布魯克｜下山後怎麼逛</h2>
-  <p>北向上。北鏈在城市北側；纜車起點在老城東北角。黃金屋頂、宮廷教堂與河岸集中在老城周邊，瑪麗亞·特蕾西亞大街向南通往凱旋門。圖為相對位置示意，不按比例；點地標開啟 Google Maps，手機可左右滑動。</p></div>
-  <div class="town-map-scroll" tabindex="0" aria-label="因斯布魯克市區示意圖，窄螢幕可左右捲動">
-  <svg class="town-map-svg" viewBox="0 0 940 690" role="img" aria-labelledby="town-title town-desc">
-    <title id="town-title">因斯布魯克市區與北鏈纜車起點</title><desc id="town-desc">上方北鏈山區。茵河流經老城北側與西側；彩色屋在河對岸，拍照位置為南岸 Marktplatz。纜車起點在東北，黃金屋頂在老城，宮廷教堂在其東側，大街與凱旋門在南側，火車站在東南。</desc>
-    <rect x="20" y="20" width="900" height="650" rx="20" fill="#172130"/>
-    <path d="M75 115L165 45L240 115L325 35L405 115L510 50L605 115" fill="#2a3448"/>
-    <text x="300" y="82">北鏈 Nordkette</text><text x="670" y="65" class="sub">↑ 北 N　　東 →</text>
-    <path d="M0 300 Q120 310 220 245 T470 175 T950 155" fill="none" stroke="#365e70" stroke-width="47"/>
-    <text x="540" y="169" class="sub">茵河 Inn</text>
-    <rect x="285" y="250" width="290" height="170" rx="25" fill="#263143"/>
-    <text x="425" y="394" class="sub">老城 Altstadt</text>
-    <path class="route" d="M600 220L510 265L360 300L260 315M360 300L385 450L390 600"/>
-    <path d="M600 210L610 125" stroke="#9fd3e4" stroke-width="4" stroke-dasharray="6 6"/><text x="640" y="122" class="sub">搭纜車往北鏈 ↑</text>
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=Nordkette+Congress+Innsbruck"><circle class="pin" cx="600" cy="220" r="10"/><text x="625" y="225">Altstadt／Congress 纜車站</text><text x="625" y="250" class="sub">下山回到這裡，再走老城</text></a>
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=Goldenes+Dachl+Innsbruck"><circle class="pin" cx="360" cy="300" r="10"/><text x="308" y="335">黃金屋頂</text></a>
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=Hofkirche+Innsbruck"><circle class="pin" cx="510" cy="290" r="10"/><text x="510" y="321">宮廷教堂</text><text x="510" y="343" class="sub">Hofkirche</text></a>
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=Marktplatz+Innsbruck"><circle class="pin" cx="260" cy="315" r="10"/><text x="55" y="365">Marktplatz 河岸</text><text x="55" y="388" class="sub">朝對岸拍彩色屋</text></a>
-    <path d="M120 225L120 200L145 190L170 200L170 225M180 210L180 185L205 175L230 185L230 210" fill="#bd8967" stroke="#172130" stroke-width="3"/>
-    <text x="45" y="175">彩色屋 Mariahilf</text><text x="45" y="197" class="sub">在河對岸；拍照不必過橋</text>
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=Maria-Theresien-Strasse+Innsbruck"><circle class="pin" cx="385" cy="450" r="10"/><text x="412" y="455">瑪麗亞·特蕾西亞大街</text><text x="412" y="480" class="sub">Maria-Theresien-Straße · 散步、咖啡</text></a>
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=Triumphpforte+Innsbruck"><circle class="pin" cx="390" cy="600" r="10"/><text x="418" y="608">凱旋門 Triumphpforte</text></a>
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=InnenSTADT+Garage+Innsbruck"><rect x="775" y="280" width="30" height="30" rx="5" fill="#365e70"/><text x="783" y="302">P</text><text x="670" y="343" class="sub">InnenSTADT Garage</text></a>
-    <a href="https://www.google.com/maps/search/?api=1&amp;query=Altstadtgarage+Innsbruck"><rect x="260" y="410" width="30" height="30" rx="5" fill="#365e70"/><text x="268" y="432">P</text><text x="90" y="443" class="sub">Altstadtgarage</text></a>
-    <text x="725" y="568" class="sub">中央車站 ↘</text><text x="45" y="630" class="sub">橘虛線：步行動線示意</text>
-  </svg></div>
+  <p>北向上。北鏈在城市北側；纜車起點在老城東北角。黃金屋頂、宮廷教堂與河岸集中在老城周邊，瑪麗亞·特蕾西亞大街向南通往凱旋門。圖為相對位置示意，不按比例；點圖可放大；圖下提供 Google Maps 地標導航。</p></div>
+  <figure class="ph plan-map"><button type="button" class="zoom" data-full="img/plan-map.png" aria-label="放大因斯布魯克北向上位置圖"><img src="img/plan-map.png" alt="因斯布魯克北向上手繪位置圖：北鏈上山轉乘另示意，茵河兩岸、Congress 纜車與停車起點、黃金屋頂、皇宮、宮廷教堂、河岸彩色屋、瑪麗亞特蕾西亞大街及凱旋門；步行時間為估算。" decoding="async"></button><figcaption><span class="cap">點圖放大｜纜車起點、老城、河岸與南側大街</span><span class="cr">手繪相對位置示意，不按比例；步行估時不含參觀、拍照與休息。上山小圖另示意，實際導航依地圖與現場指標。</span></figcaption></figure>
+  <div class="town-links" aria-label="地標導航">
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Nordkette+Congress+Innsbruck">① 纜車起點</a>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Congress+Garage+Rennweg+3+Innsbruck">P Congress 停車場</a>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Goldenes+Dachl+Innsbruck">② 黃金屋頂</a>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Hofburg+Innsbruck">皇宮</a>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Hofkirche+Innsbruck">宮廷教堂</a>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Marktplatz+Innsbruck">③ 河岸</a>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Maria-Theresien-Strasse+Innsbruck">④ 大街</a>
+<a href="https://www.google.com/maps/search/?api=1&amp;query=Triumphpforte+Innsbruck">⑤ 凱旋門</a>
+  </div>
   <div class="walks">
     <div class="walk"><h3>A｜下山後短逛</h3><span class="dur">13:45–15:00 · 依排隊調整</span><p>纜車站 → 黃金屋頂 → 老城 → 瑪麗亞·特蕾西亞大街 → 返回停車場。想拍彩色屋可加 Marktplatz；時間不足省略河岸與凱旋門。</p></div>
     <div class="walk"><h3>B｜不搭纜車慢遊</h3><span class="dur">09:30–15:00 · 午餐留在市區</span><p>停車後先走到凱旋門，再向北逛大街、黃金屋頂；午餐後選宮廷教堂或咖啡，最後到 Marktplatz 拍河對岸彩色屋，回車旁。</p></div>
