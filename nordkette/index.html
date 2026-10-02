@@ -233,6 +233,14 @@ svg .cloud{fill:#c9d6e6;opacity:.07;animation:drift 60s linear infinite}
   .step,.rope,.ph img{transition:none}
 }
 svg .town{fill:#2a3448}
+.town-map-scroll{overflow:auto;border:1px solid var(--hair);border-radius:18px;background:var(--panel)}
+.town-map-svg{display:block;width:100%;min-width:660px;height:auto}
+.town-map-svg text{font-family:var(--sans);fill:var(--ink);font-size:18px}
+.town-map-svg .sub{font-size:14px;fill:var(--ink2)}
+.town-map-svg .route{fill:none;stroke:var(--glow);stroke-width:5;stroke-dasharray:9 7}
+.town-map-svg .pin{fill:var(--glow);stroke:var(--night);stroke-width:3}
+.town-map-svg a:hover .pin,.town-map-svg a:focus .pin{fill:var(--gold)}
+
 </style>
 </head>
 <body>
@@ -251,7 +259,7 @@ svg .town{fill:#2a3448}
   <nav class="jump" aria-label="頁內導覽">
     <a href="https://alexzhangyouwei.github.io/germany-austria-2026/day4.html">← 行程網站 Day 4</a>
     <a href="#rides">哪一段最壯觀</a><a href="#views">南邊還是北邊漂亮</a><a href="#plan">當天怎麼排</a>
-    <a href="#wx">天氣與十月路況</a><a href="#tix">票與停車</a>
+    <a href="#town-map">市區地圖</a><a href="#onward">途中停留</a><a href="#wx">天氣與十月路況</a><a href="#tix">票與停車</a>
   </nav>
 </header>
 
@@ -537,20 +545,64 @@ svg .town{fill:#2a3448}
 <section class="sec" id="plan" aria-labelledby="h-plan">
   <div class="sec-h">
     <h2 id="h-plan">當天怎麼排</h2>
-    <p>依 V5 行程：山上 10:00–12:00、澤格魯貝午餐、14:00 前回老城。想用 8 折，就要在 09:30 前到站、先過閘門（例如買 08:00–09:30 時段的線上票）。</p>
+    <p>依現行 Day 4：09:45 上山、11:30 回澤格魯貝觀景與午餐、13:00 下山、13:45 回市區，15:00 開車離開。交通、轉乘與候車時間皆為估算；本時程採成人全票，不預設趕得上早鳥。</p>
   </div>
   <div class="legend"><span><i style="background:var(--glow)"></i>山頂</span><span><i style="background:var(--ice)"></i>澤格魯貝</span><span><i style="background:repeating-linear-gradient(90deg,var(--steel) 0 4px,transparent 4px 8px)"></i>搭纜車</span><span><i style="background:repeating-linear-gradient(90deg,var(--ink2) 0 4px,transparent 4px 8px)"></i>走路</span></div>
   <ol class="plan">
     <li data-lv="ride"><time>08:30</time><span class="bar"></span><div class="t"><b>米滕瓦爾德出發</b><span>車程約 1 小時</span></div></li>
-    <li data-lv="walk"><time>09:30</time><span class="bar"></span><div class="t"><b>停 InnenSTADT Garage，走到 Altstadt 站買票</b><span>早一點到、09:30 前過閘門就是 44.80 €</span></div></li>
-    <li data-lv="ride"><time>09:35</time><span class="bar"></span><div class="t"><b>飢餓堡纜車 → 澤格魯貝纜車 → 哈菲勒卡纜車</b><span>全程不到 30 分鐘，約 10:10 到山頂站</span></div></li>
-    <li data-lv="top"><time>10:10</time><span class="bar"></span><div class="t"><b>卡文德爾觀景點、走到峰頂 2,334 m</b><span>單程 10–15 分，積雪就只在觀景點看</span></div></li>
-    <li data-lv="top"><time>11:00</time><span class="bar"></span><div class="t"><b>因斯布魯克觀景台、地質步道</b><span>到 11:40，依路況取捨</span></div></li>
-    <li data-lv="ride"><time>11:45</time><span class="bar"></span><div class="t"><b>哈菲勒卡纜車下到澤格魯貝</b><span>約 2.5–4 分</span></div></li>
-    <li data-lv="plat"><time>12:00</time><span class="bar"></span><div class="t"><b>Restaurant Seegrube 午餐</b><span>熱食 11:30 起，不用訂位</span></div></li>
+    <li data-lv="walk"><time>09:30–09:45</time><span class="bar"></span><div class="t"><b>停 InnenSTADT Garage，走到 Altstadt 站買票</b><span>停車、步行、購票；09:45 才搭車，採成人全票</span></div></li>
+    <li data-lv="ride"><time>09:45</time><span class="bar"></span><div class="t"><b>飢餓堡纜車 → 澤格魯貝纜車 → 哈菲勒卡纜車</b><span>單計搭乘約 30 分鐘，另加轉乘與候車</span></div></li>
+    <li data-lv="top"><time>約 10:15</time><span class="bar"></span><div class="t"><b>卡文德爾觀景點、走到峰頂 2,334 m</b><span>單程 10–15 分，積雪就只在觀景點看</span></div></li>
+    <li data-lv="top"><time>11:00–11:30</time><span class="bar"></span><div class="t"><b>因斯布魯克觀景台、地質步道</b><span>依路況取捨，11:30 左右返回澤格魯貝</span></div></li>
+    <li data-lv="ride"><time>11:30</time><span class="bar"></span><div class="t"><b>哈菲勒卡纜車下到澤格魯貝</b><span>約 2.5–4 分</span></div></li>
+    <li data-lv="plat"><time>11:30–13:00</time><span class="bar"></span><div class="t"><b>Restaurant Seegrube 午餐</b><span>熱食 11:30 起，不用訂位</span></div></li>
     <li data-lv="ride"><time>13:00</time><span class="bar"></span><div class="t"><b>下山：澤格魯貝纜車 → 飢餓堡 → 飢餓堡纜車</b><span>飢餓堡可短停拍城市</span></div></li>
-    <li data-lv="walk"><time>14:00</time><span class="bar"></span><div class="t"><b>回到老城</b><span>停車票蓋章、黃金屋頂、15:00 開車去薩爾斯堡</span></div></li>
+    <li data-lv="walk"><time>13:45</time><span class="bar"></span><div class="t"><b>回到老城</b><span>停車票蓋章、黃金屋頂、15:00 開車去薩爾斯堡</span></div></li>
   </ol>
+</section>
+
+<section class="sec" id="town-map" aria-labelledby="h-town">
+  <div class="sec-h"><h2 id="h-town">因斯布魯克｜下山後怎麼逛</h2>
+  <p>北向上。北鏈在城市北側；纜車起點在老城東北角。黃金屋頂、宮廷教堂與河岸集中在老城周邊，瑪麗亞·特蕾西亞大街向南通往凱旋門。圖為相對位置示意，不按比例；點地標開啟 Google Maps，手機可左右滑動。</p></div>
+  <div class="town-map-scroll" tabindex="0" aria-label="因斯布魯克市區示意圖，窄螢幕可左右捲動">
+  <svg class="town-map-svg" viewBox="0 0 940 690" role="img" aria-labelledby="town-title town-desc">
+    <title id="town-title">因斯布魯克市區與北鏈纜車起點</title><desc id="town-desc">上方北鏈山區。茵河流經老城北側與西側；彩色屋在河對岸，拍照位置為南岸 Marktplatz。纜車起點在東北，黃金屋頂在老城，宮廷教堂在其東側，大街與凱旋門在南側，火車站在東南。</desc>
+    <rect x="20" y="20" width="900" height="650" rx="20" fill="#172130"/>
+    <path d="M75 115L165 45L240 115L325 35L405 115L510 50L605 115" fill="#2a3448"/>
+    <text x="300" y="82">北鏈 Nordkette</text><text x="670" y="65" class="sub">↑ 北 N　　東 →</text>
+    <path d="M0 300 Q120 310 220 245 T470 175 T950 155" fill="none" stroke="#365e70" stroke-width="47"/>
+    <text x="540" y="169" class="sub">茵河 Inn</text>
+    <rect x="285" y="250" width="290" height="170" rx="25" fill="#263143"/>
+    <text x="425" y="394" class="sub">老城 Altstadt</text>
+    <path class="route" d="M600 220L510 265L360 300L260 315M360 300L385 450L390 600"/>
+    <path d="M600 210L610 125" stroke="#9fd3e4" stroke-width="4" stroke-dasharray="6 6"/><text x="640" y="122" class="sub">搭纜車往北鏈 ↑</text>
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=Nordkette+Congress+Innsbruck"><circle class="pin" cx="600" cy="220" r="10"/><text x="625" y="225">Altstadt／Congress 纜車站</text><text x="625" y="250" class="sub">下山回到這裡，再走老城</text></a>
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=Goldenes+Dachl+Innsbruck"><circle class="pin" cx="360" cy="300" r="10"/><text x="308" y="335">黃金屋頂</text></a>
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=Hofkirche+Innsbruck"><circle class="pin" cx="510" cy="290" r="10"/><text x="510" y="321">宮廷教堂</text><text x="510" y="343" class="sub">Hofkirche</text></a>
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=Marktplatz+Innsbruck"><circle class="pin" cx="260" cy="315" r="10"/><text x="55" y="365">Marktplatz 河岸</text><text x="55" y="388" class="sub">朝對岸拍彩色屋</text></a>
+    <path d="M120 225L120 200L145 190L170 200L170 225M180 210L180 185L205 175L230 185L230 210" fill="#bd8967" stroke="#172130" stroke-width="3"/>
+    <text x="45" y="175">彩色屋 Mariahilf</text><text x="45" y="197" class="sub">在河對岸；拍照不必過橋</text>
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=Maria-Theresien-Strasse+Innsbruck"><circle class="pin" cx="385" cy="450" r="10"/><text x="412" y="455">瑪麗亞·特蕾西亞大街</text><text x="412" y="480" class="sub">Maria-Theresien-Straße · 散步、咖啡</text></a>
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=Triumphpforte+Innsbruck"><circle class="pin" cx="390" cy="600" r="10"/><text x="418" y="608">凱旋門 Triumphpforte</text></a>
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=InnenSTADT+Garage+Innsbruck"><rect x="775" y="280" width="30" height="30" rx="5" fill="#365e70"/><text x="783" y="302">P</text><text x="670" y="343" class="sub">InnenSTADT Garage</text></a>
+    <a href="https://www.google.com/maps/search/?api=1&amp;query=Altstadtgarage+Innsbruck"><rect x="260" y="410" width="30" height="30" rx="5" fill="#365e70"/><text x="268" y="432">P</text><text x="90" y="443" class="sub">Altstadtgarage</text></a>
+    <text x="725" y="568" class="sub">中央車站 ↘</text><text x="45" y="630" class="sub">橘虛線：步行動線示意</text>
+  </svg></div>
+  <div class="walks">
+    <div class="walk"><h3>A｜下山後短逛</h3><span class="dur">13:45–15:00 · 依排隊調整</span><p>纜車站 → 黃金屋頂 → 老城 → 瑪麗亞·特蕾西亞大街 → 返回停車場。想拍彩色屋可加 Marktplatz；時間不足省略河岸與凱旋門。</p></div>
+    <div class="walk"><h3>B｜不搭纜車慢遊</h3><span class="dur">09:30–15:00 · 午餐留在市區</span><p>停車後先走到凱旋門，再向北逛大街、黃金屋頂；午餐後選宮廷教堂或咖啡，最後到 Marktplatz 拍河對岸彩色屋，回車旁。</p></div>
+    <div class="walk"><h3>步行時間怎麼抓</h3><span class="dur">以下皆為估算，不含停留</span><p>纜車站 → 黃金屋頂約 5–10 分；黃金屋頂 → Marktplatz 約 5–10 分；黃金屋頂 → 凱旋門約 15–20 分。15:00 是開車離開，需提早回停車場。</p></div>
+  </div>
+  <p class="tip">位置與動線參考 <a href="https://www.innsbruck.info/en/destinations/travel-tips/town-and-city-maps.html">官方城市地圖</a>與 <a href="https://www.innsbruck.info/sehenswuerdigkeiten/m/walk-3-auf-den-spuren-der-habsburger.html">官方老城散步路線</a>；查詢 2026/10/02。</p>
+</section>
+
+<section class="sec" id="onward" aria-labelledby="h-onward">
+  <div class="sec-h"><h2 id="h-onward">去薩爾斯堡｜途中停哪裡</h2><p>以 A12 → Kufstein → A93 → Rosenheim → A8 → A1 為規劃路線。完全不下高速只能選休息站；小鎮至少要下、上高速各一次。以下擇一，當日若導航改走其他路線便不適用。</p></div>
+  <div class="walks">
+    <div class="walk"><h3>首選休息｜Hochfelln Süd</h3><span class="dur">A8 往薩爾斯堡 · 不下交流道</span><p>在 Bergen 一帶，適合洗手間、咖啡與短暫伸展；建議停 15–25 分。由同方向高速休息站匝道進出，選「Süd」，不要導航到反向 Nord。</p><p><a href="https://www.google.com/maps/search/?api=1&amp;query=Raststaette+Hochfelln+Sued">開啟地圖</a> · <a href="https://www.raststaetten.de/standorte/hochfelln-sued/">官方設施</a></p></div>
+    <div class="walk"><h3>想逛小鎮｜拉滕貝格 Rattenberg</h3><span class="dur">A12 Kramsach 出口 · 下、上各一次</span><p>小巧的中世紀步行老城，適合短逛街景與玻璃店。從 Kramsach 出口到 P4 東側停車場，逛完回同一交流道，續往 Kufstein；不必串聯其他小鎮。</p><p>建議逛 45–60 分，另留繞出、停車與返回高速時間；規劃上整段加留約 60–90 分，非導航實測。若仍要約 18:00 到住宿，應縮短因斯布魯克下午，不能 15:00 才出發又維持原抵達估算。</p><p><a href="https://www.google.com/maps/search/?api=1&amp;query=Rattenberg+Parkplatz+Ost+P4">導航 P4</a> · <a href="https://www.alpbachtal.at/en/info-and-service/alpbachtal-a-z/P4-Rattenberg-car-park-subject-to-parking-fees_isd_34876">官方停車資訊</a></p></div>
+  </div>
+  <p class="tip">查詢日期 2026/10/02。停留時間是建議；官網確認 Hochfelln Süd 提供餐飲、洗手間與停車，Rattenberg P4 為收費停車場。小鎮抵達方式依 <a href="https://www.alpbachtal.at/demi-download_Unterk-C3-BCnfte-20im-20Alpbachtal_de.pdf_94926?_locale=de&amp;path=info-und-service%2Fprospekte">官方交通指引</a>；高速順向判斷另參考 <a href="https://stau.info/rastplatz/hochfelln-sud">A8 路段方向資料</a>。保留住宿抵達緩衝，出發前看即時導航。</p>
 </section>
 
 <section class="sec" id="wx" aria-labelledby="h-wx">
@@ -564,7 +616,7 @@ svg .town{fill:#2a3448}
     <div class="walk warn"><h3>積雪結冰</h3><span class="dur">只走短步道</span>
       <p>去年 10/8 下雪後攀岩步道關閉，10/14 北坡結冰仍未開；10/26 有健行者在歌德步道迷路。峰頂步道有雪就只在觀景點看。</p></div>
     <div class="walk"><h3>強風、看不清楚</h3><span class="dur">改走 B 方案</span>
-      <p>官方沒有公布強風停駛的標準。山頂一片白就不買票，改 B 方案（市區古城＋拉滕貝格）。</p></div>
+      <p>官方沒有公布強風停駛的標準。山頂一片白就不買票，改 B 方案（因斯布魯克市區慢遊；拉滕貝格僅為可選停靠）。</p></div>
   </div>
 </section>
 
