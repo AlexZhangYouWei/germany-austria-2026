@@ -25,6 +25,7 @@ const NAV = [
   ["weather.html","天氣預報", "weather"],
   ["tickets.html","票券","tickets"],
   ["shop.html","伴手禮與藥妝","shop"],
+  ["collect.html","紀念鈔票與硬幣","collect"],
   ["drive.html","自駕指南","drive"],
   ["esim.html","eSIM 方案","esim"],
   ["checklist.html","行李與待辦","checklist"],
@@ -462,8 +463,8 @@ function dayArticle(d){
 
   ${d.collect ? `<section class="day glass rv collect-card" aria-label="紀念紙鈔與紀念幣">
     <div class="daybox-t">紀念紙鈔與紀念幣<span class="daybox-when">順路收藏</span></div>
-    <ul class="notes">${d.collect.items.map(([name, url, note]) => `<li><b class="lbl">${esc(name)}</b>${md(note)} <a class="daylink" href="${esc(url)}" target="_blank" rel="noopener">位置與品項參考 ↗</a></li>`).join("")}</ul>
-    <p class="cfm-foot">${md(d.collect.foot)}</p>
+    <p class="cfm-lead">${d.collect.items.map(([name]) => esc(name)).join("、")}</p>
+    <a class="daylink" href="collect.html#day${d.n}">查看今天的購買地點與收藏品項 ↗</a>
   </section>` : ""}
 
   ${todo}
@@ -915,6 +916,16 @@ if (PAGE === "day") {
       goTo(dx < 0 ? cur + 1 : cur - 1, false);
     }, { passive:true });
   }
+}
+
+if (PAGE === "collect") {
+  el("collections").innerHTML = DAYS.filter(d => d.collect).map(d => `<section class="day glass" id="day${d.n}">
+    <div class="daybox-t">Day ${d.n} · ${esc(d.date)}<a class="daylink" href="day${d.n}.html">返回當日行程 ↗</a></div>
+    <h2 class="day-title" style="margin-bottom:20px">${esc(d.title)}</h2>
+    <ul class="notes">${d.collect.items.map(([name, url, note]) => `<li><b class="lbl">${esc(name)}</b>${md(note)} <a class="daylink" href="${esc(url)}" target="_blank" rel="noopener">位置與品項參考 ↗</a></li>`).join("")}</ul>
+    <p class="cfm-foot">${md(d.collect.foot)}</p>
+  </section>`).join("");
+  if (/^#day[1-8]$/.test(location.hash)) requestAnimationFrame(() => document.querySelector(location.hash)?.scrollIntoView({behavior:"instant"}));
 }
 
 if (PAGE === "food") {
