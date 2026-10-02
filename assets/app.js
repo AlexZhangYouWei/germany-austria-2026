@@ -460,6 +460,12 @@ function dayArticle(d){
     <div class="day-meta">${d.meta.map(m => `<span>${esc(m)}</span>`).join("")}</div>
   </article>
 
+  ${d.collect ? `<section class="day glass rv collect-card" aria-label="紀念紙鈔與紀念幣">
+    <div class="daybox-t">紀念紙鈔與紀念幣<span class="daybox-when">順路收藏</span></div>
+    <ul class="notes">${d.collect.items.map(([name, url, note]) => `<li><b class="lbl">${esc(name)}</b>${md(note)} <a class="daylink" href="${esc(url)}" target="_blank" rel="noopener">位置與品項參考 ↗</a></li>`).join("")}</ul>
+    <p class="cfm-foot">${md(d.collect.foot)}</p>
+  </section>` : ""}
+
   ${todo}
 
   ${wx ? `<details class="day glass rv wxcard wxfold">
