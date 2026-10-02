@@ -10,6 +10,8 @@
 
 純靜態，無框架。此儲存庫保存網站成品，資料由本地旅行專案的五份主資料建置成 `assets/data.js`，勿直接手改；版面於 `assets/style.css`，渲染於 `assets/app.js`。
 
+導覽頁的大型路線圖採「頁內預覽、點擊放大」：`img/*-map-preview.jpg` 是 1280 px 的頁內圖，原始 PNG 僅由放大視窗按需載入。新增或更新這類地圖時，請一併產生對應預覽圖並保留 `width`、`height`。
+
 2026/10/01 更新：以五份主資料重建，16 個內容區塊及 2 個地圖區塊比對一致；導航保存 Google Maps／Apple Maps 直接連結。
 
 GitHub Pages 從 `main` 分支根目錄發布：
